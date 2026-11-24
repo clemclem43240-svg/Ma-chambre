@@ -443,8 +443,11 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
   ];
   $('apps').innerHTML = APPS.map(a => '<button class="app" data-app="'+a.id+'" aria-pressed="false"><span class="logo" style="background:'+a.bg+';color:'+a.fg+'">'+a.letter+'</span>'+esc(a.name)+'</button>').join('');
 
+  /* clé refusée : on arrête d'insister, sinon Home Assistant bloque l'appareil */
+  let badKey = false;
   async function ha(path, method, body){
     const r = await fetch(cfg.url.replace(/\/+$/,'') + path, {method:method||'GET', headers:{'Authorization':'Bearer '+cfg.token, 'Content-Type':'application/json'}, body: body ? JSON.stringify(body) : undefined});
+    if (r.status === 401){ if (!badKey) notify('Clé refusée par Home Assistant : remettez-la dans Réglages'); badKey = true; }
     if (!r.ok) throw new Error('HTTP '+r.status);
     return r.json();
   }
@@ -529,6 +532,7 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
     $('mode-txt').textContent = live ? 'Connecté à Home Assistant' : 'Mode démo';
   }
   async function poll(){
+    if(badKey){ live=false; setMode(); return; }
     if (!cfg.url || !cfg.token) { live = false; setMode(); return; }
     try {
       const x = await ha('/api/states/'+encodeURIComponent(cfg.xbox));
@@ -586,14 +590,14 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
   const dlg = $('settings');
   function fillSettings(){ $('st-city').value = cfg.city||''; $('st-url').value = cfg.url||''; $('st-token').value = cfg.token||''; $('st-xbox').value = cfg.xbox||''; $('st-person').value = cfg.person||''; $('st-status').textContent=''; }
   function readSettings(){ return {city:$('st-city').value.trim(), url:$('st-url').value.trim(), token:$('st-token').value.trim(), xbox:$('st-xbox').value.trim()||'media_player.xbox', person:$('st-person').value.trim()}; }
-  $('open-settings').onclick = () => { fillSettings(); if (cfg.url && cfg.token) findDevices(cfg.url, cfg.token).catch(()=>{}); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open',''); };
+  $('open-settings').onclick = () => { fillSettings(); if (!badKey && cfg.url && cfg.token) findDevices(cfg.url, cfg.token).catch(()=>{}); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open',''); };
   $('st-test').onclick = async () => {
     const c = readSettings(), st = $('st-status');
     if (!c.url || !c.token){ st.className='status err'; st.textContent='Remplis l\'adresse et la clé'; return; }
     if (location.protocol === 'https:' && c.url.startsWith('http:')){ st.className='status err'; st.textContent='Ouvrez l\'appli depuis Home Assistant : http://(adresse):8123/local/ma-chambre/index.html'; return; }
     await testAndFind(c, st);
   };
-  $('st-save').onclick = () => {
+  $('st-save').onclick = () => {badKey=false; 
     const old = cfg.city; cfg = readSettings(); store.set('cfg', cfg); dlg.close();
     if (cfg.city !== old) loadWeather();
     poll();

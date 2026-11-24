@@ -345,8 +345,11 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
   $('alert-ok').onclick = () => $('alert').classList.remove('show');
 
   /* ---------- Home Assistant ---------- */
+  /* clé refusée : on arrête d'insister, sinon Home Assistant bloque l'appareil */
+  let badKey = false;
   async function ha(path, method, body){
     const r = await fetch(cfg.url.replace(/\/+$/,'') + path, {method:method||'GET', headers:{'Authorization':'Bearer '+cfg.token,'Content-Type':'application/json'}, body: body ? JSON.stringify(body) : undefined});
+    if (r.status === 401){ if (!badKey) notify('Clé refusée par Home Assistant : remettez-la dans Réglages'); badKey = true; }
     if (!r.ok) throw new Error('HTTP '+r.status); return r.json();
   }
   async function call(domain, service, data){
@@ -358,7 +361,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
   function route(){ const t=(location.hash||'').slice(1); const tab = TABS[t] ? t : 'accueil';
     Object.keys(TABS).forEach(k => $('v-'+k).hidden = k !== tab);
     document.querySelectorAll('nav.tabs a').forEach(a => { if (a.dataset.tab===tab) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
-    $('title').textContent = TABS[tab]; if (tab==='reglages'){ fillSettings(); if(cfg.url&&cfg.token) findDevices(cfg.url,cfg.token).catch(()=>{}); } window.scrollTo(0,0); }
+    $('title').textContent = TABS[tab]; if (tab==='reglages'){ fillSettings(); if(!badKey&&cfg.url&&cfg.token) findDevices(cfg.url,cfg.token).catch(()=>{}); } window.scrollTo(0,0); }
   window.addEventListener('hashchange', route);
 
   /* ---------- horloge, agenda, rappels ---------- */
@@ -501,6 +504,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
 
   /* ---------- synchro Home Assistant ---------- */
   async function poll(){
+    if(badKey){ live=false; setMode(); return; }
     if(!cfg.url||!cfg.token){ live=false; setMode(); render(); return; }
     try {
       const states=await ha('/api/states'); const by={}; states.forEach(e=>by[e.entity_id]=e);
@@ -555,7 +559,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
     if(!c.url||!c.token){ st.className='status err'; st.textContent='Remplis l\'adresse et la clé'; return; }
     if (location.protocol === 'https:' && c.url.startsWith('http:')){ st.className='status err'; st.textContent='Ouvrez l\'appli depuis Home Assistant : http://(adresse):8123/local/ma-chambre/index.html'; return; }
     await testAndFind(c, st); };
-  $('st-save').onclick=()=>{ const old=cfg.city; cfg=readSettings(); store.set('cfg',cfg); toast('Réglages enregistrés'); if(cfg.city!==old) loadWeather(); poll(); };
+  $('st-save').onclick=()=>{ badKey=false; const old=cfg.city; cfg=readSettings(); store.set('cfg',cfg); toast('Réglages enregistrés'); if(cfg.city!==old) loadWeather(); poll(); };
   $('st-forget').onclick=()=>{ cfg={city:cfg.city,url:SAME?location.origin:'',token:'',xbox:'media_player.xbox',person:''}; store.set('cfg',cfg); fillSettings(); live=false; liveMedia=null; setMode(); render(); $('st-status').className='status ok'; $('st-status').textContent='Adresse et clé effacées du téléphone'; };
 
   /* ---------- démarrage ---------- */
