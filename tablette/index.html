@@ -470,13 +470,14 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
   async function sendApp(id, wasOn, send){
     const name = (APPS.find(a => a.id === id) || {name:id}).name;
     if (!wasOn){ await send('turn_on', {entity_id:cfg.xbox}); await new Promise(r => setTimeout(r, 20000)); }
-    const src = srcList.find(x => KEY[id].test(x));
-    if (src) return send('select_source', {entity_id:cfg.xbox, source:src});
     if (id === 'Home') return send('play_media', {entity_id:cfg.xbox, media_content_id:'Home', media_content_type:'app'});
-    if (!xApps || !xApps.length){ try { xApps = await xboxApps(); } catch(e){ xApps = null; } }
+    /* même chemin que le menu Médias de Home Assistant (celui qui marche) : applis installées puis play_media */
+    if (!xApps || !xApps.length){ try { xApps = await xboxApps(); } catch(e){ xApps = null; notify('Xbox : liste des applis illisible ('+e.message+')'); } }
     const app = (xApps || []).find(a => KEY[id].test(a.title || ''));
     if (app) return send('play_media', {entity_id:cfg.xbox, media_content_id:app.id, media_content_type:app.type || 'app'});
-    notify(name+' introuvable dans les applis installées de la Xbox');
+    const src = srcList.find(x => KEY[id].test(x));
+    if (src) return send('select_source', {entity_id:cfg.xbox, source:src});
+    throw new Error(name+' introuvable ('+(xApps ? xApps.length : 0)+' applis vues sur la Xbox)');
   }
   /* clé refusée : on arrête d'insister, sinon Home Assistant bloque l'appareil */
   let badKey = false;
