@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>Ma chambre mobile</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ma chambre">
+<meta name="theme-color" content="#0b1026">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: phone app, one column of frosted-glass cards over a soft colour gradient, fixed bottom tab bar with 5 tabs. Centered at 440px on bigger screens. Single deliberate dark look. */
+:root{
+  --bg:#0b1026; --fg:#f5f7ff; --muted:rgba(235,240,255,.66); --edge:rgba(255,255,255,.2);
+  --accent:#7cc8ff; --pink:#ff6fcf; --violet:#8b6bff; --ok:#6bf0b8; --warn:#ffc46b;
+  --lamp:#ffcf8a;
+  --f-display:"Sora","Segoe UI",system-ui,sans-serif;
+  --f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.7;animation:drift 24s ease-in-out infinite alternate}
+.aurora .a1{width:90vmax;height:90vmax;left:-40vmax;top:-45vmax;background:radial-gradient(circle,#4f5bff,transparent 62%)}
+.aurora .a2{width:80vmax;height:80vmax;right:-45vmax;top:5vmax;background:radial-gradient(circle,#ff4fc8,transparent 62%);animation-duration:30s}
+.aurora .a3{width:80vmax;height:80vmax;left:-20vmax;bottom:-50vmax;background:radial-gradient(circle,#00d4ff,transparent 62%);animation-duration:27s}
+.aurora .a4{width:60vmax;height:60vmax;right:-20vmax;bottom:-20vmax;background:radial-gradient(circle,var(--lamp),transparent 62%);opacity:0;transition:opacity .6s,background .6s}
+body.lit .aurora .a4{opacity:.55}
+@keyframes drift{to{transform:translate(5vmax,4vmax) scale(1.12)}}
+
+.app{position:relative;z-index:1;max-width:440px;margin:0 auto;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));
+  padding-block:14px calc(110px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+h1{font-size:30px;font-weight:600;letter-spacing:-.02em}
+h2{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+h3{font-size:17px;font-weight:600}
+.sub{color:var(--muted);font-size:13px}
+
+.card{border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,255,255,.05));
+  -webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);
+  border:1px solid var(--edge);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 16px 40px -20px rgba(0,0,0,.6);transition:border-color .3s, box-shadow .3s}
+.card.active{border-color:rgba(124,200,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 30px -10px var(--accent)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.row > div{min-width:0}
+.ic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex-shrink:0;background:var(--g,linear-gradient(135deg,#5b8cff,#8b6bff))}
+.ic svg{stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lead{display:flex;align-items:center;gap:12px;min-width:0}
+.tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.12);color:var(--muted);white-space:nowrap}
+
+/* header */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-top:6px}
+.top .sub{font-size:14px;text-transform:capitalize}
+.demo{font-size:12px;font-weight:600;color:var(--warn);padding:6px 10px;border-radius:99px;background:rgba(255,196,107,.14);border:1px solid rgba(255,196,107,.3);white-space:nowrap}
+
+/* summary chips */
+.chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.chip{border-radius:20px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.chip b{font-family:var(--f-display);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+
+/* scenes */
+.scenes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.scene{border-radius:22px;padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;min-height:104px;transition:transform .15s}
+.scene:active{transform:scale(.96)}
+.scene b{font-family:var(--f-display);font-size:16px;font-weight:600}
+.scene.on{border-color:var(--c);box-shadow:0 0 0 1px var(--c),0 0 26px -6px var(--c)}
+
+/* controls */
+.switch{width:56px;height:32px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid var(--edge);position:relative;flex-shrink:0;transition:background .3s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+.switch[aria-checked="true"]{background:linear-gradient(90deg,#00c8ff,#8b6bff)}
+.switch[aria-checked="true"]::after{transform:translateX(24px)}
+.range{width:100%;height:28px;-webkit-appearance:none;appearance:none;background:transparent}
+.range::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,rgba(255,255,255,.15),var(--tc,var(--accent)))}
+.range::-moz-range-track{height:8px;border-radius:99px;background:linear-gradient(90deg,rgba(255,255,255,.15),var(--tc,var(--accent)))}
+.range::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.18)}
+.range::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:#fff}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.3)}
+.sw[aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.btns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.btn{min-height:44px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid var(--edge);font-weight:600;font-size:14px;padding:0 8px}
+.btn:active{transform:scale(.96)}
+.btn.primary{background:linear-gradient(90deg,#00c8ff,#8b6bff 55%,#ff6fcf);border-color:transparent}
+.seg{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(0,0,0,.22);border:1px solid var(--edge)}
+.seg button{flex:1;min-height:40px;border-radius:10px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:rgba(255,255,255,.92);color:#10132a}
+.ctrl{display:flex;flex-direction:column;gap:10px}
+.off{opacity:.4;pointer-events:none}
+.meter{height:8px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,#00c8ff,#ff6fcf);transition:width .25s}
+.big{font-family:var(--f-display);font-size:44px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.big span{font-size:20px;color:var(--muted)}
+.spark{width:100%;height:54px;display:block}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.facts b{display:block;font-size:16px;font-variant-numeric:tabular-nums}
+.shut{height:110px;border-radius:16px;background:linear-gradient(#3a5bd8,#7fb7ff 55%,#ffb3a0);position:relative;overflow:hidden;border:1px solid var(--edge)}
+.shut i{position:absolute;inset:0 0 auto 0;background:repeating-linear-gradient(rgba(30,36,70,.92) 0 9px,rgba(60,70,120,.92) 9px 12px);transition:height .25s linear}
+.hue{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.hue button{min-height:56px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid var(--edge);text-align:left;padding:8px 12px;display:flex;flex-direction:column;justify-content:center}
+.hue button b{font-size:14px}
+.hue button span{font-size:12px;color:var(--muted)}
+.hue button.flash{background:rgba(124,200,255,.35)}
+input[type="time"]{font-family:var(--f-display);font-size:20px;color:var(--fg);background:rgba(255,255,255,.1);border:1px solid var(--edge);border-radius:12px;padding:6px 10px;min-height:44px}
+.log{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.log li{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted)}
+.log li b{color:var(--fg);font-weight:500}
+.note{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* tab bar */
+nav.tabs{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  width:min(408px, calc(100% - 24px));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding:6px;border-radius:26px;
+  background:rgba(20,24,50,.55);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--edge);box-shadow:0 18px 40px -16px rgba(0,0,0,.7)}
+nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;border-radius:20px;color:var(--muted);text-decoration:none;font-size:11px;font-weight:600;min-height:44px}
+nav.tabs a svg{stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
+.view{display:flex;flex-direction:column;gap:12px}
+
+.toast{position:fixed;z-index:5;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translate(-50%,-20px);max-width:calc(100% - 32px);
+  background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border:1px solid var(--edge);padding:10px 18px;border-radius:99px;font-weight:600;font-size:14px;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<style>
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+.app{padding-top:calc(14px + env(safe-area-inset-top,0px))!important}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
+
+<div class="app">
+  <div class="top">
+    <div><div class="sub" id="date"></div><h1 id="title">Ma chambre</h1></div>
+    <span class="demo">Mode démo</span>
+  </div>
+
+  <!-- ACCUEIL -->
+  <section class="view" id="v-accueil">
+    <div class="chips">
+      <div class="card chip"><span class="sub">Temp.</span><b id="c-temp">20,4°</b></div>
+      <div class="card chip"><span class="sub">Lumières</span><b id="c-lights">0/4</b></div>
+      <div class="card chip"><span class="sub">Volets</span><b id="c-shut">Ouv.</b></div>
+    </div>
+    <h2>Ambiances</h2>
+    <div class="scenes" id="scenes"></div>
+    <h2>Raccourcis</h2>
+    <div class="card"><div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#ffb454,#ff6f8f)"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><h3>Toutes les lumières</h3><div class="sub" id="all-sub">Éteintes</div></div></div><button class="switch" role="switch" id="all-sw" aria-checked="false" aria-label="Toutes les lumières"></button></div></div>
+    <div class="card"><div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#3a5bd8,#7cc8ff)"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8h16M4 12h16M4 16h16"/></svg></span><div><h3>Volets</h3><div class="sub" id="home-shut">Ouverts</div></div></div></div>
+      <div class="btns"><button class="btn" data-shut="0">Ouvrir</button><button class="btn" data-shut="stop">Stop</button><button class="btn" data-shut="100">Fermer</button></div></div>
+  </section>
+
+  <!-- LUMIERES -->
+  <section class="view" id="v-lumieres" hidden>
+    <p class="note" style="margin:0">3 ampoules Philips Hue et un ruban LED de 5 m.</p>
+    <div id="lights" class="view"></div>
+  </section>
+
+  <!-- APPAREILS -->
+  <section class="view" id="v-appareils" hidden>
+    <div class="card" id="d-shut">
+      <div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#3a5bd8,#7cc8ff)"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8h16M4 12h16M4 16h16"/></svg></span><div><h3>Volets</h3><div class="sub" id="shut-sub">Ouverts</div></div></div><span class="tag">Somfy</span></div>
+      <div class="shut" aria-hidden="true"><i id="shut-vis"></i></div>
+      <label class="sub" for="shut-rng">Fermeture <b id="shut-pct">0 %</b></label>
+      <input class="range" type="range" id="shut-rng" min="0" max="100" value="0">
+      <div class="btns"><button class="btn" data-shut="0">Ouvrir</button><button class="btn" data-shut="stop">Stop</button><button class="btn" data-shut="100">Fermer</button></div>
+    </div>
+
+    <div class="card" id="d-tv">
+      <div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#ff6f8f,#8b6bff)"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><div><h3>Télé</h3><div class="sub" id="tv-sub">Éteinte</div></div></div><span class="tag">Chromecast</span><button class="switch" role="switch" id="tv-sw" aria-checked="false" aria-label="Télé"></button></div>
+      <div class="ctrl" id="tv-ctrl">
+        <div class="seg" role="group" aria-label="Source"><button data-src="Chromecast" aria-pressed="true">Chromecast</button><button data-src="Xbox" aria-pressed="false">Xbox</button></div>
+        <div class="btns"><button class="btn" data-app="YouTube">YouTube</button><button class="btn" data-app="Netflix">Netflix</button><button class="btn" data-app="Spotify">Spotify</button></div>
+        <div class="row" style="gap:10px"><button class="btn" id="tv-vd" style="width:48px" aria-label="Baisser le son">–</button><div class="meter" style="flex:1"><i id="tv-vol"></i></div><button class="btn" id="tv-vu" style="width:48px" aria-label="Monter le son">+</button></div>
+      </div>
+    </div>
+
+    <div class="card" id="d-xbox">
+      <div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#2fbf71,#6bf0b8)"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/></svg></span><div><h3>Xbox</h3><div class="sub" id="xb-sub">En veille</div></div></div><button class="switch" role="switch" id="xb-sw" aria-checked="false" aria-label="Xbox"></button></div>
+      <button class="btn primary" id="xb-play">Lancer l'ambiance Jeu</button>
+    </div>
+
+    <div class="card" id="d-gh">
+      <div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#4285f4,#34a8ff)"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><div><h3>Enceinte Google Home</h3><div class="sub" id="gh-sub">Prête</div></div></div></div>
+      <label class="sub" for="gh-vol">Volume <b id="gh-pct">40 %</b></label>
+      <input class="range" type="range" id="gh-vol" min="0" max="100" value="40">
+      <div class="sub">Exemples de commandes vocales :</div>
+      <div class="btns" style="grid-template-columns:1fr">
+        <button class="btn" data-voice="film">« Ok Google, mode Film »</button>
+        <button class="btn" data-voice="nuit">« Ok Google, bonne nuit »</button>
+      </div>
+    </div>
+
+    <div class="card" id="d-plug">
+      <div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#ffb454,#ffd36b)"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/></svg></span><div><h3>Prise connectée</h3><div class="sub" id="plug-sub">Éteinte · 0 W</div></div></div><button class="switch" role="switch" id="plug-sw" aria-checked="false" aria-label="Prise connectée"></button></div>
+      <div class="sub">Branchée sur : <b style="color:var(--fg)">chargeur et enceinte du bureau</b></div>
+    </div>
+  </section>
+
+  <!-- CAPTEURS -->
+  <section class="view" id="v-capteurs" hidden>
+    <div class="card">
+      <div class="row"><h3>Température et humidité</h3><span class="tag" id="comfort">Confortable</span></div>
+      <div class="big" id="temp">20,4<span> °C</span></div>
+      <svg class="spark" id="spark" viewBox="0 0 300 54" preserveAspectRatio="none" role="img" aria-label="Température des 12 dernières heures"></svg>
+      <div class="facts"><div><span class="sub">Humidité</span><b id="hum">48 %</b></div><div><span class="sub">Min 12 h</span><b id="tmin">–</b></div><div><span class="sub">Max 12 h</span><b id="tmax">–</b></div></div>
+    </div>
+    <div class="card">
+      <div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#8b6bff,#ff6fcf)"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="M7 21l3-6 3 2v4M10 15l1-5 4 3 3 1M8 9l3-1"/></svg></span><div><h3>Détecteur de mouvement</h3><div class="sub" id="mo-sub">Aucun mouvement</div></div></div></div>
+      <button class="btn" id="mo-sim">Simuler un passage</button>
+      <ul class="log" id="mo-log"></ul>
+    </div>
+    <div class="card">
+      <div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#ffffff,#b8c4ff)"><svg width="22" height="22" viewBox="0 0 24 24" style="stroke:#10132a"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M10 8h4M10 16h4"/></svg></span><div><h3>Interrupteur Hue</h3><div class="sub">Sans fil, collé au mur près de la porte</div></div></div></div>
+      <div class="hue">
+        <button data-hue="0"><b>Bouton 1</b><span>Allumer tout</span></button>
+        <button data-hue="1"><b>Bouton 2</b><span>Plus fort</span></button>
+        <button data-hue="2"><b>Bouton 3</b><span>Moins fort</span></button>
+        <button data-hue="3"><b>Bouton 4</b><span>Ambiance Nuit</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROUTINES -->
+  <section class="view" id="v-routines" hidden>
+    <div class="card">
+      <div class="row"><div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#00c8ff,#6bf0b8)"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3L2 6M19 3l3 3"/></svg></span><div><h3>Réveil iPhone</h3><div class="sub">Quand l'alarme sonne → ambiance Réveil</div></div></div><button class="switch" role="switch" data-rt="wake" aria-checked="true" aria-label="Routine Réveil"></button></div>
+      <div class="row"><label class="sub" for="wake-time">Heure du réveil</label><input type="time" id="wake-time" value="07:00"></div>
+      <button class="btn" id="wake-test">Tester maintenant</button>
+    </div>
+    <div id="routines" class="view"></div>
+    <p class="note">Les routines tourneront sur Home Assistant une fois les appareils achetés. Ici, tu peux déjà choisir lesquelles tu veux.</p>
+  </section>
+</div>
+
+<nav class="tabs" aria-label="Sections">
+  <a href="#accueil" data-tab="accueil"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+  <a href="#lumieres" data-tab="lumieres"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>Lumières</a>
+  <a href="#appareils" data-tab="appareils"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/></svg>Appareils</a>
+  <a href="#capteurs" data-tab="capteurs"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/></svg>Capteurs</a>
+  <a href="#routines" data-tab="routines"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M20 10A8 8 0 0 0 6 6L4 10M4 14a8 8 0 0 0 14 4l2-4"/></svg>Routines</a>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toFixed(1).replace('.', ',');
+  const COLORS = [['#ffcf8a','Blanc chaud'],['#f4f6ff','Blanc froid'],['#5b8cff','Bleu'],['#a77bff','Violet'],['#ff6b8b','Rose'],['#5fd3a0','Vert'],['#ff9b42','Orange']];
+  const def = {
+    lights:[
+      {id:'plafond', name:'Plafonnier', kind:'Ampoule Hue', on:false, lvl:70, color:'#ffcf8a'},
+      {id:'bureau', name:'Lampe de bureau', kind:'Ampoule Hue', on:false, lvl:80, color:'#f4f6ff'},
+      {id:'chevet', name:'Lampe de chevet', kind:'Ampoule Hue', on:false, lvl:40, color:'#ffcf8a'},
+      {id:'ruban', name:'Ruban LED 5 m', kind:'Hue Lightstrip', on:false, lvl:60, color:'#a77bff'}
+    ],
+    shutter:0, tv:false, src:'Chromecast', vol:30, xbox:false, gh:40, plug:false, scene:null,
+    rt:{wake:true, motion:true, sunset:true, leave:true, tvoff:false}, wake:'07:00'
+  };
+  let s = JSON.parse(JSON.stringify(def));
+  try { const v = JSON.parse(localStorage.getItem('chambre-appli') || 'null'); if (v && v.lights) s = Object.assign(s, v); } catch(e){}
+  const save = () => { try { localStorage.setItem('chambre-appli', JSON.stringify(s)); } catch(e){} };
+  let tt; const toast = m => { const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),1700); };
+  $('date').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+
+  /* tabs */
+  const TABS = {accueil:'Ma chambre', lumieres:'Lumières', appareils:'Appareils', capteurs:'Capteurs', routines:'Routines'};
+  function route(){ const t = (location.hash||'').slice(1); const tab = TABS[t] ? t : 'accueil';
+    Object.keys(TABS).forEach(k => { $('v-'+k).hidden = k !== tab; });
+    document.querySelectorAll('nav.tabs a').forEach(a => { if (a.dataset.tab===tab) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+    $('title').textContent = TABS[tab]; window.scrollTo(0,0); }
+  window.addEventListener('hashchange', route);
+
+  /* scenes */
+  const SCENES = {
+    jeu:{label:'Jeu', desc:'Xbox, télé, ruban bleu', c:'#5b8cff', g:'linear-gradient(135deg,#5b8cff,#8b6bff)', icon:'<path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/>',
+      apply(){ setLights({plafond:[false],bureau:[false],chevet:[true,20,'#5b8cff'],ruban:[true,60,'#5b8cff']}); s.tv=true; s.src='Xbox'; s.xbox=true; moveShut(100);} },
+    film:{label:'Film', desc:'Lumière tamisée, volets fermés', c:'#ff8a5b', g:'linear-gradient(135deg,#ffb454,#ff5f8f)', icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5v4M16 5v4"/>',
+      apply(){ setLights({plafond:[false],bureau:[false],chevet:[false],ruban:[true,15,'#ff9b42']}); s.tv=true; s.src='Chromecast'; s.xbox=false; moveShut(100);} },
+    nuit:{label:'Nuit', desc:"Tout s'éteint", c:'#8b6bff', g:'linear-gradient(135deg,#3b3f9e,#8b6bff)', icon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+      apply(){ setLights({plafond:[false],bureau:[false],chevet:[false],ruban:[false]}); s.tv=false; s.xbox=false; s.plug=false; moveShut(100);} },
+    reveil:{label:'Réveil', desc:'Volets ouverts, lumière douce', c:'#6bf0b8', g:'linear-gradient(135deg,#00c8ff,#6bf0b8)', icon:'<path d="M12 3v3M5 8l2 2M19 8l-2 2M3 16h18M7 16a5 5 0 0 1 10 0M8 20h8"/>',
+      apply(){ setLights({plafond:[true,50,'#ffcf8a'],bureau:[false],chevet:[true,40,'#ffcf8a'],ruban:[false]}); s.tv=false; moveShut(0);} }
+  };
+  function setLights(m){ s.lights.forEach(l => { const v=m[l.id]; if(!v) return; l.on=v[0]; if(v[1]!=null) l.lvl=v[1]; if(v[2]) l.color=v[2]; }); }
+  function scene(k){ SCENES[k].apply(); s.scene=k; render(); save(); toast('Ambiance ' + SCENES[k].label); }
+  $('scenes').innerHTML = Object.entries(SCENES).map(([k,v]) =>
+    '<button class="card scene" data-scene="'+k+'" style="--c:'+v.c+'"><span class="ic" style="--g:'+v.g+'"><svg width="22" height="22" viewBox="0 0 24 24">'+v.icon+'</svg></span><span><b>'+v.label+'</b><br><span class="sub">'+v.desc+'</span></span></button>').join('');
+  document.querySelectorAll('[data-scene]').forEach(b => b.onclick = () => scene(b.dataset.scene));
+
+  /* lights UI */
+  $('lights').innerHTML = s.lights.map((l,i) =>
+    '<div class="card" id="l-'+l.id+'"><div class="row"><div class="lead"><span class="ic" id="li-'+l.id+'"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><h3>'+l.name+'</h3><div class="sub" id="ls-'+l.id+'"></div></div></div>'+
+    '<button class="switch" role="switch" data-l="'+i+'" aria-label="'+l.name+'"></button></div>'+
+    '<div class="ctrl" id="lc-'+l.id+'"><input class="range" type="range" min="5" max="100" data-lr="'+i+'" aria-label="Intensité '+l.name+'">'+
+    '<div class="swatches" role="group" aria-label="Couleur">'+COLORS.map(c=>'<button class="sw" style="background:'+c[0]+'" data-lc="'+i+'" data-color="'+c[0]+'" aria-label="'+c[1]+'"></button>').join('')+'</div></div></div>').join('');
+  document.querySelectorAll('[data-l]').forEach(b => b.onclick = () => { const l=s.lights[b.dataset.l]; l.on=!l.on; s.scene=null; render(); save(); toast(l.name+(l.on?' allumé(e)':' éteint(e)')); });
+  document.querySelectorAll('[data-lr]').forEach(r => r.oninput = () => { const l=s.lights[r.dataset.lr]; l.lvl=+r.value; l.on=true; s.scene=null; render(); save(); });
+  document.querySelectorAll('[data-lc]').forEach(b => b.onclick = () => { const l=s.lights[b.dataset.lc]; l.color=b.dataset.color; l.on=true; s.scene=null; render(); save(); });
+  $('all-sw').onclick = () => { const any=s.lights.some(l=>l.on); s.lights.forEach(l=>l.on=!any); s.scene=null; render(); save(); toast(any?'Lumières éteintes':'Lumières allumées'); };
+
+  /* shutter */
+  let target=s.shutter, motor=null;
+  function moveShut(t){ target=t; if(motor) return; motor=setInterval(()=>{ if(Math.abs(s.shutter-target)<2){ s.shutter=target; clearInterval(motor); motor=null; render(); save(); return; } s.shutter += s.shutter<target?2:-2; render(); },50); }
+  function stopShut(){ clearInterval(motor); motor=null; s.shutter=Math.round(s.shutter); target=s.shutter; render(); save(); }
+  document.querySelectorAll('[data-shut]').forEach(b => b.onclick = () => { s.scene=null; const v=b.dataset.shut; if(v==='stop'){ stopShut(); toast('Volets arrêtés'); } else { moveShut(+v); toast(v==='0'?'Ouverture des volets':'Fermeture des volets'); } });
+  $('shut-rng').oninput = e => { stopShut(); s.shutter=+e.target.value; target=s.shutter; s.scene=null; render(); save(); };
+
+  /* tv / xbox / gh / plug */
+  $('tv-sw').onclick = () => { s.tv=!s.tv; s.scene=null; render(); save(); toast(s.tv?'Télé allumée':'Télé éteinte'); };
+  document.querySelectorAll('[data-src]').forEach(b => b.onclick = () => { s.src=b.dataset.src; render(); save(); });
+  document.querySelectorAll('[data-app]').forEach(b => b.onclick = () => { s.tv=true; s.src='Chromecast'; s.app=b.dataset.app; render(); save(); toast(b.dataset.app+' sur la télé'); });
+  $('tv-vu').onclick = () => { s.vol=Math.min(100,s.vol+10); render(); save(); };
+  $('tv-vd').onclick = () => { s.vol=Math.max(0,s.vol-10); render(); save(); };
+  $('xb-sw').onclick = () => { s.xbox=!s.xbox; s.scene=null; render(); save(); toast(s.xbox?'Xbox allumée':'Xbox en veille'); };
+  $('xb-play').onclick = () => scene('jeu');
+  $('gh-vol').oninput = e => { s.gh=+e.target.value; render(); save(); };
+  document.querySelectorAll('[data-voice]').forEach(b => b.onclick = () => scene(b.dataset.voice));
+  $('plug-sw').onclick = () => { s.plug=!s.plug; render(); save(); toast(s.plug?'Prise allumée':'Prise éteinte'); };
+
+  /* hue switch */
+  document.querySelectorAll('[data-hue]').forEach(b => b.onclick = () => {
+    b.classList.add('flash'); setTimeout(()=>b.classList.remove('flash'),300);
+    const k=+b.dataset.hue;
+    if(k===0){ s.lights.forEach(l=>l.on=true); toast('Interrupteur : tout allumé'); }
+    if(k===1){ s.lights.forEach(l=>{ if(l.on) l.lvl=Math.min(100,l.lvl+15); }); toast('Interrupteur : plus fort'); }
+    if(k===2){ s.lights.forEach(l=>{ if(l.on) l.lvl=Math.max(5,l.lvl-15); }); toast('Interrupteur : moins fort'); }
+    if(k===3){ scene('nuit'); return; }
+    s.scene=null; render(); save(); });
+
+  /* motion */
+  const moLog=[];
+  $('mo-sim').onclick = () => { const d=new Date(); const h=d.getHours();
+    moLog.unshift(d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})); moLog.splice(4);
+    let act='';
+    if (s.rt.motion && (h>=22 || h<7)) { setLights({ruban:[true,10,'#ff9b42']}); act=' · ruban allumé à 10 %'; }
+    $('mo-sub').textContent='Mouvement détecté à l’instant'+act;
+    $('mo-log').innerHTML = moLog.map(t=>'<li><span>Passage détecté</span><b>'+t+'</b></li>').join('');
+    render(); save(); toast('Mouvement détecté'); };
+
+  /* routines */
+  const RT = [
+    ['motion','Veilleuse de nuit','Mouvement entre 22 h et 7 h → ruban à 10 % orange','linear-gradient(135deg,#8b6bff,#ff6fcf)','<circle cx="13" cy="4" r="2"/><path d="M7 21l3-6 3 2v4M10 15l1-5 4 3 3 1"/>'],
+    ['sunset','Coucher du soleil','Fermer les volets automatiquement','linear-gradient(135deg,#ffb454,#ff5f8f)','<path d="M12 10V3M5 13l-2-2M19 13l2-2M3 18h18M7 18a5 5 0 0 1 10 0"/>'],
+    ['leave','Je pars de la maison','Quand ton iPhone quitte la maison → tout éteindre','linear-gradient(135deg,#3a5bd8,#7cc8ff)','<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'],
+    ['tvoff','Extinction auto de la télé','Couper la prise et la télé à 1 h du matin','linear-gradient(135deg,#ff6f8f,#8b6bff)','<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/>']
+  ];
+  $('routines').innerHTML = RT.map(r => '<div class="card"><div class="row"><div class="lead"><span class="ic" style="--g:'+r[3]+'"><svg width="22" height="22" viewBox="0 0 24 24">'+r[4]+'</svg></span><div><h3>'+r[1]+'</h3><div class="sub">'+r[2]+'</div></div></div><button class="switch" role="switch" data-rt="'+r[0]+'" aria-label="'+r[1]+'"></button></div></div>').join('');
+  document.querySelectorAll('[data-rt]').forEach(b => b.onclick = () => { const k=b.dataset.rt; s.rt[k]=!s.rt[k]; render(); save(); toast(s.rt[k]?'Routine activée':'Routine désactivée'); });
+  $('wake-time').value = s.wake;
+  $('wake-time').onchange = e => { s.wake=e.target.value; save(); toast('Réveil réglé à '+s.wake.replace(':',' h ')); };
+  $('wake-test').onclick = () => scene('reveil');
+
+  /* render */
+  function render(){
+    const onCount = s.lights.filter(l=>l.on).length;
+    const lit = s.lights.find(l=>l.on);
+    document.body.classList.toggle('lit', !!lit);
+    if (lit) document.documentElement.style.setProperty('--lamp', lit.color);
+    s.lights.forEach((l,i) => {
+      const card=$('l-'+l.id); card.classList.toggle('active', l.on);
+      card.querySelector('[data-l]').setAttribute('aria-checked', l.on);
+      $('ls-'+l.id).textContent = l.kind + ' · ' + (l.on ? l.lvl+' %' : 'éteinte');
+      $('li-'+l.id).style.setProperty('--g', l.on ? 'linear-gradient(135deg,'+l.color+',rgba(255,255,255,.35))' : 'rgba(255,255,255,.14)');
+      const r=card.querySelector('[data-lr]'); r.value=l.lvl; r.style.setProperty('--tc', l.color);
+      card.querySelectorAll('[data-lc]').forEach(b => b.setAttribute('aria-pressed', b.dataset.color===l.color));
+    });
+    $('c-lights').textContent = onCount+'/4';
+    $('all-sw').setAttribute('aria-checked', onCount>0);
+    $('all-sub').textContent = onCount ? onCount+' allumée'+(onCount>1?'s':'') : 'Éteintes';
+    const p=Math.round(s.shutter), txt = p<=1?'Ouverts':p>=99?'Fermés':'Fermés à '+p+' %';
+    $('shut-sub').textContent=txt; $('home-shut').textContent=txt; $('c-shut').textContent = p<=1?'Ouv.':p>=99?'Ferm.':p+'%';
+    $('shut-vis').style.height=s.shutter+'%'; $('shut-rng').value=p; $('shut-pct').textContent=p+' %';
+    $('d-shut').classList.toggle('active', p>1);
+    $('tv-sw').setAttribute('aria-checked', s.tv); $('d-tv').classList.toggle('active', s.tv);
+    $('tv-sub').textContent = s.tv ? 'Allumée · '+(s.src==='Xbox'?'Xbox':(s.app||'Chromecast')) : 'Éteinte';
+    $('tv-ctrl').classList.toggle('off', !s.tv);
+    document.querySelectorAll('[data-src]').forEach(b => b.setAttribute('aria-pressed', b.dataset.src===s.src));
+    $('tv-vol').style.width=s.vol+'%';
+    $('xb-sw').setAttribute('aria-checked', s.xbox); $('d-xbox').classList.toggle('active', s.xbox);
+    $('xb-sub').textContent = s.xbox ? 'Allumée · prête à jouer' : 'En veille';
+    $('gh-vol').value=s.gh; $('gh-pct').textContent=s.gh+' %';
+    $('plug-sw').setAttribute('aria-checked', s.plug); $('d-plug').classList.toggle('active', s.plug);
+    $('plug-sub').textContent = s.plug ? 'Allumée · '+(12+Math.round(Math.random()*6))+' W' : 'Éteinte · 0 W';
+    document.querySelectorAll('[data-rt]').forEach(b => b.setAttribute('aria-checked', !!s.rt[b.dataset.rt]));
+    document.querySelectorAll('[data-scene]').forEach(b => b.classList.toggle('on', b.dataset.scene===s.scene));
+  }
+
+  /* temperature (simulated) */
+  const hist=[19.2,19.0,18.9,19.0,19.3,19.6,19.9,20.1,20.3,20.2,20.5,20.4];
+  function drawTemp(){
+    const cur=hist[hist.length-1], mn=Math.min(...hist), mx=Math.max(...hist);
+    $('temp').innerHTML = fmt(cur)+'<span> °C</span>'; $('c-temp').textContent = fmt(cur)+'°';
+    $('tmin').textContent=fmt(mn)+' °C'; $('tmax').textContent=fmt(mx)+' °C';
+    const ok=cur>=18.5&&cur<=21.5; $('comfort').textContent = ok?'Confortable':(cur<18.5?'Un peu frais':'Un peu chaud');
+    const lo=mn-.3, hi=mx+.3, w=300, h=54;
+    const pts=hist.map((v,i)=>[i*(w/(hist.length-1)), h-4-(v-lo)/(hi-lo)*(h-8)]);
+    const line=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '); const last=pts[pts.length-1];
+    $('spark').innerHTML='<defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#00c8ff"/><stop offset="1" stop-color="#ff6fcf"/></linearGradient><linearGradient id="sf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b6bff" stop-opacity=".35"/><stop offset="1" stop-color="#8b6bff" stop-opacity="0"/></linearGradient></defs>'+
+      '<polygon points="0,'+h+' '+line+' '+w+','+h+'" fill="url(#sf)"/><polyline points="'+line+'" fill="none" stroke="url(#sg)" stroke-width="2.5" vector-effect="non-scaling-stroke"/><circle cx="'+last[0]+'" cy="'+last[1]+'" r="4" fill="#fff"/>';
+  }
+  drawTemp();
+  setInterval(()=>{ const v=hist[hist.length-1]+(Math.random()-.5)*.2; hist.push(Math.round(v*10)/10); hist.shift(); drawTemp(); $('hum').textContent=(46+Math.round(Math.random()*4))+' %'; }, 15000);
+
+  route(); render();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+
+</body>
+</html>
