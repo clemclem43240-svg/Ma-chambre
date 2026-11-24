@@ -1,0 +1,64 @@
+/* Animations partagées par l'appli téléphone et la tablette.
+   Uniquement transform et opacity (fluide même sur une vieille tablette).
+   Tout est coupé si l'appareil demande moins d'animations. */
+
+:root{ --spring:cubic-bezier(.34,1.56,.64,1); --smooth:cubic-bezier(.22,1,.36,1); }
+
+/* Apparition des cartes, en cascade */
+@keyframes rise{ from{opacity:0;transform:translateY(16px) scale(.98)} }
+.anim-in{ animation:rise .6s var(--smooth) both; animation-delay:calc(var(--i,0) * 55ms) }
+
+/* Changement d'onglet */
+@keyframes viewIn{ from{opacity:0;transform:translateX(var(--dir,18px))} }
+.view-in{ animation:viewIn .42s var(--smooth) both }
+
+/* Appui sur un bouton ou une carte */
+button,.card,a{ transition:transform .18s var(--spring) }
+button:active,.scene:active,.appb:active,.app:active{ transform:scale(.95) }
+.card:has(> .row button:active){ transform:scale(.99) }
+
+/* Onde au toucher */
+.ripple{ position:absolute; border-radius:50%; pointer-events:none; background:rgba(255,255,255,.35); transform:scale(0); animation:ripple .6s ease-out forwards }
+@keyframes ripple{ to{ transform:scale(1); opacity:0 } }
+.rip-host{ position:relative; overflow:hidden }
+
+/* Interrupteurs : le rond s'étire pendant l'appui */
+.switch:active::after{ width:32px }
+.switch[aria-checked="true"]:active::after{ transform:translateX(18px) }
+
+/* Carte qui s'allume : halo bref */
+@keyframes glow{ 0%{box-shadow:0 0 0 0 rgba(124,200,255,.55)} 100%{box-shadow:0 0 0 18px rgba(124,200,255,0)} }
+.pulse{ animation:glow .7s ease-out }
+
+/* Icône d'une lumière allumée : respiration douce */
+@keyframes breathe{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+.card.active .ic{ animation:breathe 3.2s ease-in-out infinite }
+
+/* Météo : l'icône flotte doucement */
+@keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+#wx-icon svg,#wx-mini-i svg,.wx-day svg{ animation:float 5s ease-in-out infinite }
+.wx-day:nth-child(2) svg{animation-delay:-1.2s} .wx-day:nth-child(3) svg{animation-delay:-2.4s} .wx-day:nth-child(4) svg{animation-delay:-3.6s}
+
+/* Xbox : l'affiche en cours apparaît en fondu et zoom léger */
+@keyframes poster{ from{opacity:.2;transform:scale(1.04)} to{opacity:1;transform:none} }
+.now.swap > *{ animation:poster .55s var(--smooth) both }
+.now.swap{ animation:poster .55s var(--smooth) both }
+
+/* Volets et garage : mouvement amorti */
+.shut i,.slats{ transition:height .3s var(--smooth) }
+
+/* Horloge : les deux-points clignotent doucement */
+.clock .colon{ animation:blink 2s steps(1) infinite } @keyframes blink{ 50%{opacity:.35} }
+
+/* Chiffres qui changent (météo, volume) */
+@keyframes tick{ from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+.changed{ animation:tick .35s var(--smooth) }
+
+/* Barre d'onglets : l'onglet actif glisse */
+nav.tabs a{ transition:background .3s var(--smooth), color .3s, transform .18s var(--spring) }
+nav.tabs a[aria-current="page"] svg{ animation:tabpop .4s var(--spring) }
+@keyframes tabpop{ from{transform:scale(.8)} to{transform:none} }
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation:none!important; transition:none!important }
+}
