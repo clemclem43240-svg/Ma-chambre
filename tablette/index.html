@@ -580,10 +580,16 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
     });
     return found;
   }
+  let refused = '', testing = false;
   async function testAndFind(c, st){
+    /* une clé Home Assistant ressemble à xxxxx.yyyyy.zzzzz : on refuse le reste sans rien envoyer */
+    if (!/^[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}$/.test(c.token)){ st.className='status err'; st.textContent='Ce n\'est pas une clé Home Assistant : recopiez-la avec le bouton Copier'; return; }
+    if (c.token === refused){ st.className='status err'; st.textContent='Cette clé a déjà été refusée : créez-en une nouvelle (inutile de réessayer)'; return; }
+    if (testing) return; testing = true;
     st.className='status'; st.textContent='Recherche des appareils…';
     try { const n = await findDevices(c.url, c.token); st.className='status ok'; st.textContent='Connexion réussie · '+n+' appareil'+(n>1?'s':'')+' reconnu'+(n>1?'s':'')+'. Vérifiez la liste puis Enregistrer.'; }
-    catch(e){ st.className='status err'; st.textContent = /401/.test(e.message) ? 'Clé refusée' : 'Pas de réponse : vérifiez l\'adresse et que vous êtes sur le wifi de la maison'; }
+    catch(e){ st.className='status err'; if (/401/.test(e.message)) refused = c.token; st.textContent = /401/.test(e.message) ? 'Clé refusée : créez-en une nouvelle' : /403/.test(e.message) ? 'Home Assistant a bloqué cet appareil (trop d\'essais)' : 'Pas de réponse : vérifiez l\'adresse et que vous êtes sur le wifi de la maison'; }
+    testing = false;
   }
 
   /* ---------- réglages ---------- */
