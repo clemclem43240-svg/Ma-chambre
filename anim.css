@@ -13,9 +13,8 @@
 .view-in{ animation:viewIn .42s var(--smooth) both }
 
 /* Appui sur un bouton ou une carte */
-button,.card,a{ transition:transform .18s var(--spring) }
+.btn,.icon-btn,.scene,.appb,.app,.sw{ transition:transform .18s var(--spring), background .25s, border-color .3s, box-shadow .3s }
 button:active,.scene:active,.appb:active,.app:active{ transform:scale(.95) }
-.card:has(> .row button:active){ transform:scale(.99) }
 
 /* Onde au toucher */
 .ripple{ position:absolute; border-radius:50%; pointer-events:none; background:rgba(255,255,255,.35); transform:scale(0); animation:ripple .6s ease-out forwards }
