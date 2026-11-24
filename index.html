@@ -140,7 +140,7 @@ body.lit .aurora .a4{opacity:.5}
 /* réglages */
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-size:13px;font-weight:600;color:var(--muted)}
-.field input{min-height:46px;border-radius:12px;border:1px solid var(--edge);background:rgba(0,0,0,.25);padding:0 12px;font-size:16px;width:100%}
+.field input,.field select{color:inherit;font-family:inherit;-webkit-appearance:none;appearance:none;min-height:46px;border-radius:12px;border:1px solid var(--edge);background:rgba(0,0,0,.25);padding:0 12px;font-size:16px;width:100%}
 .help{font-size:13px;color:var(--muted);line-height:1.5;margin:0}
 .help code{background:rgba(255,255,255,.1);padding:1px 6px;border-radius:6px;font-size:12px;overflow-wrap:anywhere}
 .status{font-size:14px;font-weight:600}
@@ -271,18 +271,18 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
     </div>
     <div class="card">
       <h3>Home Assistant</h3>
-      <p class="help">Tant que ce n'est pas rempli, l'appli reste en démo. L'adresse et la clé restent <b>uniquement sur ce téléphone</b>, jamais sur GitHub. Si tu les as déjà mises sur la tablette, il faut aussi les mettre ici.</p>
-      <div class="field"><label for="st-url">Adresse (en https)</label><input id="st-url" type="url" placeholder="https://xxxx.ui.nabu.casa" autocomplete="off" spellcheck="false"></div>
+      <p class="help">Tant que ce n'est pas rempli, l'appli reste en démo. L'adresse et la clé restent <b>uniquement sur ce téléphone</b>, jamais sur GitHub. Il faut les mettre une fois sur chaque appareil.</p>
+      <div class="field"><label for="st-url">Adresse de Home Assistant</label><input id="st-url" type="url" placeholder="Remplie toute seule si l'appli est ouverte depuis Home Assistant" autocomplete="off" spellcheck="false"></div>
       <div class="field"><label for="st-token">Clé d'accès (jeton longue durée)</label><input id="st-token" type="password" placeholder="Profil › Sécurité › Jetons" autocomplete="off" spellcheck="false"></div>
       <details>
-        <summary style="cursor:pointer;font-weight:600;font-size:14px;min-height:28px">Noms des appareils</summary>
+        <summary style="cursor:pointer;font-weight:600;font-size:14px;min-height:28px">Appareils</summary>
         <div class="view" style="margin-top:10px" id="ent-fields"></div>
-        <p class="help" style="margin-top:10px">Laisse vide ce que tu n'as pas encore acheté : ça restera en démo. Dans <code>configuration.yaml</code>, autorise l'appli avec <code>http:</code> › <code>cors_allowed_origins:</code> › <code>- https://clemclem43240-svg.github.io</code></p>
+        <p class="help" style="margin-top:10px">« Tester » cherche vos appareils dans Home Assistant et propose une liste. Laissez « Pas encore » pour ce qui n'est pas encore acheté : ça reste en démo.</p>
       </details>
       <span class="status" id="st-status"></span>
       <div class="btns"><button class="btn" id="st-forget">Oublier</button><button class="btn" id="st-test">Tester</button><button class="btn primary" id="st-save">Enregistrer</button></div>
     </div>
-    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/">ouvrir</a></p>
+    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a></p>
   </section>
 </div>
 
@@ -321,6 +321,10 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
     ['volets','Volets','cover.volets_chambre'], ['garage','Porte de garage','cover.garage']
   ];
   let cfg = Object.assign({city:'', url:'', token:'', xbox:'media_player.xbox', person:''}, store.get('cfg', {}));
+  /* servie par Home Assistant lui-même (http://…:8123/local/…) : l'adresse se remplit toute seule */
+  const SAME = location.port === '8123' || location.pathname.indexOf('/local/') === 0;
+  if (SAME && !cfg.url) cfg.url = location.origin;
+  let haHome = null; /* position de la maison (zone.home), utilisée pour la météo */
   let live = false;
   const has = k => live && !!cfg[k];
 
@@ -354,7 +358,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
   function route(){ const t=(location.hash||'').slice(1); const tab = TABS[t] ? t : 'accueil';
     Object.keys(TABS).forEach(k => $('v-'+k).hidden = k !== tab);
     document.querySelectorAll('nav.tabs a').forEach(a => { if (a.dataset.tab===tab) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
-    $('title').textContent = TABS[tab]; if (tab==='reglages') fillSettings(); window.scrollTo(0,0); }
+    $('title').textContent = TABS[tab]; if (tab==='reglages'){ fillSettings(); if(cfg.url&&cfg.token) findDevices(cfg.url,cfg.token).catch(()=>{}); } window.scrollTo(0,0); }
   window.addEventListener('hashchange', route);
 
   /* ---------- horloge, agenda, rappels ---------- */
@@ -395,6 +399,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
     try {
       let loc=null;
       if (cfg.city){ const j=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=fr&name='+encodeURIComponent(cfg.city))).json(); if (j.results&&j.results.length) loc={lat:j.results[0].latitude,lon:j.results[0].longitude,name:j.results[0].name}; }
+      if (!loc) loc=haHome;
       if (!loc) loc=await position();
       if (!loc) loc={lat:48.8566,lon:2.3522,name:'Paris (choisis ta ville dans Réglages)'};
       const j=await (await fetch('https://api.open-meteo.com/v1/forecast?latitude='+loc.lat+'&longitude='+loc.lon+'&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&timezone=auto&forecast_days=4')).json();
@@ -500,6 +505,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
     try {
       const states=await ha('/api/states'); const by={}; states.forEach(e=>by[e.entity_id]=e);
       const was=live; live=true; setMode(); if(!was) notify('Connecté à Home Assistant');
+      const z=by['zone.home']; if(z&&z.attributes&&typeof z.attributes.latitude==='number'&&!haHome){ haHome={lat:z.attributes.latitude,lon:z.attributes.longitude,name:'Maison'}; if(!cfg.city) loadWeather(); }
       const x=by[cfg.xbox];
       if(x){ const on=!['off','unavailable','standby','unknown'].includes(x.state); if(was&&on!==s.xbox) notify(on?'Xbox allumée':'Xbox éteinte'); s.xbox=on;
         const a=x.attributes||{}; s.app=a.source||null; if(typeof a.volume_level==='number') s.vol=Math.round(a.volume_level*100); s.muted=!!a.is_volume_muted;
@@ -515,18 +521,42 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
   }
   $('presence').onclick=()=>{ if(live) return; s.home=!s.home; renderPresence(); notify(s.home?'Tu es rentré à la maison':'Tu es parti de la maison'); };
 
+  /* ---------- découverte des appareils ---------- */
+  const DOM = {xbox:['media_player'], person:['person','device_tracker'], chevet:['light'], plafond:['light'], ruban:['light'], volets:['cover'], garage:['cover']};
+  const GUESS = {xbox:/xbox/, person:/clement|iphone/, chevet:/chevet/, plafond:/plafon|bureau/, ruban:/ruban|strip|canap/, volets:/volet|shutter/, garage:/garage/};
+  async function findDevices(url, token){
+    const r = await fetch(url.replace(/\/+$/,'')+'/api/states', {headers:{'Authorization':'Bearer '+token}});
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    const states = await r.json(); let found = 0;
+    ENT.forEach(([k]) => {
+      const old = $('st-'+k), cur = old.value.trim();
+      const list = states.filter(e => DOM[k].includes(e.entity_id.split('.')[0]));
+      const name = e => (e.attributes && e.attributes.friendly_name) || e.entity_id;
+      const sel = document.createElement('select'); sel.id = 'st-'+k;
+      sel.innerHTML = '<option value="">Pas encore (démo)</option>' + list.map(e => '<option value="'+esc(e.entity_id)+'">'+esc(name(e))+' · '+esc(e.entity_id)+'</option>').join('');
+      let pick = list.some(e => e.entity_id === cur) ? cur : '';
+      if (!pick){ const g = list.filter(e => GUESS[k].test((e.entity_id+' '+name(e)).toLowerCase())); if (g.length === 1) pick = g[0].entity_id; else if (k === 'xbox' && list.length === 1) pick = list[0].entity_id; }
+      sel.value = pick; if (pick) found++;
+      old.replaceWith(sel);
+    });
+    return found;
+  }
+  async function testAndFind(c, st){
+    st.className='status'; st.textContent='Recherche des appareils…';
+    try { const n = await findDevices(c.url, c.token); st.className='status ok'; st.textContent='Connexion réussie · '+n+' appareil'+(n>1?'s':'')+' reconnu'+(n>1?'s':'')+'. Vérifiez la liste puis Enregistrer.'; }
+    catch(e){ st.className='status err'; st.textContent = /401/.test(e.message) ? 'Clé refusée' : 'Pas de réponse : vérifiez l\'adresse et que vous êtes sur le wifi de la maison'; }
+  }
+
   /* ---------- réglages ---------- */
   $('ent-fields').innerHTML=ENT.map(([k,label,ph])=>'<div class="field"><label for="st-'+k+'">'+label+'</label><input id="st-'+k+'" type="text" placeholder="'+ph+'" spellcheck="false" autocomplete="off"></div>').join('');
   function fillSettings(){ $('st-city').value=cfg.city||''; $('st-url').value=cfg.url||''; $('st-token').value=cfg.token||''; ENT.forEach(([k])=>$('st-'+k).value=cfg[k]||''); $('st-status').textContent=''; }
   function readSettings(){ const c={city:$('st-city').value.trim(), url:$('st-url').value.trim(), token:$('st-token').value.trim()}; ENT.forEach(([k])=>c[k]=$('st-'+k).value.trim()); if(!c.xbox) c.xbox='media_player.xbox'; return c; }
   $('st-test').onclick=async()=>{ const c=readSettings(), st=$('st-status');
     if(!c.url||!c.token){ st.className='status err'; st.textContent='Remplis l\'adresse et la clé'; return; }
-    if(c.url.startsWith('http:')){ st.className='status err'; st.textContent='L\'adresse doit commencer par https://'; return; }
-    st.className='status'; st.textContent='Test en cours…';
-    try { const r=await fetch(c.url.replace(/\/+$/,'')+'/api/',{headers:{'Authorization':'Bearer '+c.token}}); if(r.status===401){ st.className='status err'; st.textContent='Clé refusée'; return; } if(!r.ok) throw 0; st.className='status ok'; st.textContent='Connexion réussie'; }
-    catch(e){ st.className='status err'; st.textContent='Pas de réponse (adresse ou autorisation cors)'; } };
+    if (location.protocol === 'https:' && c.url.startsWith('http:')){ st.className='status err'; st.textContent='Ouvrez l\'appli depuis Home Assistant : http://(adresse):8123/local/ma-chambre/index.html'; return; }
+    await testAndFind(c, st); };
   $('st-save').onclick=()=>{ const old=cfg.city; cfg=readSettings(); store.set('cfg',cfg); toast('Réglages enregistrés'); if(cfg.city!==old) loadWeather(); poll(); };
-  $('st-forget').onclick=()=>{ cfg={city:cfg.city,url:'',token:'',xbox:'media_player.xbox',person:''}; store.set('cfg',cfg); fillSettings(); live=false; liveMedia=null; setMode(); render(); $('st-status').className='status ok'; $('st-status').textContent='Adresse et clé effacées du téléphone'; };
+  $('st-forget').onclick=()=>{ cfg={city:cfg.city,url:SAME?location.origin:'',token:'',xbox:'media_player.xbox',person:''}; store.set('cfg',cfg); fillSettings(); live=false; liveMedia=null; setMode(); render(); $('st-status').className='status ok'; $('st-status').textContent='Adresse et clé effacées du téléphone'; };
 
   /* ---------- démarrage ---------- */
   route(); setMode(); renderPresence(); render(); renderAgenda(); renderReminders(); renderNotifs();

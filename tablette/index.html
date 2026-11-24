@@ -149,7 +149,7 @@ dialog::backdrop{background:rgba(5,8,20,.6);-webkit-backdrop-filter:blur(6px);ba
   background:rgba(25,30,62,.85);-webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);border:1px solid var(--edge)}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-size:13px;font-weight:600;color:var(--muted)}
-.field input{min-height:46px;border-radius:12px;border:1px solid var(--edge);background:rgba(0,0,0,.25);padding:0 12px;font-size:15px;width:100%}
+.field input,.field select{-webkit-appearance:none;appearance:none;min-height:46px;border-radius:12px;border:1px solid var(--edge);background:rgba(0,0,0,.25);padding:0 12px;font-size:15px;width:100%}
 .help{font-size:13px;color:var(--muted);line-height:1.5;margin:0}
 .help code{background:rgba(255,255,255,.1);padding:1px 6px;border-radius:6px;font-size:12px}
 .status{font-size:14px;font-weight:600}
@@ -286,23 +286,21 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
     </div>
 
     <h2>Home Assistant</h2>
-    <p class="help">Tant que ce n'est pas rempli, le tableau de bord reste en mode démo. L'adresse et la clé restent <b>uniquement sur cette tablette</b> : elles ne sont jamais envoyées sur GitHub.</p>
+    <p class="help">Tant que ce n'est pas rempli, le tableau de bord reste en mode démo. L'adresse et la clé restent <b>uniquement sur cette tablette</b> : elles ne sont jamais envoyées sur GitHub. « Tester » trouve tout seul la Xbox et la présence.</p>
     <div class="field">
-      <label for="st-url">Adresse de Home Assistant (en https)</label>
-      <input id="st-url" type="url" placeholder="https://xxxx.ui.nabu.casa" autocomplete="off" spellcheck="false">
+      <label for="st-url">Adresse de Home Assistant</label>
+      <input id="st-url" type="url" placeholder="Remplie toute seule si la page est ouverte depuis Home Assistant" autocomplete="off" spellcheck="false">
     </div>
     <div class="field">
       <label for="st-token">Clé d'accès (jeton longue durée)</label>
       <input id="st-token" type="password" placeholder="Profil › Sécurité › Jetons d'accès longue durée" autocomplete="off" spellcheck="false">
     </div>
     <details class="adv">
-      <summary>Noms des appareils dans Home Assistant</summary>
+      <summary>Appareils</summary>
       <div class="two">
         <div class="field"><label for="st-xbox">Xbox</label><input id="st-xbox" type="text" placeholder="media_player.xbox" spellcheck="false"></div>
         <div class="field"><label for="st-person">Présence iPhone</label><input id="st-person" type="text" placeholder="person.clement" spellcheck="false"></div>
       </div>
-      <p class="help">Pour que la tablette ait le droit de parler à Home Assistant, ajoute dans <code>configuration.yaml</code> :<br>
-      <code>http:</code> › <code>cors_allowed_origins:</code> › <code>- https://clemclem43240-svg.github.io</code></p>
     </details>
     <div class="row" style="flex-wrap:wrap">
       <span class="status" id="st-status"></span>
@@ -330,6 +328,10 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
 
   /* ---------- état ---------- */
   let cfg = store.get('cfg', {city:'', url:'', token:'', xbox:'media_player.xbox', person:''});
+  /* servie par Home Assistant lui-même (http://…:8123/local/…) : l'adresse se remplit toute seule */
+  const SAME = location.port === '8123' || location.pathname.indexOf('/local/') === 0;
+  if (SAME && !cfg.url) cfg.url = location.origin;
+  let haHome = null; /* position de la maison (zone.home), utilisée pour la météo */
   let live = false;
   const s = {xbox:false, app:null, vol:30, muted:false, home:true};
   let agenda = store.get('agenda', null);
@@ -399,6 +401,7 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
     try {
       let loc = null;
       if (cfg.city) loc = await geocode(cfg.city);
+      if (!loc) loc = haHome;
       if (!loc) loc = await position();
       if (!loc){ loc = {lat:48.8566, lon:2.3522, name:'Paris (choisis ta ville dans Réglages)'}; }
       const u = 'https://api.open-meteo.com/v1/forecast?latitude='+loc.lat+'&longitude='+loc.lon+
@@ -540,6 +543,7 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
       const pic = at.entity_picture ? (at.entity_picture.startsWith('http') ? at.entity_picture : cfg.url.replace(/\/+$/,'') + at.entity_picture) : null;
       liveMedia = on && (at.media_title || at.source) ? {title: at.media_title || at.source, picture: pic} : null;
       renderXbox();
+      if (!haHome){ try { const z = await ha('/api/states/zone.home'); if (z.attributes && typeof z.attributes.latitude === 'number'){ haHome = {lat:z.attributes.latitude, lon:z.attributes.longitude, name:'Maison'}; if (!cfg.city) loadWeather(); } } catch(e){} }
       if (cfg.person){
         const p = await ha('/api/states/'+encodeURIComponent(cfg.person));
         const home = p.state === 'home';
@@ -552,29 +556,49 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
     }
   }
 
+  /* ---------- découverte des appareils ---------- */
+  const DOM = {xbox:['media_player'], person:['person','device_tracker']};
+  const GUESS = {xbox:/xbox/, person:/clement|iphone/};
+  async function findDevices(url, token){
+    const r = await fetch(url.replace(/\/+$/,'')+'/api/states', {headers:{'Authorization':'Bearer '+token}});
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    const states = await r.json(); let found = 0;
+    [['xbox'],['person']].forEach(([k]) => {
+      const old = $('st-'+k), cur = old.value.trim();
+      const list = states.filter(e => DOM[k].includes(e.entity_id.split('.')[0]));
+      const name = e => (e.attributes && e.attributes.friendly_name) || e.entity_id;
+      const sel = document.createElement('select'); sel.id = 'st-'+k;
+      sel.innerHTML = '<option value="">Pas encore (démo)</option>' + list.map(e => '<option value="'+esc(e.entity_id)+'">'+esc(name(e))+' · '+esc(e.entity_id)+'</option>').join('');
+      let pick = list.some(e => e.entity_id === cur) ? cur : '';
+      if (!pick){ const g = list.filter(e => GUESS[k].test((e.entity_id+' '+name(e)).toLowerCase())); if (g.length === 1) pick = g[0].entity_id; else if (k === 'xbox' && list.length === 1) pick = list[0].entity_id; }
+      sel.value = pick; if (pick) found++;
+      old.replaceWith(sel);
+    });
+    return found;
+  }
+  async function testAndFind(c, st){
+    st.className='status'; st.textContent='Recherche des appareils…';
+    try { const n = await findDevices(c.url, c.token); st.className='status ok'; st.textContent='Connexion réussie · '+n+' appareil'+(n>1?'s':'')+' reconnu'+(n>1?'s':'')+'. Vérifiez la liste puis Enregistrer.'; }
+    catch(e){ st.className='status err'; st.textContent = /401/.test(e.message) ? 'Clé refusée' : 'Pas de réponse : vérifiez l\'adresse et que vous êtes sur le wifi de la maison'; }
+  }
+
   /* ---------- réglages ---------- */
   const dlg = $('settings');
   function fillSettings(){ $('st-city').value = cfg.city||''; $('st-url').value = cfg.url||''; $('st-token').value = cfg.token||''; $('st-xbox').value = cfg.xbox||''; $('st-person').value = cfg.person||''; $('st-status').textContent=''; }
   function readSettings(){ return {city:$('st-city').value.trim(), url:$('st-url').value.trim(), token:$('st-token').value.trim(), xbox:$('st-xbox').value.trim()||'media_player.xbox', person:$('st-person').value.trim()}; }
-  $('open-settings').onclick = () => { fillSettings(); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open',''); };
+  $('open-settings').onclick = () => { fillSettings(); if (cfg.url && cfg.token) findDevices(cfg.url, cfg.token).catch(()=>{}); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open',''); };
   $('st-test').onclick = async () => {
     const c = readSettings(), st = $('st-status');
     if (!c.url || !c.token){ st.className='status err'; st.textContent='Remplis l\'adresse et la clé'; return; }
-    if (location.protocol === 'https:' && c.url.startsWith('http:')){ st.className='status err'; st.textContent='L\'adresse doit commencer par https://'; return; }
-    st.className='status'; st.textContent='Test en cours…';
-    try {
-      const r = await fetch(c.url.replace(/\/+$/,'')+'/api/', {headers:{'Authorization':'Bearer '+c.token}});
-      if (r.status === 401){ st.className='status err'; st.textContent='Clé refusée'; return; }
-      if (!r.ok) throw new Error();
-      st.className='status ok'; st.textContent='Connexion réussie';
-    } catch(e){ st.className='status err'; st.textContent='Pas de réponse (adresse ou autorisation cors)'; }
+    if (location.protocol === 'https:' && c.url.startsWith('http:')){ st.className='status err'; st.textContent='Ouvrez l\'appli depuis Home Assistant : http://(adresse):8123/local/ma-chambre/index.html'; return; }
+    await testAndFind(c, st);
   };
   $('st-save').onclick = () => {
     const old = cfg.city; cfg = readSettings(); store.set('cfg', cfg); dlg.close();
     if (cfg.city !== old) loadWeather();
     poll();
   };
-  $('st-forget').onclick = () => { cfg = {city:cfg.city, url:'', token:'', xbox:'media_player.xbox', person:''}; store.set('cfg', cfg); fillSettings(); live=false; liveMedia=null; setMode(); $('st-status').className='status ok'; $('st-status').textContent='Adresse et clé effacées de la tablette'; };
+  $('st-forget').onclick = () => { cfg = {city:cfg.city, url:SAME?location.origin:'', token:'', xbox:'media_player.xbox', person:''}; store.set('cfg', cfg); fillSettings(); live=false; liveMedia=null; setMode(); $('st-status').className='status ok'; $('st-status').textContent='Adresse et clé effacées de la tablette'; };
 
   /* ---------- plein écran & écran allumé ---------- */
   $('fs').onclick = () => { const el = document.documentElement; const req = el.requestFullscreen || el.webkitRequestFullscreen;
