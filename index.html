@@ -420,8 +420,20 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
     {id:'Spotify',name:'Spotify',bg:'#1db954',fg:'#000',l:'♪',art:'linear-gradient(135deg,#1db954,#0b3d1f)'},{id:'Home',name:'Accueil',bg:'#107c10',fg:'#fff',l:'X',art:'linear-gradient(135deg,#107c10,#0b2614)'}];
   $('apps').innerHTML=APPS.map(a=>'<button class="appb" data-app="'+a.id+'" aria-pressed="false"><span class="logo" style="background:'+a.bg+';color:'+a.fg+'">'+a.l+'</span>'+a.name+'</button>').join('');
   let liveMedia=null;
+
+  /* les boutons correspondent aux applis épinglées sur la Xbox (liste « source_list » de Home Assistant) */
+  let srcList = [];
+  const KEY = {YouTube:/youtube/i, Netflix:/netflix/i, Spotify:/spotify/i, Home:/^(home|accueil)/i};
+  const srcFor = id => srcList.find(x => KEY[id].test(x)) || (srcList.length ? null : id);
+  const appOf = src => src ? ((APPS.find(a => KEY[a.id].test(src)) || {}).id || src) : null;
+  async function sendApp(id, wasOn, send){
+    const src = srcFor(id), name = (APPS.find(a => a.id === id) || {name:id}).name;
+    if (!src){ notify(name+' n\'est pas épinglée sur la Xbox : épinglez-la sur l\'accueil de la Xbox'); return; }
+    if (!wasOn){ await send('turn_on', {entity_id:cfg.xbox}); await new Promise(r => setTimeout(r, 20000)); }
+    await send('select_source', {entity_id:cfg.xbox, source:src});
+  }
   async function xboxPower(on){ s.xbox=on; if(!on) s.app=null; s.scene=null; render(); notify(on?'Xbox allumée':'Xbox éteinte'); if(has('xbox')) await call('media_player', on?'turn_on':'turn_off', {entity_id:cfg.xbox}); }
-  async function launch(id){ s.xbox=true; s.app=id; render(); notify('Lancement : '+(APPS.find(a=>a.id===id)||{name:id}).name); if(has('xbox')) await call('media_player','select_source',{entity_id:cfg.xbox,source:id}); }
+  async function launch(id){ const wasOn=s.xbox; s.xbox=true; s.app=id; render(); notify('Lancement : '+(APPS.find(a=>a.id===id)||{name:id}).name); if(has('xbox')) await sendApp(id, wasOn, (sv,d)=>call('media_player',sv,d)); }
   async function volume(dir){ if(dir==='mute') s.muted=!s.muted; else { s.vol=Math.max(0,Math.min(100,s.vol+dir*10)); s.muted=false; } render();
     if(has('xbox')){ if(dir==='mute') await call('media_player','volume_mute',{entity_id:cfg.xbox,is_volume_muted:s.muted}); else await call('media_player','volume_'+(dir>0?'up':'down'),{entity_id:cfg.xbox}); } }
   $('xb-sw').onclick=()=>xboxPower(!s.xbox);
@@ -512,7 +524,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
       const z=by['zone.home']; if(z&&z.attributes&&typeof z.attributes.latitude==='number'&&!haHome){ haHome={lat:z.attributes.latitude,lon:z.attributes.longitude,name:'Maison'}; if(!cfg.city) loadWeather(); }
       const x=by[cfg.xbox];
       if(x){ const on=!['off','unavailable','standby','unknown'].includes(x.state); if(was&&on!==s.xbox) notify(on?'Xbox allumée':'Xbox éteinte'); s.xbox=on;
-        const a=x.attributes||{}; s.app=a.source||null; if(typeof a.volume_level==='number') s.vol=Math.round(a.volume_level*100); s.muted=!!a.is_volume_muted;
+        const a=x.attributes||{}; srcList=a.source_list||[]; s.app=appOf(a.source); if(typeof a.volume_level==='number') s.vol=Math.round(a.volume_level*100); s.muted=!!a.is_volume_muted;
         const pic=a.entity_picture?(a.entity_picture.startsWith('http')?a.entity_picture:cfg.url.replace(/\/+$/,'')+a.entity_picture):null;
         liveMedia= on&&(a.media_title||a.source) ? {title:a.media_title||a.source, picture:pic} : null; }
       if(cfg.person&&by[cfg.person]){ const home=by[cfg.person].state==='home'; if(home!==s.home) notify(home?'Tu es rentré à la maison':'Tu es parti de la maison'); s.home=home; renderPresence(); }

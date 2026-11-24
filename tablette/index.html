@@ -443,6 +443,17 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
   ];
   $('apps').innerHTML = APPS.map(a => '<button class="app" data-app="'+a.id+'" aria-pressed="false"><span class="logo" style="background:'+a.bg+';color:'+a.fg+'">'+a.letter+'</span>'+esc(a.name)+'</button>').join('');
 
+  /* les boutons correspondent aux applis épinglées sur la Xbox (liste « source_list » de Home Assistant) */
+  let srcList = [];
+  const KEY = {YouTube:/youtube/i, Netflix:/netflix/i, Spotify:/spotify/i, Home:/^(home|accueil)/i};
+  const srcFor = id => srcList.find(x => KEY[id].test(x)) || (srcList.length ? null : id);
+  const appOf = src => src ? ((APPS.find(a => KEY[a.id].test(src)) || {}).id || src) : null;
+  async function sendApp(id, wasOn, send){
+    const src = srcFor(id), name = (APPS.find(a => a.id === id) || {name:id}).name;
+    if (!src){ notify(name+' n\'est pas épinglée sur la Xbox : épinglez-la sur l\'accueil de la Xbox'); return; }
+    if (!wasOn){ await send('turn_on', {entity_id:cfg.xbox}); await new Promise(r => setTimeout(r, 20000)); }
+    await send('select_source', {entity_id:cfg.xbox, source:src});
+  }
   /* clé refusée : on arrête d'insister, sinon Home Assistant bloque l'appareil */
   let badKey = false;
   async function ha(path, method, body){
@@ -457,9 +468,9 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
     if (live) { try { await ha('/api/services/media_player/'+(on?'turn_on':'turn_off'), 'POST', {entity_id:cfg.xbox}); } catch(e){ notify('Xbox : commande non reçue ('+e.message+')'); } }
   }
   async function launch(id){
-    s.xbox = true; s.app = id; renderXbox();
+    const wasOn = s.xbox; s.xbox = true; s.app = id; renderXbox();
     notify('Lancement : '+(APPS.find(a=>a.id===id)||{name:id}).name);
-    if (live) { try { await ha('/api/services/media_player/select_source', 'POST', {entity_id:cfg.xbox, source:id}); } catch(e){ notify('Xbox : appli non lancée ('+e.message+')'); } }
+    if (live) { try { await sendApp(id, wasOn, (sv, d) => ha('/api/services/media_player/'+sv, 'POST', d)); } catch(e){ notify('Xbox : appli non lancée ('+e.message+')'); } }
   }
   async function volume(dir){
     if (dir === 'mute') s.muted = !s.muted; else { s.vol = Math.max(0, Math.min(100, s.vol + dir*10)); s.muted = false; }
@@ -541,7 +552,7 @@ details.adv[open]{display:flex;flex-direction:column;gap:12px}
       if (on !== s.xbox && wasLive) notify(on ? 'Xbox allumée' : 'Xbox éteinte');
       s.xbox = on;
       const at = x.attributes || {};
-      s.app = at.source || null;
+      srcList = at.source_list || []; s.app = appOf(at.source);
       if (typeof at.volume_level === 'number') s.vol = Math.round(at.volume_level*100);
       s.muted = !!at.is_volume_muted;
       const pic = at.entity_picture ? (at.entity_picture.startsWith('http') ? at.entity_picture : cfg.url.replace(/\/+$/,'') + at.entity_picture) : null;
