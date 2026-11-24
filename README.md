@@ -1,8 +1,10 @@
 # Ma chambre
 
-Appli web (mode démo) pour piloter ma chambre depuis mon téléphone : lumières Hue, volets, télé, Xbox, Google Home, capteurs et routines.
+Appli téléphone pour piloter ma chambre : Xbox et télé, météo réelle, présence de l'iPhone, agenda, rappels, notifications, lumières Hue (chevet, plafonnier/bureau, ruban sous le canapé), volets et porte de garage Somfy. Mode démo tant que Home Assistant n'est pas branché.
 
-Installer sur iPhone : ouvrir le lien GitHub Pages dans Safari → Partager → « Sur l'écran d'accueil ».
+Adresse : https://clemclem43240-svg.github.io/Ma-chambre/
+
+Installer sur iPhone : ouvrir le lien dans Safari → Partager → « Sur l'écran d'accueil ».
 
 ## Tableau de bord tablette
 
