@@ -22,3 +22,9 @@ Safari refuse qu'une page en https (GitHub Pages) parle à Home Assistant en htt
 Installation (une fois) : `git clone --depth 1 https://github.com/clemclem43240-svg/Ma-chambre.git <config>/www/ma-chambre` puis redémarrer Home Assistant. Mise à jour : `git -C <config>/www/ma-chambre pull`.
 
 L'adresse se remplit toute seule ; il reste à coller un jeton longue durée dans Réglages puis « Tester », qui trouve les appareils. Le jeton reste sur l'appareil, jamais dans ce dépôt.
+
+## Version légère pour vieille tablette (Android 4.4)
+
+`tablette/lite.html` : même tableau de bord en plus simple (JavaScript ES5, sans flou ni police externe) pour les vieux navigateurs. Météo lue dans Home Assistant (entité `weather`). Connexion possible avec l'identifiant et le mot de passe Home Assistant (jeton renouvelé tout seul, gardé uniquement sur la tablette) ou avec un jeton longue durée.
+
+Adresse : `http://<adresse-de-home-assistant>:8123/local/ma-chambre/tablette/lite.html`

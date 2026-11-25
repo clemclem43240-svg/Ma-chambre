@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Ma chambre</title>
+<link rel="icon" href="../icon-192.png">
+<!-- Version légère pour vieilles tablettes (Android 4.4) : JavaScript ES5, pas de flou, pas de police externe -->
+<style>
+*{box-sizing:border-box;-webkit-box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Roboto","Helvetica Neue",Arial,sans-serif;color:#f4f6ff;background:#0b1026;
+  background-image:-webkit-linear-gradient(135deg,#1a1f5c 0%,#0b1026 45%,#3a1450 100%);
+  background-image:linear-gradient(135deg,#1a1f5c 0%,#0b1026 45%,#3a1450 100%);
+  -webkit-user-select:none;user-select:none;overflow-x:hidden}
+button,input,select{font-family:inherit;font-size:16px;color:inherit}
+button{cursor:pointer;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.12);border-radius:14px;padding:10px 14px;min-height:46px;
+  -webkit-transition:background .2s,-webkit-transform .15s;transition:background .2s,transform .15s}
+button:active{-webkit-transform:scale(.96);transform:scale(.96);background:rgba(255,255,255,.25)}
+.wrap{padding:14px 16px}
+.top{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.top .grow{-webkit-box-flex:1;-webkit-flex:1;flex:1}
+#clock{font-size:64px;font-weight:200;letter-spacing:-1px;line-height:1}
+#date{font-size:18px;color:#b9c0e6;margin-top:4px}
+.pill{display:inline-block;padding:6px 12px;border-radius:20px;font-size:14px;margin-right:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)}
+.pill.live{color:#6bf0b8}.pill.demo{color:#ffc46b}
+.row{display:-webkit-box;display:-webkit-flex;display:flex;margin:14px -7px 0}
+.col{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 7px;min-width:0}
+.card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:16px;margin-bottom:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);-webkit-transition:background .4s,border-color .4s;transition:background .4s,border-color .4s}
+.card.on{background:rgba(107,240,184,.12);border-color:rgba(107,240,184,.4)}
+h3{margin:0 0 10px;font-size:14px;font-weight:600;color:#b9c0e6;text-transform:uppercase;letter-spacing:1px}
+.big{font-size:52px;font-weight:200;line-height:1}
+.sub{color:#b9c0e6;font-size:14px}
+.line{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between}
+.days{display:-webkit-box;display:-webkit-flex;display:flex;margin-top:14px}
+.day{-webkit-box-flex:1;-webkit-flex:1;flex:1;text-align:center;padding:8px 4px;border-radius:14px;background:rgba(0,0,0,.18);margin-right:6px;font-size:14px}
+.day:last-child{margin-right:0}
+.day b{display:block;font-size:22px;font-weight:400;margin:4px 0}
+.sw{width:66px;height:38px;min-height:38px;border-radius:20px;padding:0;position:relative;background:rgba(255,255,255,.18)}
+.sw:after{content:"";position:absolute;top:4px;left:4px;width:28px;height:28px;border-radius:50%;background:#fff;-webkit-transition:left .2s;transition:left .2s}
+.sw.on{background:#2fbf71}.sw.on:after{left:32px}
+.apps{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;margin:12px -4px 0}
+.app{-webkit-box-flex:1;-webkit-flex:1 1 40%;flex:1 1 40%;margin:4px;text-align:left;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.app.cur{border-color:#6bf0b8;background:rgba(107,240,184,.18)}
+.logo{display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;border-radius:9px;font-weight:700;margin-right:10px;-webkit-flex:none;flex:none}
+.vol{display:-webkit-box;display:-webkit-flex;display:flex;margin-top:12px}
+.vol button{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin-right:8px}.vol button:last-child{margin-right:0}
+#now{font-size:20px;margin:6px 0 0}
+ul{list-style:none;margin:0;padding:0}
+li{padding:8px 0;border-top:1px solid rgba(255,255,255,.08);font-size:15px}
+li:first-child{border-top:0}
+li span{color:#b9c0e6;font-size:13px;margin-right:8px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;background:#ffc46b}
+.dot.home{background:#6bf0b8}
+/* réglages */
+#settings{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(5,8,24,.92);overflow-y:auto;padding:20px;display:none}
+#settings.show{display:block}
+.sheet{max-width:640px;margin:0 auto;background:#161c45;border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;color:#b9c0e6;margin-bottom:6px}
+.field input,.field select{width:100%;min-height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:#0b1026;padding:0 12px}
+.help{font-size:13px;color:#b9c0e6;line-height:1.4}
+.btns{text-align:right}.btns button{margin:6px 0 0 6px}
+.primary{background:#5b6bff;border-color:#5b6bff}
+#st-status{display:block;margin:6px 0;font-size:14px;min-height:20px}
+.ok{color:#6bf0b8}.err{color:#ff8a8a}
+#toast{position:fixed;left:50%;bottom:24px;width:420px;margin-left:-210px;text-align:center;background:rgba(20,26,70,.95);border:1px solid rgba(255,255,255,.2);
+  border-radius:16px;padding:12px;opacity:0;-webkit-transition:opacity .3s;transition:opacity .3s;pointer-events:none}
+#toast.show{opacity:1}
+@media (max-width:760px){.row{display:block}#clock{font-size:48px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="grow"><div id="clock">--:--</div><div id="date"></div></div>
+    <span class="pill demo" id="mode">Mode démo</span>
+    <button id="open-st">Réglages</button>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <h3>Météo</h3>
+        <div class="line"><div class="big" id="wx-t">--°</div><div style="font-size:44px" id="wx-i"></div></div>
+        <div id="wx-d" style="font-size:18px;margin-top:6px">En attente de Home Assistant</div>
+        <div class="sub" id="wx-x"></div>
+        <div class="days" id="wx-days"></div>
+      </div>
+      <div class="card">
+        <h3>Présence</h3>
+        <div><span class="dot" id="pr-dot"></span><span id="pr-txt">Inconnue</span></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card" id="c-xbox">
+        <div class="line"><h3 style="margin:0">Xbox et télé</h3><button class="sw" id="xb-sw" aria-label="Xbox"></button></div>
+        <div id="now">En veille</div>
+        <div class="sub" id="xb-sub">La télé s'allume avec la Xbox</div>
+        <div class="apps" id="apps"></div>
+        <div class="vol"><button id="v-down">Son −</button><button id="v-mute">Muet</button><button id="v-up">Son +</button></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h3>Notifications</h3>
+        <ul id="notifs"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="settings">
+  <div class="sheet">
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 1</span></h3><button id="st-close">Fermer</button></div>
+    <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
+    <div class="field"><label for="st-url">Adresse de Home Assistant</label><input id="st-url" type="url" autocomplete="off" spellcheck="false"></div>
+    <h3 style="margin-top:18px">Se connecter (le plus simple)</h3>
+    <div class="field"><label for="st-user">Identifiant Home Assistant</label><input id="st-user" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+    <div class="field"><label for="st-pass">Mot de passe</label><input id="st-pass" type="password" autocomplete="off"></div>
+    <div class="btns" style="margin-bottom:14px"><button class="primary" id="st-login">Se connecter</button></div>
+    <h3>Ou avec une clé d'accès</h3>
+    <div class="field"><input id="st-token" type="password" autocomplete="off" spellcheck="false" placeholder="Jeton longue durée (facultatif si connecté)"></div>
+    <div class="field"><label for="st-xbox">Xbox</label><select id="st-xbox"><option value="">Touchez « Tester » pour trouver la Xbox</option></select></div>
+    <div class="field"><label for="st-person">Présence iPhone</label><select id="st-person"><option value="">Touchez « Tester »</option></select></div>
+    <span id="st-status"></span>
+    <div class="btns"><button id="st-forget">Oublier</button><button id="st-test">Tester</button><button class="primary" id="st-save">Enregistrer</button></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function hm(d){ return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function find(a, f){ for (var i = 0; i < a.length; i++){ if (f(a[i])) return a[i]; } return null; }
+  function each(a, f){ for (var i = 0; i < a.length; i++) f(a[i], i); }
+  function trimUrl(u){ return String(u || '').replace(/\/+$/, ''); }
+  var store = {
+    get: function(k, d){ try { var v = localStorage.getItem('tb-' + k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set: function(k, v){ try { localStorage.setItem('tb-' + k, JSON.stringify(v)); } catch(e){} }
+  };
+  var ORIGIN = location.protocol + '//' + location.host;
+  var SAME = location.port === '8123' || location.pathname.indexOf('/local/') === 0;
+  var cfg = store.get('cfg', {}) || {};
+  if (!cfg.url && SAME) cfg.url = ORIGIN;
+  var live = false, badKey = false, refused = '', testing = false;
+
+  var tt;
+  function toast(m){ var t = $('toast'); t.textContent = m; t.className = 'show'; clearTimeout(tt); tt = setTimeout(function(){ t.className = ''; }, 2500); }
+  var notifs = store.get('notifs', []) || [];
+  function renderNotifs(){
+    var h = '';
+    each(notifs.slice(0, 8), function(n){ h += '<li><span>' + esc(n.t) + '</span>' + esc(n.txt) + '</li>'; });
+    $('notifs').innerHTML = h || '<li class="sub">Rien de nouveau</li>';
+  }
+  function notify(txt){ notifs.unshift({t: hm(new Date()), txt: txt}); notifs = notifs.slice(0, 30); store.set('notifs', notifs); renderNotifs(); }
+
+  /* ---------- Home Assistant (XMLHttpRequest) ---------- */
+  /* requête brute (connexion par identifiant, sans clé) */
+  function raw(method, url, body, form, cb){
+    var x = new XMLHttpRequest();
+    x.open(method, url, true);
+    x.setRequestHeader('Content-Type', form ? 'application/x-www-form-urlencoded' : 'application/json');
+    x.onreadystatechange = function(){ if (x.readyState !== 4) return; var j = null; try { j = JSON.parse(x.responseText); } catch(e){} cb(x.status, j); };
+    try { x.send(form ? body : JSON.stringify(body)); } catch(e){ cb(0, null); }
+  }
+  function clientId(c){ return trimUrl(c.url) + '/'; }
+  function formEnc(o){ var a = []; for (var k in o) a.push(k + '=' + encodeURIComponent(o[k])); return a.join('&'); }
+  /* identifiant + mot de passe -> jeton (même méthode que l'écran de connexion de Home Assistant) */
+  function login(c, user, pass, cb){
+    var base = trimUrl(c.url);
+    raw('POST', base + '/auth/login_flow', {client_id: clientId(c), handler: ['homeassistant', null], redirect_uri: clientId(c) + 'local/ma-chambre/tablette/lite.html'}, false, function(st, j){
+      if (st !== 200 || !j || !j.flow_id) return cb(new Error(st === 403 ? 'bloqué' : st ? 'HTTP ' + st : 'pas de réponse'));
+      raw('POST', base + '/auth/login_flow/' + j.flow_id, {client_id: clientId(c), username: user, password: pass}, false, function(st2, r){
+        if (st2 !== 200 || !r) return cb(new Error(st2 === 403 ? 'bloqué' : 'HTTP ' + st2));
+        if (r.type !== 'create_entry') return cb(new Error('identifiant ou mot de passe incorrect'));
+        raw('POST', base + '/auth/token', formEnc({grant_type: 'authorization_code', code: r.result, client_id: clientId(c)}), true, function(st3, t){
+          if (st3 !== 200 || !t || !t.access_token) return cb(new Error('HTTP ' + st3));
+          cb(null, {token: t.access_token, refresh: t.refresh_token, exp: Date.now() + (t.expires_in || 1800) * 1000});
+        });
+      });
+    });
+  }
+  /* le jeton de connexion dure 30 min : on le renouvelle tout seul */
+  function withToken(c, cb){
+    if (!c.refresh || Date.now() < (c.exp || 0) - 60000) return cb(null, c.token);
+    raw('POST', trimUrl(c.url) + '/auth/token', formEnc({grant_type: 'refresh_token', refresh_token: c.refresh, client_id: clientId(c)}), true, function(st, t){
+      if (st === 200 && t && t.access_token){ c.token = t.access_token; c.exp = Date.now() + (t.expires_in || 1800) * 1000; if (c === cfg) store.set('cfg', cfg); return cb(null, c.token); }
+      if (st === 400){ if (!badKey) notify('Connexion expirée : reconnectez-vous dans Réglages'); badKey = true; }
+      cb(new Error(st ? 'HTTP ' + st : 'pas de réponse'));
+    });
+  }
+  function req(method, path, body, cb, c){
+    c = c || cfg;
+    withToken(c, function(err, tok){ if (err) return cb(err); reqT(method, path, body, cb, c, tok); });
+  }
+  function reqT(method, path, body, cb, c, tok){
+    var x = new XMLHttpRequest();
+    x.open(method, trimUrl(c.url) + path, true);
+    x.setRequestHeader('Authorization', 'Bearer ' + tok);
+    x.setRequestHeader('Content-Type', 'application/json');
+    x.onreadystatechange = function(){
+      if (x.readyState !== 4) return;
+      if (x.status === 401){ if (c.refresh) c.exp = 0; else { if (!badKey) notify('Clé refusée par Home Assistant : remettez-la dans Réglages'); badKey = true; refused = c.token; } }
+      if (x.status >= 200 && x.status < 300){ var j = null; try { j = JSON.parse(x.responseText); } catch(e){} cb(null, j); }
+      else cb(new Error(x.status ? 'HTTP ' + x.status : 'pas de réponse'));
+    };
+    try { x.send(body ? JSON.stringify(body) : null); } catch(e){ cb(e); }
+  }
+  function service(domain, svc, data, cb){
+    req('POST', '/api/services/' + domain + '/' + svc, data, function(err){ if (err) notify('Commande non reçue (' + err.message + ')'); if (cb) cb(err); });
+  }
+
+  /* ---------- horloge ---------- */
+  var JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  function tick(){ var d = new Date(); $('clock').textContent = hm(d); $('date').textContent = JOURS[d.getDay()].charAt(0).toUpperCase() + JOURS[d.getDay()].slice(1) + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()]; }
+
+  /* ---------- météo (entité weather de Home Assistant) ---------- */
+  var WX = {'clear-night':['Nuit claire','☾'], cloudy:['Nuageux','☁'], exceptional:['Exceptionnel','!'], fog:['Brouillard','≡'], hail:['Grêle','☂'],
+    lightning:['Orage','ϟ'], 'lightning-rainy':['Orage et pluie','ϟ'], partlycloudy:['Éclaircies','⛅'], pouring:['Averses','☂'], rainy:['Pluie','☂'],
+    snowy:['Neige','❄'], 'snowy-rainy':['Pluie et neige','❄'], sunny:['Ensoleillé','☀'], windy:['Venteux','~'], 'windy-variant':['Venteux','~']};
+  var wxEntity = null, wxLast = 0;
+  function showWeather(e){
+    var a = e.attributes || {}, w = WX[e.state] || [e.state, ''];
+    $('wx-t').textContent = (typeof a.temperature === 'number' ? Math.round(a.temperature) : '--') + '°';
+    $('wx-i').textContent = w[1]; $('wx-d').textContent = w[0];
+    var x = [];
+    if (typeof a.humidity === 'number') x.push('Humidité ' + Math.round(a.humidity) + ' %');
+    if (typeof a.wind_speed === 'number') x.push('Vent ' + Math.round(a.wind_speed) + ' ' + (a.wind_speed_unit || 'km/h'));
+    $('wx-x').textContent = x.join(' · ');
+    if (Date.now() - wxLast > 30 * 60 * 1000){ wxLast = Date.now(); loadForecast(e.entity_id); }
+  }
+  function loadForecast(id){
+    req('POST', '/api/services/weather/get_forecasts?return_response', {entity_id: id, type: 'daily'}, function(err, j){
+      if (err || !j) return;
+      var r = j.service_response || j, f = r[id] && r[id].forecast;
+      if (!f || !f.length) return;
+      var h = '';
+      each(f.slice(0, 4), function(d, i){
+        var dt = new Date(d.datetime), w = WX[d.condition] || ['', ''];
+        h += '<div class="day">' + (i === 0 ? 'Auj.' : JOURS[dt.getDay()].slice(0, 3) + '.') + '<b>' + w[1] + '</b>' + Math.round(d.temperature) + '°' +
+          (typeof d.templow === 'number' ? ' <span class="sub">' + Math.round(d.templow) + '°</span>' : '') + '</div>';
+      });
+      $('wx-days').innerHTML = h;
+    });
+  }
+
+  /* ---------- Xbox ---------- */
+  var APPS = [
+    {id:'YouTube', name:'YouTube', bg:'#ff0033', fg:'#fff', l:'▶', re:/youtube/i},
+    {id:'Netflix', name:'Netflix', bg:'#000', fg:'#e50914', l:'N', re:/netflix/i},
+    {id:'Spotify', name:'Spotify', bg:'#1db954', fg:'#000', l:'♪', re:/spotify/i},
+    {id:'Home', name:'Accueil', bg:'#107c10', fg:'#fff', l:'X', re:/^(home|accueil)/i}
+  ];
+  var s = {xbox:false, app:null, title:'', vol:30, muted:false, home:null};
+  var srcList = [], xApps = null;
+  (function(){ var h = ''; each(APPS, function(a){ h += '<button class="app" data-app="' + a.id + '"><span class="logo" style="background:' + a.bg + ';color:' + a.fg + '">' + a.l + '</span>' + a.name + '</button>'; }); $('apps').innerHTML = h; })();
+  function appOf(src){ if (!src) return null; var a = find(APPS, function(x){ return x.re.test(src); }); return a ? a.id : src; }
+  function renderXbox(){
+    $('xb-sw').className = 'sw' + (s.xbox ? ' on' : '');
+    $('c-xbox').className = 'card' + (s.xbox ? ' on' : '');
+    var a = find(APPS, function(x){ return x.id === s.app; });
+    $('now').textContent = !s.xbox ? 'En veille' : (s.title || (a ? a.name : 'Allumée'));
+    $('xb-sub').textContent = s.xbox ? 'Télé allumée par la Xbox · son ' + (s.muted ? 'coupé' : s.vol + ' %') : "La télé s'allume avec la Xbox";
+    each(document.querySelectorAll('[data-app]'), function(b){ b.className = 'app' + (s.xbox && b.getAttribute('data-app') === s.app ? ' cur' : ''); });
+  }
+  function needLive(){ if (!live){ toast('Mode démo : branchez Home Assistant dans Réglages'); return false; } if (!cfg.xbox){ toast('Choisissez la Xbox dans Réglages'); return false; } return true; }
+
+  /* liste des applis installées, comme le menu Médias de Home Assistant (WebSocket) */
+  function xboxApps(cb){
+    var ws, out = [], depth = {}, pending = {}, count = 0, n = 0, finished = false;
+    function done(err){ if (finished) return; finished = true; clearTimeout(t); try { ws.close(); } catch(e){} cb(err || null, out); }
+    var t = setTimeout(function(){ done(); }, 15000);
+    function browse(ct, cid, d){
+      var id = ++n, m = {id:id, type:'media_player/browse_media', entity_id:cfg.xbox};
+      if (ct){ m.media_content_type = ct; m.media_content_id = cid; }
+      pending[id] = true; count++; depth[id] = d; ws.send(JSON.stringify(m));
+    }
+    var tok = cfg.token;
+    withToken(cfg, function(err, t2){ if (err) return done(err); tok = t2;
+      try { ws = new WebSocket(trimUrl(cfg.url).replace(/^http/, 'ws') + '/api/websocket'); } catch(e){ return done(e); }
+      ws.onmessage = onMsg; ws.onerror = function(){ done(new Error('connexion impossible')); }; });
+    function onMsg(ev){
+      var m; try { m = JSON.parse(ev.data); } catch(e){ return; }
+      if (m.type === 'auth_required') ws.send(JSON.stringify({type:'auth', access_token:tok}));
+      else if (m.type === 'auth_ok') browse(null, null, 0);
+      else if (m.type === 'auth_invalid') done(new Error('clé refusée'));
+      else if (m.type === 'result' && pending[m.id]){
+        delete pending[m.id]; count--;
+        if (m.success && m.result) each(m.result.children || [], function(c){
+          if (c.can_play) out.push({title:c.title || '', id:c.media_content_id, type:c.media_content_type});
+          else if (c.can_expand && depth[m.id] < 2) browse(c.media_content_type, c.media_content_id, depth[m.id] + 1);
+        });
+        if (count === 0) done();
+      }
+    }
+  }
+  function launch(id){
+    if (!needLive()) return;
+    var a = find(APPS, function(x){ return x.id === id; }), wasOn = s.xbox;
+    s.xbox = true; s.app = id; s.title = ''; renderXbox(); toast('Lancement : ' + a.name);
+    function fail(msg){ notify('Xbox : ' + a.name + ' non lancé (' + msg + ')'); toast('Xbox : ' + a.name + ' non lancé'); }
+    function play(cid, ct){ req('POST', '/api/services/media_player/play_media', {entity_id:cfg.xbox, media_content_id:cid, media_content_type:ct || 'app'}, function(err){ if (err) fail(err.message); else notify(a.name + ' lancé sur la Xbox'); }); }
+    function go(){
+      if (id === 'Home') return play('Home', 'app');
+      function pick(){
+        var app = find(xApps || [], function(x){ return a.re.test(x.title); });
+        if (app) return play(app.id, app.type);
+        var src = find(srcList, function(x){ return a.re.test(x); });
+        if (src) return req('POST', '/api/services/media_player/select_source', {entity_id:cfg.xbox, source:src}, function(err){ if (err) fail(err.message); });
+        fail('introuvable, ' + (xApps ? xApps.length : 0) + ' applis vues');
+      }
+      if (xApps && xApps.length) return pick();
+      xboxApps(function(err, list){ if (err) notify('Xbox : liste des applis illisible (' + err.message + ')'); xApps = list; pick(); });
+    }
+    if (wasOn) go();
+    else service('media_player', 'turn_on', {entity_id:cfg.xbox}, function(err){ if (!err) setTimeout(go, 20000); });
+  }
+  $('xb-sw').onclick = function(){
+    if (!needLive()) return;
+    s.xbox = !s.xbox; if (!s.xbox){ s.app = null; s.title = ''; } renderXbox();
+    service('media_player', s.xbox ? 'turn_on' : 'turn_off', {entity_id:cfg.xbox});
+    notify(s.xbox ? 'Xbox allumée' : 'Xbox éteinte');
+  };
+  each(document.querySelectorAll('[data-app]'), function(b){ b.onclick = function(){ launch(b.getAttribute('data-app')); }; });
+  $('v-up').onclick = function(){ if (needLive()) service('media_player', 'volume_up', {entity_id:cfg.xbox}); };
+  $('v-down').onclick = function(){ if (needLive()) service('media_player', 'volume_down', {entity_id:cfg.xbox}); };
+  $('v-mute').onclick = function(){ if (needLive()){ s.muted = !s.muted; renderXbox(); service('media_player', 'volume_mute', {entity_id:cfg.xbox, is_volume_muted:s.muted}); } };
+
+  /* ---------- présence ---------- */
+  function renderPresence(){
+    $('pr-dot').className = 'dot' + (s.home ? ' home' : '');
+    $('pr-txt').textContent = s.home === null ? 'Inconnue (choisissez-la dans Réglages)' : (s.home ? 'iPhone à la maison' : 'iPhone parti');
+  }
+
+  /* ---------- synchro ---------- */
+  function setMode(){ $('mode').className = 'pill ' + (live ? 'live' : 'demo'); $('mode').textContent = live ? 'Connecté' : 'Mode démo'; }
+  function poll(){
+    if (!cfg.url || !cfg.token || badKey){ live = false; setMode(); return; }
+    req('GET', '/api/states', null, function(err, states){
+      if (err || !states){ if (live) notify('Connexion à Home Assistant perdue'); live = false; setMode(); return; }
+      var by = {}; each(states, function(e){ by[e.entity_id] = e; });
+      if (!live) notify('Connecté à Home Assistant');
+      live = true; setMode();
+      var x = cfg.xbox && by[cfg.xbox];
+      if (x){
+        var on = ['off', 'unavailable', 'standby', 'unknown'].indexOf(x.state) < 0, at = x.attributes || {};
+        s.xbox = on; srcList = at.source_list || []; s.app = on ? appOf(at.source) : null;
+        s.title = on ? (at.media_title || '') : '';
+        if (typeof at.volume_level === 'number') s.vol = Math.round(at.volume_level * 100);
+        s.muted = !!at.is_volume_muted; renderXbox();
+      }
+      if (cfg.person && by[cfg.person]){
+        var home = by[cfg.person].state === 'home';
+        if (s.home !== null && home !== s.home) notify(home ? 'Tu es rentré à la maison' : 'Tu es parti de la maison');
+        s.home = home; renderPresence();
+      }
+      if (!wxEntity) wxEntity = find(states, function(e){ return e.entity_id.indexOf('weather.') === 0; });
+      if (wxEntity && by[wxEntity.entity_id]) showWeather(by[wxEntity.entity_id]);
+    });
+  }
+
+  /* ---------- réglages ---------- */
+  function fillSelect(sel, list, cur, guess){
+    var pick = find(list, function(e){ return e.entity_id === cur; }) ? cur : '';
+    if (!pick){ var g = []; each(list, function(e){ if (guess.test((e.entity_id + ' ' + ((e.attributes || {}).friendly_name || '')).toLowerCase())) g.push(e); }); if (g.length === 1) pick = g[0].entity_id; else if (list.length === 1) pick = list[0].entity_id; }
+    var h = '<option value="">Aucun</option>';
+    each(list, function(e){ h += '<option value="' + esc(e.entity_id) + '"' + (e.entity_id === pick ? ' selected' : '') + '>' + esc((e.attributes || {}).friendly_name || e.entity_id) + '</option>'; });
+    sel.innerHTML = h; return pick ? 1 : 0;
+  }
+  var auth = null; /* résultat de « Se connecter » en attente d'Enregistrer */
+  function readSettings(){
+    var c = {url: trimUrl($('st-url').value.replace(/^\s+|\s+$/g, '')), token: $('st-token').value.replace(/\s+/g, ''), xbox: $('st-xbox').value, person: $('st-person').value};
+    if (!c.token && auth){ c.token = auth.token; c.refresh = auth.refresh; c.exp = auth.exp; }
+    else if (!c.token && cfg.refresh){ c.token = cfg.token; c.refresh = cfg.refresh; c.exp = cfg.exp; }
+    return c;
+  }
+  function findDevices(c, cb){
+    req('GET', '/api/states', null, function(err, states){
+      if (err) return cb(err);
+      var mp = [], pe = [];
+      each(states, function(e){ var d = e.entity_id.split('.')[0]; if (d === 'media_player') mp.push(e); if (d === 'person' || d === 'device_tracker') pe.push(e); });
+      var n = fillSelect($('st-xbox'), mp, c.xbox || cfg.xbox, /xbox/) + fillSelect($('st-person'), pe, c.person || cfg.person, /clement|iphone/);
+      cb(null, n);
+    }, c);
+  }
+  function openSettings(){
+    $('st-url').value = cfg.url || ORIGIN; $('st-token').value = cfg.refresh ? '' : (cfg.token || ''); $('st-pass').value = ''; $('st-status').textContent = '';
+    $('settings').className = 'show';
+    if (cfg.url && cfg.token && !badKey) findDevices(cfg, function(){});
+  }
+  $('open-st').onclick = openSettings;
+  $('st-close').onclick = function(){ $('settings').className = ''; };
+  var logging = false;
+  $('st-login').onclick = function(){
+    var c = readSettings(), st = $('st-status'), u = $('st-user').value.replace(/^\s+|\s+$/g, ''), pw = $('st-pass').value;
+    if (!u || !pw){ st.className = 'err'; st.textContent = "Remplissez l'identifiant et le mot de passe"; return; }
+    if (logging) return; logging = true; st.className = ''; st.textContent = 'Connexion…';
+    login(c, u, pw, function(err, a){
+      logging = false;
+      if (err){ st.className = 'err'; st.textContent = err.message === 'bloqué' ? "Home Assistant a bloqué cette tablette (trop d'essais)" : 'Connexion refusée : ' + err.message; return; }
+      auth = a; $('st-token').value = ''; $('st-pass').value = '';
+      var c2 = readSettings();
+      findDevices(c2, function(e2, n){ st.className = 'ok'; st.textContent = 'Connecté · ' + (n || 0) + ' appareil(s) reconnu(s). Vérifiez puis Enregistrer.'; });
+    });
+  };
+  $('st-test').onclick = function(){
+    var c = readSettings(), st = $('st-status');
+    if (c.refresh){ st.className = ''; st.textContent = 'Recherche des appareils…'; findDevices(c, function(err, n){ st.className = err ? 'err' : 'ok'; st.textContent = err ? 'Pas de réponse (' + err.message + ')' : 'Connexion réussie · ' + n + ' appareil(s) reconnu(s).'; }); return; }
+    if (!c.url || !c.token){ st.className = 'err'; st.textContent = "Remplissez l'adresse et la clé"; return; }
+    if (!/^[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}$/.test(c.token)){ st.className = 'err'; st.textContent = "Ce n'est pas une clé Home Assistant : recopiez-la en entier"; return; }
+    if (c.token === refused){ st.className = 'err'; st.textContent = 'Cette clé a déjà été refusée : créez-en une nouvelle'; return; }
+    if (testing) return; testing = true;
+    st.className = ''; st.textContent = 'Recherche des appareils…';
+    findDevices(c, function(err, n){
+      testing = false;
+      if (err){ st.className = 'err'; st.textContent = /401/.test(err.message) ? 'Clé refusée : créez-en une nouvelle' : /403/.test(err.message) ? "Home Assistant a bloqué cette tablette (trop d'essais)" : "Pas de réponse : vérifiez l'adresse et le wifi"; return; }
+      st.className = 'ok'; st.textContent = 'Connexion réussie · ' + n + ' appareil(s) reconnu(s). Vérifiez puis Enregistrer.';
+    });
+  };
+  $('st-save').onclick = function(){
+    var c = readSettings(); badKey = false; xApps = null; wxEntity = null; wxLast = 0;
+    cfg = {city: cfg.city || '', url: c.url, token: c.token, refresh: c.refresh || '', exp: c.exp || 0, xbox: c.xbox, person: c.person}; auth = null;
+    store.set('cfg', cfg); $('settings').className = ''; toast('Réglages enregistrés'); poll();
+  };
+  $('st-forget').onclick = function(){
+    cfg = {city: cfg.city || '', url: SAME ? ORIGIN : '', token: '', refresh: '', exp: 0, xbox: '', person: ''}; auth = null; store.set('cfg', cfg);
+    $('st-token').value = ''; live = false; setMode(); $('st-status').className = 'ok'; $('st-status').textContent = 'Clé effacée de la tablette';
+  };
+
+  /* ---------- démarrage ---------- */
+  tick(); setInterval(tick, 1000);
+  renderNotifs(); renderXbox(); renderPresence(); setMode();
+  poll(); setInterval(poll, 10000);
+  if (!cfg.token) setTimeout(openSettings, 600);
+})();
+</script>
+</body>
+</html>
