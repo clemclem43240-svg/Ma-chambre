@@ -28,3 +28,7 @@ L'adresse se remplit toute seule ; il reste à coller un jeton longue durée dan
 `tablette/lite.html` : même tableau de bord en plus simple (JavaScript ES5, sans flou ni police externe) pour les vieux navigateurs. Météo lue dans Home Assistant (entité `weather`). Connexion possible avec l'identifiant et le mot de passe Home Assistant (jeton renouvelé tout seul, gardé uniquement sur la tablette) ou avec un jeton longue durée.
 
 Adresse : `http://<adresse-de-home-assistant>:8123/local/ma-chambre/tablette/lite.html`
+
+## Thèmes selon la Xbox
+
+Quand la Xbox lance Netflix, YouTube, Forza ou GTA 6, l'appli et la version légère de la tablette changent de décor toutes seules : rideau, ticket et fauteuils de cinéma pour Netflix ; jungle (liane, feuilles, lucioles) pour YouTube ; vrai combiné de voiture avec animation de démarrage pour Forza (tablette) ; coucher de soleil, ville et palmier pour GTA 6. Réglages › Thème permet de forcer un thème pour l'essayer, et sur la tablette « Animations des thèmes » coupe les mouvements si elle rame. Le téléphone n'a pas d'animation. Images : voir `themes/CREDITS.md`.

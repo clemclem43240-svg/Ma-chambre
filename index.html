@@ -165,10 +165,62 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
 .alert.show{transform:translate(-50%,0)}
 .alert .txt{flex:1;min-width:0} .alert b{font-family:var(--f-display);display:block}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* ---------- thèmes selon la Xbox (sans animation sur le téléphone) ---------- */
+#th-bg,#th-fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;display:none}
+#th-bg{z-index:0;background-size:cover;background-position:center bottom}#th-fx{z-index:2}
+.dk{position:absolute}.dk img,.dk svg{display:block;width:100%}
+.now > .tk{display:none}
+body.th-netflix{--bg:#0a0000;--accent:#e50914;--edge:rgba(255,90,90,.25)}
+.th-netflix .aurora .a1{background:radial-gradient(circle,#e50914,transparent 62%)}
+.th-netflix .aurora .a2{background:radial-gradient(circle,#7a0008,transparent 62%)}
+.th-netflix .aurora .a3{background:radial-gradient(circle,#ff3b45,transparent 62%);opacity:.4}
+.th-netflix .card{background:linear-gradient(145deg,rgba(255,60,60,.14),rgba(255,255,255,.03))}
+.th-netflix .ic{--g:linear-gradient(135deg,#ff3b45,#8a0008)!important}
+.th-netflix .switch[aria-checked="true"]{background:linear-gradient(90deg,#b00610,#e50914)}
+.th-netflix .meter i{background:linear-gradient(90deg,#ff5a5f,#e50914)}
+.th-netflix .appb[aria-pressed="true"]{background:rgba(229,9,20,.35);border-color:#e50914}
+.th-netflix nav.tabs{background:rgba(40,0,4,.7)}
+.th-netflix .app{padding-top:46px}
+.now.ticket{background:linear-gradient(135deg,#f4e7d0,#e7d3ad)!important;overflow:visible;padding-right:84px;box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.now.ticket::before{display:none}
+.now.ticket .label{color:#b00610}.now.ticket .title{color:#2a0003}
+.now.ticket > .tk{display:block;position:absolute;top:50%;margin-top:-13px;width:26px;height:26px;border-radius:50%;background:#1a0003}
+.now.ticket > .tk-l{left:-13px}.now.ticket > .tk-r{right:-13px}
+.now.ticket > .tk-d{top:12px;bottom:12px;margin:0;width:0;height:auto;right:70px;border-radius:0;background:none;border-left:3px dashed rgba(120,0,10,.45)}
+.now.ticket > .tk-s{right:12px;width:52px;height:20px;margin-top:-10px;border-radius:0;background:none;font:700 13px sans-serif;color:#b00610;text-align:center;transform:rotate(-90deg)}
+body.th-youtube{--bg:#020c06;--accent:#2fae5a;--edge:rgba(110,210,130,.25)}
+.th-youtube .aurora,.th-gta .aurora,.th-forza .aurora{display:none}
+.th-youtube #th-bg{background-image:url(themes/yt-fond-p.jpg);background-color:#020c06}
+.th-youtube .card{background:linear-gradient(145deg,rgba(90,200,120,.14),rgba(0,0,0,.3))}
+.th-youtube .ic{--g:linear-gradient(135deg,#4fc96a,#145c26)!important}
+.th-youtube .switch[aria-checked="true"]{background:linear-gradient(90deg,#1b7a3a,#3fcf6a)}
+.th-youtube .meter i{background:linear-gradient(90deg,#9be27a,#2fae5a)}
+.th-youtube .appb[aria-pressed="true"]{background:rgba(47,174,90,.32);border-color:#2fae5a}
+.th-youtube nav.tabs{background:rgba(4,30,14,.7)}
+.th-youtube .now{--art:linear-gradient(135deg,#1d6b35,#04170b)!important}
+body.th-gta{--bg:#07020f;--accent:#ff2d95;--edge:rgba(255,90,170,.3)}
+.th-gta #th-bg{background-image:url(themes/gta-fond-p.jpg);background-color:#07020f}
+.th-gta .card{background:linear-gradient(145deg,rgba(120,40,140,.45),rgba(20,0,40,.72))}
+.th-gta .ic{--g:linear-gradient(135deg,#ff5aa0,#7b2cff)!important}
+.th-gta .switch[aria-checked="true"]{background:linear-gradient(90deg,#7b2cff,#ff2d95)}
+.th-gta .meter i{background:linear-gradient(90deg,#ffb35c,#ff2d95)}
+.th-gta .appb[aria-pressed="true"]{background:rgba(255,45,149,.3);border-color:#ff2d95}
+.th-gta nav.tabs{background:rgba(25,5,40,.75)}
+.th-gta .now{--art:linear-gradient(160deg,#ffb35c,#ff2d95 45%,#4a0f8a)!important}
+body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
+.th-forza #th-bg{background:radial-gradient(circle at 20% 0%,rgba(255,60,20,.28),transparent 50%),radial-gradient(circle at 100% 70%,rgba(200,20,10,.25),transparent 50%),#050506}
+.th-forza .card{background:linear-gradient(145deg,rgba(255,110,70,.1),rgba(0,0,0,.4))}
+.th-forza .ic{--g:linear-gradient(135deg,#ff7a3a,#a3120a)!important}
+.th-forza .switch[aria-checked="true"]{background:linear-gradient(90deg,#a3120a,#ff5a2a)}
+.th-forza .meter i{background:linear-gradient(90deg,#ffb35c,#ff3a1a)}
+.th-forza .appb[aria-pressed="true"]{background:rgba(255,90,42,.28);border-color:#ff5a2a}
+.th-forza nav.tabs{background:rgba(20,6,4,.75)}
+.th-forza .now{--art:url(themes/fz-mini.jpg) center/cover no-repeat #000!important;min-height:190px}
 </style>
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
+<div id="th-bg" aria-hidden="true"></div><div id="th-fx" aria-hidden="true"></div>
 
 <div class="app">
   <div class="top">
@@ -205,7 +257,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
           <div><h3>Xbox</h3><div class="sub" id="xb-state">En veille</div></div></div>
         <button class="switch green" role="switch" id="xb-sw" aria-checked="false" aria-label="Allumer la Xbox"></button>
       </div>
-      <div class="now" id="xb-now"><span class="label" id="xb-label">En veille</span><span class="title" id="xb-title">Touche une appli</span></div>
+      <div class="now" id="xb-now"><span class="tk tk-l"></span><span class="tk tk-r"></span><span class="tk tk-d"></span><span class="tk tk-s">ADMIS</span><span class="label" id="xb-label">En veille</span><span class="title" id="xb-title">Touche une appli</span></div>
       <div class="apps" id="apps"></div>
     </div>
     <div class="card" id="c-tv">
@@ -268,6 +320,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
   <section class="view" id="v-reglages" hidden>
     <div class="card">
       <div class="field"><label for="st-city">Ville pour la météo</label><input id="st-city" type="text" placeholder="Vide = position du téléphone" autocomplete="off"></div>
+      <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
     </div>
     <div class="card">
       <h3>Home Assistant</h3>
@@ -282,7 +335,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
       <span class="status" id="st-status"></span>
       <div class="btns"><button class="btn" id="st-forget">Oublier</button><button class="btn" id="st-test">Tester</button><button class="btn primary" id="st-save">Enregistrer</button></div>
     </div>
-    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 4 (24/11)</p>
+    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 5 (25/11)</p>
   </section>
 </div>
 
@@ -535,7 +588,41 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
     // bientôt
     document.querySelectorAll('[data-soon]').forEach(t=>{ const k={shutter:'volets'}[t.dataset.soon]||t.dataset.soon; t.hidden = has(k); });
     document.querySelectorAll('[data-scene]').forEach(b=>b.classList.toggle('on',b.dataset.scene===s.scene));
+    applyTheme();
   }
+  /* ---------- thèmes selon ce qui tourne sur la Xbox (images fixes, sans animation) ---------- */
+  const TH={k:null,start:0};
+  function themeOf(){ const f=store.get('theme','auto'); if(f&&f!=='auto') return f==='none'?'':f; if(!s.xbox) return '';
+    const t=((s.app||'')+' '+(liveMedia&&liveMedia.title||'')).toLowerCase();
+    if(/netflix/.test(t)) return 'netflix'; if(/youtube/.test(t)) return 'youtube'; if(/forza/.test(t)) return 'forza'; if(/grand theft auto|gta/.test(t)) return 'gta'; return ''; }
+  const dur=()=>{ const m=Math.max(0,Math.floor((Date.now()-TH.start)/60000)); return m<60? m+' min' : Math.floor(m/60)+' h '+pad(m%60); };
+  const dk=(st,src)=>'<div class="dk" style="'+st+'"><img src="themes/'+src+'" alt=""></div>';
+  function curtainSvg(){ const w=390/6; let st='',p='',g='';
+    for(let i=0;i<7;i++) st+='<stop offset="'+(i/6)+'" stop-color="'+(i%2?'#5a0006':'#d10a14')+'"/>';
+    for(let i=0;i<6;i++){ p+=' Q'+(390-i*w-w/2)+' 44 '+(390-(i+1)*w)+' 20'; g+=' Q'+(390-i*w-w/2)+' 40 '+(390-(i+1)*w)+' 16'; }
+    return '<div class="dk" style="left:0;top:0;right:0"><svg height="64" viewBox="0 0 390 100" preserveAspectRatio="none"><defs><linearGradient id="nfo" x1="0" x2="1">'+st+'</linearGradient><linearGradient id="nfg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#b07a1e"/></linearGradient></defs>'+
+      '<path d="M0 0 H390 V20'+p+' Z" fill="url(#nfo)"/><path d="M0 0 H390 V16'+g+'" fill="none" stroke="url(#nfg)" stroke-width="3"/><path d="M0 0 H16 Q12 40 0 90Z" fill="url(#nfo)"/><path d="M390 0 H374 Q378 40 390 90Z" fill="url(#nfo)"/></svg></div>'; }
+  function seatsSvg(){ let h=''; for(let r=0;r<2;r++) for(let i=0;i<10;i++){ const x=i*44+(r?22:0)-8, y=r?26:8;
+      h+='<path d="M'+x+' '+(y+60)+' V'+(y+11)+' Q'+x+' '+y+' '+(x+11)+' '+y+' H'+(x+27)+' Q'+(x+38)+' '+y+' '+(x+38)+' '+(y+11)+' V'+(y+60)+'Z" fill="'+(r?'#050000':'#1a0003')+'"/>'; }
+    return '<div class="dk" style="left:0;right:0;bottom:0"><svg height="62" viewBox="0 0 390 62" preserveAspectRatio="xMidYMin slice">'+h+'</svg></div>'; }
+  function buildDeco(k){ let b='',f='';
+    if(k==='netflix') f=curtainSvg()+seatsSvg();
+    else if(k==='youtube'){ b=dk('right:-110px;top:-90px;width:260px;transform:rotate(15deg)','yt-monstera.png')+dk('left:-90px;bottom:40px;width:300px;opacity:.85;transform:rotate(150deg)','yt-bananier.png'); f=dk('left:-142px;top:300px;width:180px','yt-liane.png'); }
+    else if(k==='gta') f=dk('right:-90px;bottom:-100px;width:215px;transform:rotate(-6deg)','gta-palmier.png');
+    $('th-bg').innerHTML=b; $('th-fx').innerHTML=f;
+    $('th-bg').style.display=k&&k!=='netflix'||b?'block':'none'; $('th-fx').style.display=f?'block':'none'; }
+  function applyTheme(){
+    const k=themeOf();
+    if(k!==TH.k){ TH.k=k; const st=store.get('th-start',null);
+      if(k&&st&&st.k===k&&Date.now()-st.t<12*3600000) TH.start=st.t; else { TH.start=Date.now(); if(k) store.set('th-start',{k,t:TH.start}); }
+      ['netflix','youtube','forza','gta'].forEach(x=>document.body.classList.toggle('th-'+x,x===k)); buildDeco(k); }
+    const now=$('xb-now'); now.classList.toggle('ticket',k==='netflix');
+    if(k==='netflix'){ $('xb-label').textContent='Séance de '+hm(new Date(TH.start))+' · '+dur(); $('xb-title').textContent='Netflix'; const im=now.querySelector('img'); if(im) im.remove(); }
+    if(k==='forza'){ $('xb-label').textContent=(s.xbox?'En jeu · ':'')+dur(); if(!s.xbox||!liveMedia) $('xb-title').textContent='Forza Horizon 6'; const im=now.querySelector('img'); if(im) im.remove(); }
+  }
+  $('st-theme').value=store.get('theme','auto')||'auto';
+  $('st-theme').onchange=e=>{ store.set('theme',e.target.value); TH.k=null; render(); };
+
   function renderPresence(){ $('presence').style.color=s.home?'var(--ok)':'var(--warn)'; $('presence-txt').textContent=s.home?'iPhone à la maison':'iPhone parti'; }
   function setMode(){ $('mode').className='pill '+(live?'live':'demo'); $('mode-txt').textContent=live?'Connecté':'Démo'; }
 
