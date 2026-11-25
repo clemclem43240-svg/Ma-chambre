@@ -76,18 +76,12 @@ h3{margin:0;font-size:13px;font-weight:600;color:#c3c9ee;text-transform:uppercas
 .logo{display:block;width:36px;height:36px;line-height:36px;margin:0 auto 6px;border-radius:10px;font-weight:700;font-size:18px}
 .tv{margin-top:14px}
 .tv .grow .t1{font-size:19px}
-.tb{padding:0 12px;margin-left:6px;font-size:15px;font-weight:600}
-.tvb{margin-top:8px}
-.tv1{margin-top:12px}
-.tvb .tb{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 0 0 6px}
-.tvb .tb:first-child{margin-left:0}
+.vb{width:52px;padding:0;margin-left:6px;font-size:20px}
 .app{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #games{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(5,8,25,.82);z-index:6;display:none;padding:40px 60px}
 .g-card{background:#1e2450 !important;-webkit-animation:none;animation:none}
 #g-list{margin:0 -5px;overflow:hidden}
-#apps .nm{display:none}
-#apps .app{padding:8px 2px}
-#apps .logo{width:40px;height:40px;line-height:40px;margin-bottom:0}
+
 #g-list .app{float:left;width:23%;width:-webkit-calc(25% - 10px);width:calc(25% - 10px);margin:5px;padding:16px 4px}
 .bar{width:54px;height:6px;border-radius:4px;background:rgba(255,255,255,.18);margin-left:6px;overflow:hidden}
 .bar i{display:block;height:6px;width:30%;background:#5b8cff;background-image:-webkit-linear-gradient(left,#5b8cff,#ff6fcf);background-image:linear-gradient(to right,#5b8cff,#ff6fcf);-webkit-transition:width .3s;transition:width .3s}
@@ -290,8 +284,8 @@ body.th-forza.fz-off .wrap{visibility:visible}
         <div class="flex"><span class="tile t-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/></svg></span><div class="grow"><div class="t1">Xbox</div><div class="sub" id="xb-state">En veille</div></div><button class="sw" id="xb-sw" aria-label="Xbox"></button></div>
         <div class="art" id="art"><span class="tk tk-l"></span><span class="tk tk-r"></span><span class="tk tk-d"></span><span class="tk tk-s">ADMIS</span><div class="in"><div class="lbl" id="art-lbl">EN VEILLE</div><div id="now">Touchez une appli</div></div></div>
         <div class="apps" id="apps"></div>
-        <div class="flex tvb tv1"><button class="tb" data-tv="allumer">Télé on</button><button class="tb" data-tv="eteindre">Télé off</button><button class="tb" data-tv="source">Source</button></div>
-        <div class="flex tvb"><button class="tb" data-tv="moins">Vol −</button><button class="tb" data-tv="plus">Vol +</button><button class="tb" data-tv="muet">Muet</button></div>
+        <div class="flex tv"><span class="tile t-pink"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M9 21h6M12 17v4"/></svg></span><div class="grow"><div class="t1">Télé</div><div class="sub">S'allume avec la Xbox</div></div>
+          <button class="vb" data-tv="moins" aria-label="Moins fort">−</button><button class="vb" data-tv="plus" aria-label="Plus fort">+</button><button class="vb" data-tv="muet" aria-label="Muet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:auto"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg></button></div>
       </div>
     </div>
 
@@ -313,7 +307,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 12</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 13</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
     <div class="field"><label for="st-anim">Animations des thèmes</label><select id="st-anim"><option value="1">Oui</option><option value="0">Non (si la tablette rame)</option></select></div>
@@ -502,11 +496,9 @@ body.th-forza.fz-off .wrap{visibility:visible}
   /* ---------- Xbox ---------- */
   /* applis et jeux : chaque bouton lance le script Home Assistant (il allume télé + Xbox si besoin) */
   var APPS = [
-    {id:'Home', name:'Accueil', sc:'xbox_accueil', bg:'#107c10', fg:'#fff', l:'X', re:/^(home|accueil)/i, art:['#107c10','#0b2614']},
-    {id:'Netflix', name:'Netflix', sc:'xbox_netflix', bg:'#000', fg:'#e50914', l:'N', re:/netflix/i, art:['#3a0005','#0a0a0a']},
     {id:'YouTube', name:'YouTube', sc:'xbox_youtube', bg:'#ff0033', fg:'#fff', l:'▶', re:/youtube/i, art:['#ff0033','#5a0016']},
-    {id:'Spotify', name:'Spotify', sc:'xbox_spotify', bg:'#1db954', fg:'#000', l:'♪', re:/spotify/i, art:['#1db954','#0b3d1f']},
-    {id:'Deezer', name:'Deezer', sc:'xbox_deezer', bg:'#a238ff', fg:'#fff', l:'♫', re:/deezer/i, art:['#a238ff','#2a0b4a']},
+    {id:'Netflix', name:'Netflix', sc:'xbox_netflix', bg:'#000', fg:'#e50914', l:'N', re:/netflix/i, art:['#3a0005','#0a0a0a']},
+    {id:'Home', name:'Accueil', sc:'xbox_accueil', bg:'#107c10', fg:'#fff', l:'X', re:/^(home|accueil)/i, art:['#107c10','#0b2614']},
     {id:'Forza', name:'Forza Horizon 6', game:1, sc:'xbox_forza_horizon_6', bg:'#ff5a2a', fg:'#fff', l:'FH', re:/forza/i, art:['#ff5a2a','#3a0f05']},
     {id:'GTA', name:'GTA VI', game:1, sc:'xbox_gta_vi', bg:'#ff2d95', fg:'#fff', l:'VI', re:/grand theft|gta/i, art:['#ff2d95','#3a0a25']},
     {id:'CoD', name:'Call of Duty', game:1, sc:'xbox_call_of_duty', bg:'#2b2b2b', fg:'#fff', l:'CoD', re:/call of duty/i, art:['#4a4a4a','#0a0a0a']},
@@ -514,14 +506,17 @@ body.th-forza.fz-off .wrap{visibility:visible}
     {id:'Minecraft', name:'Minecraft', game:1, sc:'xbox_minecraft', bg:'#5b8c32', fg:'#fff', l:'M', re:/minecraft/i, art:['#5b8c32','#1a2a0e']},
     {id:'SoT', name:'Sea of Thieves', game:1, sc:'xbox_sea_of_thieves', bg:'#0c6f7a', fg:'#fff', l:'SoT', re:/sea of thieves/i, art:['#0c6f7a','#04262a']},
     {id:'DBX2', name:'Dragon Ball X2', game:1, sc:'xbox_dragon_ball_xenoverse_2', bg:'#ff8a00', fg:'#fff', l:'DB', re:/dragon ball|xenoverse/i, art:['#ff8a00','#3a1f00']},
-    {id:'Stumble', name:'Stumble Guys', game:1, sc:'xbox_stumble_guys', bg:'#ffcc00', fg:'#000', l:'SG', re:/stumble/i, art:['#ffcc00','#3a2f00']}
+    {id:'Stumble', name:'Stumble Guys', game:1, sc:'xbox_stumble_guys', bg:'#ffcc00', fg:'#000', l:'SG', re:/stumble/i, art:['#ffcc00','#3a2f00']},
+    {id:'Spotify', more:1, name:'Spotify', sc:'xbox_spotify', bg:'#1db954', fg:'#000', l:'♪', re:/spotify/i, art:['#1db954','#0b3d1f']},
+    {id:'Deezer', more:1, name:'Deezer', sc:'xbox_deezer', bg:'#a238ff', fg:'#fff', l:'♫', re:/deezer/i, art:['#a238ff','#2a0b4a']}
   ];
   var s = {xbox:false, app:null, title:'', vol:30, muted:false, home:null};
   var srcList = [], xApps = null;
   (function(){ var h = '', g = '';
     function btn(a){ return '<button class="app" data-app="' + a.id + '"><span class="logo" style="background:' + a.bg + ';color:' + a.fg + '">' + a.l + '</span><span class="nm">' + a.name + '</span></button>'; }
-    each(APPS, function(a){ if (a.game) g += btn(a); else h += btn(a); });
-    $('apps').innerHTML = h + '<button class="app" id="g-open"><span class="logo" style="background:#2a3170"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:block;margin:9px auto 0"><path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/></svg></span><span class="nm">Jeux</span></button>';
+    var n = 0, jeux = '<button class="app" id="g-open"><span class="logo" style="background:#2a3170"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:block;margin:7px auto 0"><path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/></svg></span><span class="nm">Jeux</span></button>';
+    each(APPS, function(a){ if (a.game || a.more) g += btn(a); else { h += btn(a); if (++n === 2) h += jeux; } });
+    $('apps').innerHTML = h;
     $('g-list').innerHTML = g; })();
   function appOf(src){ if (!src) return null; var a = find(APPS, function(x){ return x.re.test(src); }); return a ? a.id : src; }
   function renderXbox(){
@@ -578,6 +573,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
     if (!needLive()) return;
     s.xbox = !s.xbox; if (!s.xbox){ s.app = null; s.title = ''; } renderXbox();
     service('media_player', s.xbox ? 'turn_on' : 'turn_off', {entity_id:cfg.xbox});
+    tvCmd(s.xbox ? 'allumer' : 'eteindre', true);
     notify(s.xbox ? 'Xbox allumée' : 'Xbox éteinte');
   };
   each(document.querySelectorAll('[data-app]'), function(b){ b.onclick = function(){ launch(b.getAttribute('data-app')); }; });
@@ -586,8 +582,9 @@ body.th-forza.fz-off .wrap{visibility:visible}
   /* télé LG : commandes infrarouges du Redmi (scripts Home Assistant), sans retour d'état */
   var TV = {allumer:['tele_allumer','Télé : allumage'], eteindre:['tele_eteindre','Télé : extinction'], plus:['tele_volume_plus','Volume +'], moins:['tele_volume_moins','Volume −'], muet:['tele_muet','Son coupé / remis'], source:['tele_source','Source suivante']};
   each(document.querySelectorAll('[data-tv]'), function(b){ b.onclick = function(){
-    var t = TV[b.getAttribute('data-tv')]; if (!needLive()) return; toast(t[1]);
-    service('script', t[0], {}, function(err){ if (err) notify('Télé : commande non envoyée (' + err.message + ')'); }); }; });
+    if (needLive()) tvCmd(b.getAttribute('data-tv')); }; });
+  function tvCmd(k, quiet){ var t = TV[k]; if (!quiet) toast(t[1]);
+    service('script', t[0], {}, function(err){ if (err) notify('Télé : commande non envoyée (' + err.message + ')'); }); }
 
   /* ---------- présence ---------- */
   function renderPresence(){
@@ -813,8 +810,9 @@ body.th-forza.fz-off .wrap{visibility:visible}
   function runScene(k){
     scene = k; store.set('scene', k); renderScenes();
     if (k === 'jeu' && !s.xbox) $('xb-sw').onclick();
-    if (k === 'film') launch('Netflix');
-    if (k === 'nuit'){ if (s.xbox) $('xb-sw').onclick(); nightOn(); return; }
+    if (k === 'jeu' && s.xbox && live) tvCmd('allumer', true);
+    if (k === 'film'){ if (live) tvCmd('allumer', true); launch('Netflix'); }
+    if (k === 'nuit'){ if (s.xbox) $('xb-sw').onclick(); else if (live) tvCmd('eteindre', true); nightOn(); return; }
     toast('Ambiance ' + SCN[k] + ' · les lumières suivront avec le Hue');
   }
   each(document.querySelectorAll('[data-sc]'), function(b){ b.onclick = function(){ runScene(b.getAttribute('data-sc')); }; });
