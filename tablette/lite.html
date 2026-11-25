@@ -116,7 +116,7 @@ li.empty{background:none;color:#b9c0e6;padding-left:0}
   border-radius:18px;padding:12px;opacity:0;-webkit-transform:translateY(10px);transform:translateY(10px);-webkit-transition:opacity .3s,-webkit-transform .3s;transition:opacity .3s,transform .3s;pointer-events:none;z-index:6;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #toast.show{opacity:1;-webkit-transform:none;transform:none}
 @media (max-height:640px){#xb-sub{display:none}#clock{font-size:68px}.art{height:104px}#now{font-size:26px}.wrap{padding-top:10px}}
-@media (max-width:760px){.cols{display:block}.c1,.c2,.c3{width:auto}.soon{display:block}.soon .card{margin:0 7px 10px}}
+@media (max-width:760px){.pill{white-space:nowrap;font-size:13px;padding:7px 11px;margin-right:6px}#toast{left:16px;right:16px;width:auto;margin-left:0}.cols{display:block}.c1,.c2,.c3{width:auto}.soon{display:block}.soon .card{margin:0 7px 10px}}
 </style>
 </head>
 <body>
@@ -167,7 +167,7 @@ li.empty{background:none;color:#b9c0e6;padding-left:0}
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 2</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 3</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-url">Adresse de Home Assistant</label><input id="st-url" type="url" autocomplete="off" spellcheck="false"></div>
     <h3 style="margin-top:18px">Se connecter (le plus simple)</h3>
@@ -507,6 +507,14 @@ li.empty{background:none;color:#b9c0e6;padding-left:0}
     cfg = {city: cfg.city || '', url: SAME ? ORIGIN : '', token: '', refresh: '', exp: 0, xbox: '', person: ''}; auth = null; store.set('cfg', cfg);
     $('st-token').value = ''; live = false; setMode(); $('st-status').className = 'ok'; $('st-status').textContent = 'Clé effacée de la tablette';
   };
+
+  /* ---------- mise à l'échelle : en paysage, tout l'écran tient sans défiler (dessiné pour 1024 x 600, ex. Acer Iconia One 7 = 853 x 533 en CSS) ---------- */
+  function fit(){
+    var w = window.innerWidth, h = window.innerHeight, z = 1;
+    if (w > h && w > 760) z = Math.min(1.25, w / 1024, h / 600);
+    document.body.style.zoom = z;
+  }
+  fit(); window.addEventListener('resize', fit); window.addEventListener('orientationchange', function(){ setTimeout(fit, 300); });
 
   /* ---------- démarrage ---------- */
   tick(); setInterval(tick, 1000);
