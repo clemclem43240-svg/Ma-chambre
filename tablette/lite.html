@@ -448,6 +448,32 @@ body.th-forza.fz-off .wrap{visibility:visible}
     });
   }
 
+  /* pas d'entité weather dans Home Assistant : on prend la position de la maison (zone.home) et Open-Meteo */
+  var omLast = 0;
+  function omKey(c){ return c <= 1 ? 'sun' : c === 2 ? 'partly' : c === 3 ? 'cloud' : c <= 48 ? 'fog' : c <= 67 ? 'rain' : c <= 77 ? 'snow' : c <= 82 ? 'rain' : c <= 86 ? 'snow' : 'storm'; }
+  var OMTXT = {sun:'Ensoleillé', partly:'Partiellement nuageux', cloud:'Nuageux', fog:'Brouillard', rain:'Pluie', snow:'Neige', storm:'Orage'};
+  function noWeather(){ if ($('wx-t').textContent === '--°') $('wx-d').textContent = 'Météo : ajoutez « Met.no » dans Home Assistant'; }
+  function omWeather(lat, lon){
+    if (Date.now() - omLast < 30 * 60 * 1000) return; omLast = Date.now();
+    var x = new XMLHttpRequest();
+    x.open('GET', 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4', true);
+    x.onreadystatechange = function(){
+      if (x.readyState !== 4) return;
+      var j = null; try { j = JSON.parse(x.responseText); } catch(e){}
+      if (x.status !== 200 || !j || !j.current){ omLast = Date.now() - 25 * 60 * 1000; return noWeather(); }
+      var c = j.current, k = omKey(c.weather_code);
+      $('wx-t').textContent = Math.round(c.temperature_2m) + '°'; $('wx-i').innerHTML = wxSvg(k, 64); $('wx-d').textContent = OMTXT[k];
+      $('wx-x').textContent = 'Humidité ' + Math.round(c.relative_humidity_2m) + ' % · Vent ' + Math.round(c.wind_speed_10m) + ' km/h';
+      var d = j.daily, h = '';
+      each(d.time, function(t, i){
+        var jr = JOURS[new Date(t + 'T12:00:00').getDay()];
+        h += '<div class="day">' + (i === 0 ? 'Auj.' : jr.charAt(0).toUpperCase() + jr.slice(1, 3) + '.') + wxSvg(omKey(d.weather_code[i]), 26) + '<b>' + Math.round(d.temperature_2m_max[i]) + '°</b> ' + Math.round(d.temperature_2m_min[i]) + '°</div>';
+      });
+      $('wx-days').innerHTML = h;
+    };
+    try { x.send(null); } catch(e){ noWeather(); }
+  }
+
   /* ---------- Xbox ---------- */
   var APPS = [
     {id:'YouTube', name:'YouTube', bg:'#ff0033', fg:'#fff', l:'▶', re:/youtube/i, art:['#ff0033','#5a0016']},
@@ -566,6 +592,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
       }
       if (!wxEntity) wxEntity = find(states, function(e){ return e.entity_id.indexOf('weather.') === 0; });
       if (wxEntity && by[wxEntity.entity_id]) showWeather(by[wxEntity.entity_id]);
+      else { var zh = by['zone.home'], za = zh && zh.attributes; if (za && typeof za.latitude === 'number') omWeather(za.latitude, za.longitude); else noWeather(); }
     });
   }
 
