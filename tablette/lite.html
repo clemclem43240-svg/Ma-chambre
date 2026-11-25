@@ -293,10 +293,11 @@ body.th-forza.fz-off .wrap{visibility:visible}
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 4</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 5</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
     <div class="field"><label for="st-anim">Animations des thèmes</label><select id="st-anim"><option value="1">Oui</option><option value="0">Non (si la tablette rame)</option></select></div>
+    <p class="help" id="xb-raw">La Xbox dit : rien pour l'instant (Home Assistant pas connecté)</p>
     <div class="field"><label for="st-url">Adresse de Home Assistant</label><input id="st-url" type="url" autocomplete="off" spellcheck="false"></div>
     <h3 style="margin-top:18px">Se connecter (le plus simple)</h3>
     <div class="field"><label for="st-user">Identifiant Home Assistant</label><input id="st-user" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
@@ -572,6 +573,20 @@ body.th-forza.fz-off .wrap{visibility:visible}
   function setMode(){ $('mode').className = 'pill ' + (live ? 'ok-c' : 'warn-c'); $('mode-txt').textContent = live ? 'Connecté' : 'Mode démo'; }
   function poll(){
     if (!cfg.url || !cfg.token || badKey){ live = false; setMode(); return; }
+    /* l'intégration Xbox se met à jour lentement : on lui demande de relire la console avant chaque lecture */
+    if (live && cfg.xbox) req('POST', '/api/services/homeassistant/update_entity', {entity_id: cfg.xbox}, function(){ readStates(); });
+    else readStates();
+  }
+  function xbRaw(x){
+    var at = x.attributes || {}, f = [];
+    f.push('état « ' + x.state + ' »');
+    if (at.source) f.push('source « ' + at.source + ' »');
+    f.push('titre « ' + (at.media_title || 'aucun') + ' »');
+    if (at.app_id) f.push('app_id ' + at.app_id);
+    if (at.media_content_id) f.push('contenu ' + at.media_content_id);
+    $('xb-raw').textContent = 'La Xbox dit : ' + f.join(', ') + ' (lu à ' + hm(new Date()) + ')';
+  }
+  function readStates(){
     req('GET', '/api/states', null, function(err, states){
       if (err || !states){ if (live) notify('Connexion à Home Assistant perdue'); live = false; setMode(); return; }
       var by = {}; each(states, function(e){ by[e.entity_id] = e; });
@@ -583,7 +598,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
         s.xbox = on; srcList = at.source_list || []; s.app = on ? appOf(at.source) : null;
         s.title = on ? (at.media_title || '') : '';
         if (typeof at.volume_level === 'number') s.vol = Math.round(at.volume_level * 100);
-        s.muted = !!at.is_volume_muted; renderXbox();
+        s.muted = !!at.is_volume_muted; xbRaw(x); renderXbox();
       }
       if (cfg.person && by[cfg.person]){
         var home = by[cfg.person].state === 'home';
