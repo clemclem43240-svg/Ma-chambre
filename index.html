@@ -111,7 +111,10 @@ body.lit .aurora .a4{opacity:.5}
 .appb{border-radius:16px;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;background:rgba(255,255,255,.08);border:1px solid var(--edge);text-align:center;padding:4px}
 .appb .logo{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:15px}
 .appb[aria-pressed="true"]{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.5)}
-.vol{display:flex;align-items:center;gap:8px}
+.tvb{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tvb button{min-height:48px;border-radius:14px;font-size:14px;font-weight:600;background:rgba(255,255,255,.08);border:1px solid var(--edge)}
+.tvb button:active{background:rgba(255,255,255,.22)}
+.apps-h{grid-column:1/-1;margin:8px 0 0;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 
 /* maison */
 .shut{height:96px;border-radius:16px;background:linear-gradient(#3a5bd8,#7fb7ff 55%,#ffb3a0);position:relative;overflow:hidden;border:1px solid var(--edge)}
@@ -262,14 +265,12 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     </div>
     <div class="card" id="c-tv">
       <div class="lead"><span class="ic" style="--g:linear-gradient(135deg,#ff6f8f,#8b6bff)"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
-        <div><h3>Télé</h3><div class="sub" id="tv-state">S'allume et s'éteint avec la Xbox</div></div></div>
-      <div class="vol" id="tv-vol-row">
-        <button class="icon-btn" id="vol-down" aria-label="Baisser le son">–</button>
-        <div class="meter"><i id="vol-bar" style="width:30%"></i></div>
-        <button class="icon-btn" id="vol-up" aria-label="Monter le son">+</button>
-        <button class="icon-btn" id="mute" aria-label="Couper le son"><svg class="svg" width="20" height="20" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4zM22 9l-6 6M16 9l6 6"/></svg></button>
+        <div><h3>Télé</h3><div class="sub" id="tv-state">Télécommande infrarouge</div></div></div>
+      <div class="tvb">
+        <button data-tv="allumer">Allumer</button><button data-tv="eteindre">Éteindre</button><button data-tv="source">Source</button>
+        <button data-tv="moins" aria-label="Baisser le son">Vol −</button><button data-tv="plus" aria-label="Monter le son">Vol +</button><button data-tv="muet">Muet</button>
       </div>
-      <p class="help">La télé suit la Xbox grâce au HDMI-CEC : active « HDMI-CEC » dans les réglages de la télé et de la Xbox.</p>
+      <p class="help">Commandes envoyées par l'infrarouge du Redmi : il doit être tourné vers la télé.</p>
     </div>
   </section>
 
@@ -336,7 +337,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
       <span class="status" id="st-status"></span>
       <div class="btns"><button class="btn" id="st-forget">Oublier</button><button class="btn" id="st-test">Tester</button><button class="btn primary" id="st-save">Enregistrer</button></div>
     </div>
-    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 8 (25/11)</p>
+    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 9 (25/11)</p>
   </section>
 </div>
 
@@ -469,14 +470,28 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   }
 
   /* ---------- Xbox & télé ---------- */
-  const APPS=[{id:'YouTube',name:'YouTube',bg:'#ff0033',fg:'#fff',l:'▶',art:'linear-gradient(135deg,#ff0033,#5a0016)'},{id:'Netflix',name:'Netflix',bg:'#000',fg:'#e50914',l:'N',art:'linear-gradient(135deg,#3a0005,#0a0a0a)'},
-    {id:'Spotify',name:'Spotify',bg:'#1db954',fg:'#000',l:'♪',art:'linear-gradient(135deg,#1db954,#0b3d1f)'},{id:'Home',name:'Accueil',bg:'#107c10',fg:'#fff',l:'X',art:'linear-gradient(135deg,#107c10,#0b2614)'}];
-  $('apps').innerHTML=APPS.map(a=>'<button class="appb" data-app="'+a.id+'" aria-pressed="false"><span class="logo" style="background:'+a.bg+';color:'+a.fg+'">'+a.l+'</span>'+a.name+'</button>').join('');
+  /* applis et jeux : chaque bouton lance le script Home Assistant qui allume télé + Xbox si besoin */
+  const APPS=[
+    {id:'Home',name:'Accueil',sc:'xbox_accueil',re:/^(home|accueil)/i,bg:'#107c10',fg:'#fff',l:'X',art:'linear-gradient(135deg,#107c10,#0b2614)'},
+    {id:'Netflix',name:'Netflix',sc:'xbox_netflix',re:/netflix/i,bg:'#000',fg:'#e50914',l:'N',art:'linear-gradient(135deg,#3a0005,#0a0a0a)'},
+    {id:'YouTube',name:'YouTube',sc:'xbox_youtube',re:/youtube/i,bg:'#ff0033',fg:'#fff',l:'▶',art:'linear-gradient(135deg,#ff0033,#5a0016)'},
+    {id:'Spotify',name:'Spotify',sc:'xbox_spotify',re:/spotify/i,bg:'#1db954',fg:'#000',l:'♪',art:'linear-gradient(135deg,#1db954,#0b3d1f)'},
+    {id:'Deezer',name:'Deezer',sc:'xbox_deezer',re:/deezer/i,bg:'#a238ff',fg:'#fff',l:'♫',art:'linear-gradient(135deg,#a238ff,#2a0b4a)'},
+    {id:'Forza',name:'Forza Horizon 6',game:1,sc:'xbox_forza_horizon_6',re:/forza/i,bg:'#ff5a2a',fg:'#fff',l:'FH',art:'linear-gradient(135deg,#ff5a2a,#3a0f05)'},
+    {id:'GTA',name:'GTA VI',game:1,sc:'xbox_gta_vi',re:/grand theft|gta/i,bg:'#ff2d95',fg:'#fff',l:'VI',art:'linear-gradient(135deg,#ff2d95,#3a0a25)'},
+    {id:'CoD',name:'Call of Duty',game:1,sc:'xbox_call_of_duty',re:/call of duty/i,bg:'#2b2b2b',fg:'#fff',l:'CoD',art:'linear-gradient(135deg,#4a4a4a,#0a0a0a)'},
+    {id:'Fortnite',name:'Fortnite',game:1,sc:'xbox_fortnite',re:/fortnite/i,bg:'#9d4dff',fg:'#fff',l:'F',art:'linear-gradient(135deg,#9d4dff,#1f0a45)'},
+    {id:'Minecraft',name:'Minecraft',game:1,sc:'xbox_minecraft',re:/minecraft/i,bg:'#5b8c32',fg:'#fff',l:'M',art:'linear-gradient(135deg,#5b8c32,#1a2a0e)'},
+    {id:'SoT',name:'Sea of Thieves',game:1,sc:'xbox_sea_of_thieves',re:/sea of thieves/i,bg:'#0c6f7a',fg:'#fff',l:'SoT',art:'linear-gradient(135deg,#0c6f7a,#04262a)'},
+    {id:'DBX2',name:'Dragon Ball X2',game:1,sc:'xbox_dragon_ball_xenoverse_2',re:/dragon ball|xenoverse/i,bg:'#ff8a00',fg:'#fff',l:'DB',art:'linear-gradient(135deg,#ff8a00,#3a1f00)'},
+    {id:'Stumble',name:'Stumble Guys',game:1,sc:'xbox_stumble_guys',re:/stumble/i,bg:'#ffcc00',fg:'#000',l:'SG',art:'linear-gradient(135deg,#ffcc00,#3a2f00)'}];
+  const appBtn=a=>'<button class="appb" data-app="'+a.id+'" aria-pressed="false"><span class="logo" style="background:'+a.bg+';color:'+a.fg+'">'+a.l+'</span>'+a.name+'</button>';
+  $('apps').innerHTML=APPS.filter(a=>!a.game).map(appBtn).join('')+'<h4 class="apps-h">Jeux</h4>'+APPS.filter(a=>a.game).map(appBtn).join('');
   let liveMedia=null;
 
   /* boutons d'applis : liste « source_list » si elle existe, sinon applis installées */
   let srcList = [];
-  const KEY = {YouTube:/youtube/i, Netflix:/netflix/i, Spotify:/spotify/i, Home:/^(home|accueil)/i};
+  const KEY = {}; APPS.forEach(a => KEY[a.id] = a.re);
   const appOf = src => src ? ((APPS.find(a => KEY[a.id].test(src)) || {}).id || src) : null;
   /* sans épingles : on lit la liste des applis installées de la Xbox (navigateur de médias de Home Assistant) */
   let xApps = null;
@@ -511,12 +526,14 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     throw new Error(name+' introuvable ('+(xApps ? xApps.length : 0)+' applis vues sur la Xbox)');
   }
   async function xboxPower(on){ s.xbox=on; if(!on) s.app=null; s.scene=null; render(); notify(on?'Xbox allumée':'Xbox éteinte'); if(has('xbox')) await call('media_player', on?'turn_on':'turn_off', {entity_id:cfg.xbox}); }
-  async function launch(id){ const wasOn=s.xbox; s.xbox=true; s.app=id; render(); notify('Lancement : '+(APPS.find(a=>a.id===id)||{name:id}).name); if(has('xbox')){ const name=(APPS.find(a=>a.id===id)||{name:id}).name; try { await sendApp(id, wasOn, (sv,d)=>ha('/api/services/media_player/'+sv,'POST',d)); toast(name+' lancé sur la Xbox'); } catch(e){ toast('Xbox : '+name+' non lancé'); notify('Xbox : '+name+' non lancé ('+e.message+')'); } } }
-  async function volume(dir){ if(dir==='mute') s.muted=!s.muted; else { s.vol=Math.max(0,Math.min(100,s.vol+dir*10)); s.muted=false; } render();
-    if(has('xbox')){ if(dir==='mute') await call('media_player','volume_mute',{entity_id:cfg.xbox,is_volume_muted:s.muted}); else await call('media_player','volume_'+(dir>0?'up':'down'),{entity_id:cfg.xbox}); } }
+  async function launch(id){ const a=APPS.find(x=>x.id===id)||{name:id}; s.xbox=true; s.app=id; render(); notify('Lancement : '+a.name);
+    if(!cfg.token) return; try { await ha('/api/services/script/'+a.sc,'POST',{}); toast(a.name+' : la Xbox s\'en occupe'); } catch(e){ toast('Xbox : '+a.name+' non lancé'); notify('Xbox : '+a.name+' non lancé ('+e.message+')'); } }
+  /* télé LG : commandes infrarouges envoyées par le Redmi (scripts Home Assistant), sans retour d'état */
+  const TV={allumer:['tele_allumer','Télé : allumage'],eteindre:['tele_eteindre','Télé : extinction'],plus:['tele_volume_plus','Volume +'],moins:['tele_volume_moins','Volume −'],muet:['tele_muet','Son coupé / remis'],source:['tele_source','Source suivante']};
+  async function tv(k){ const t=TV[k]; toast(t[1]); if(!cfg.token) return; try { await ha('/api/services/script/'+t[0],'POST',{}); } catch(e){ notify('Télé : commande non envoyée ('+e.message+')'); } }
   $('xb-sw').onclick=()=>xboxPower(!s.xbox);
   document.querySelectorAll('[data-app]').forEach(b=>b.onclick=()=>launch(b.dataset.app));
-  $('vol-up').onclick=()=>volume(1); $('vol-down').onclick=()=>volume(-1); $('mute').onclick=()=>volume('mute');
+  document.querySelectorAll('[data-tv]').forEach(b=>b.onclick=()=>tv(b.dataset.tv));
 
   /* ---------- lumières Hue ---------- */
   const COLORS=[['#ffcf8a','Blanc chaud'],['#f4f6ff','Blanc froid'],['#5b8cff','Bleu'],['#a77bff','Violet'],['#ff6b8b','Rose'],['#5fd3a0','Vert'],['#ff9b42','Orange']];
@@ -564,8 +581,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   function render(){
     // xbox
     $('xb-sw').setAttribute('aria-checked',s.xbox); $('c-xbox').classList.toggle('active',s.xbox); $('c-tv').classList.toggle('active',s.xbox);
-    $('xb-state').textContent=s.xbox?'Allumée':'En veille'; $('tv-state').textContent=s.xbox?'Allumée par la Xbox':"S'allume et s'éteint avec la Xbox";
-    $('tv-vol-row').classList.toggle('off',!s.xbox); $('vol-bar').style.width=(s.muted?0:s.vol)+'%';
+    $('xb-state').textContent=s.xbox?'Allumée':'En veille'; 
     document.querySelectorAll('[data-app]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.app===s.app));
     const now=$('xb-now'), old=now.querySelector('img'); if(old) old.remove();
     if(!s.xbox){ now.style.setProperty('--art','linear-gradient(135deg,#1b2340,#0d1430)'); $('xb-label').textContent='En veille'; $('xb-title').textContent='Touche une appli'; }
