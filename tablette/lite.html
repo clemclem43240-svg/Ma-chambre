@@ -8,115 +8,166 @@
 <link rel="icon" href="../icon-192.png">
 <!-- Version légère pour vieilles tablettes (Android 4.4) : JavaScript ES5, pas de flou, pas de police externe -->
 <style>
-*{box-sizing:border-box;-webkit-box-sizing:border-box}
-html,body{margin:0;height:100%}
-body{font-family:"Roboto","Helvetica Neue",Arial,sans-serif;color:#f4f6ff;background:#0b1026;
-  background-image:-webkit-linear-gradient(135deg,#1a1f5c 0%,#0b1026 45%,#3a1450 100%);
-  background-image:linear-gradient(135deg,#1a1f5c 0%,#0b1026 45%,#3a1450 100%);
-  -webkit-user-select:none;user-select:none;overflow-x:hidden}
+*{box-sizing:border-box;-webkit-box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+html,body{margin:0;min-height:100%}
+body{font-family:"Roboto","Helvetica Neue",Arial,sans-serif;color:#f4f6ff;background-color:#0a0f2c;
+  background-image:-webkit-radial-gradient(10% 0%,circle,rgba(70,90,255,.55) 0,rgba(70,90,255,0) 45%),-webkit-radial-gradient(100% 30%,circle,rgba(190,60,200,.45) 0,rgba(190,60,200,0) 40%),-webkit-radial-gradient(50% 110%,circle,rgba(0,170,200,.35) 0,rgba(0,170,200,0) 45%);
+  background-image:radial-gradient(circle at 10% 0%,rgba(70,90,255,.55) 0,rgba(70,90,255,0) 45%),radial-gradient(circle at 100% 30%,rgba(190,60,200,.45) 0,rgba(190,60,200,0) 40%),radial-gradient(circle at 50% 110%,rgba(0,170,200,.35) 0,rgba(0,170,200,0) 45%);
+  background-attachment:fixed;-webkit-user-select:none;user-select:none;overflow-x:hidden}
 button,input,select{font-family:inherit;font-size:16px;color:inherit}
-button{cursor:pointer;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.12);border-radius:14px;padding:10px 14px;min-height:46px;
-  -webkit-transition:background .2s,-webkit-transform .15s;transition:background .2s,transform .15s}
-button:active{-webkit-transform:scale(.96);transform:scale(.96);background:rgba(255,255,255,.25)}
-.wrap{padding:14px 16px}
-.top{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
-.top .grow{-webkit-box-flex:1;-webkit-flex:1;flex:1}
-#clock{font-size:64px;font-weight:200;letter-spacing:-1px;line-height:1}
-#date{font-size:18px;color:#b9c0e6;margin-top:4px}
-.pill{display:inline-block;padding:6px 12px;border-radius:20px;font-size:14px;margin-right:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)}
-.pill.live{color:#6bf0b8}.pill.demo{color:#ffc46b}
-.row{display:-webkit-box;display:-webkit-flex;display:flex;margin:14px -7px 0}
-.col{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 7px;min-width:0}
-.card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:16px;margin-bottom:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25);-webkit-transition:background .4s,border-color .4s;transition:background .4s,border-color .4s}
-.card.on{background:rgba(107,240,184,.12);border-color:rgba(107,240,184,.4)}
-h3{margin:0 0 10px;font-size:14px;font-weight:600;color:#b9c0e6;text-transform:uppercase;letter-spacing:1px}
-.big{font-size:52px;font-weight:200;line-height:1}
+button{cursor:pointer;border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:10px 14px;min-height:44px;
+  background:rgba(255,255,255,.1);background-image:-webkit-linear-gradient(top,rgba(255,255,255,.16),rgba(255,255,255,.05));background-image:linear-gradient(to bottom,rgba(255,255,255,.16),rgba(255,255,255,.05));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15);-webkit-transition:-webkit-transform .15s,background-color .25s,border-color .25s;transition:transform .15s,background-color .25s,border-color .25s}
+button:active{-webkit-transform:scale(.95);transform:scale(.95);background-color:rgba(255,255,255,.25)}
+svg{display:block}
+.wrap{padding:14px 16px 16px}
+.flex{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.grow{-webkit-box-flex:1;-webkit-flex:1;flex:1;min-width:0}
+.pill{display:inline-block;padding:8px 16px;border-radius:24px;font-size:15px;font-weight:500;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.08);background-image:-webkit-linear-gradient(top,rgba(255,255,255,.14),rgba(255,255,255,.04));background-image:linear-gradient(to bottom,rgba(255,255,255,.14),rgba(255,255,255,.04));margin-right:10px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;background:#ffb454;vertical-align:middle;position:relative;top:-1px}
+.ok-c{color:#6bf0b8}.ok-c .dot{background:#6bf0b8;-webkit-animation:pulse 2.4s ease-in-out infinite;animation:pulse 2.4s ease-in-out infinite}
+.warn-c{color:#ffc46b}
+.icon-btn{width:50px;height:50px;padding:0;border-radius:16px}
+.icon-btn svg{margin:auto}
+.cols{display:-webkit-box;display:-webkit-flex;display:flex;margin:14px -7px 0;-webkit-box-align:start;-webkit-align-items:flex-start;align-items:flex-start}
+.c1{width:31%}.c2{width:39%}.c3{width:30%}
+.col{padding:0 7px;-webkit-flex:none;flex:none}
+.card{position:relative;border-radius:26px;padding:16px 18px;margin-bottom:14px;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.07);background-image:-webkit-linear-gradient(-30deg,rgba(255,255,255,.16),rgba(255,255,255,.04) 60%);background-image:linear-gradient(120deg,rgba(255,255,255,.16),rgba(255,255,255,.04) 60%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 18px 40px rgba(0,0,0,.35);
+  -webkit-animation:rise .6s ease-out both;animation:rise .6s ease-out both}
+.cols .col:nth-child(2) .card{-webkit-animation-delay:.08s;animation-delay:.08s}
+.cols .col:nth-child(3) .card{-webkit-animation-delay:.16s;animation-delay:.16s}
+.clock-card{background-color:rgba(80,95,255,.35);background-image:-webkit-linear-gradient(-45deg,rgba(110,120,255,.6),rgba(60,70,190,.25));background-image:linear-gradient(135deg,rgba(110,120,255,.6),rgba(60,70,190,.25));padding:14px 22px 16px}
+#clock{font-size:84px;font-weight:200;letter-spacing:-2px;line-height:1.05;color:#fff;
+  background-image:-webkit-linear-gradient(left,#ffffff 30%,#d9c6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#date{font-size:20px;color:#d6dbff;margin-top:2px}
+h3{margin:0;font-size:13px;font-weight:600;color:#c3c9ee;text-transform:uppercase;letter-spacing:2px}
+.hd{margin-bottom:12px}
+.hd .sub{font-size:14px}
 .sub{color:#b9c0e6;font-size:14px}
-.line{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between}
-.days{display:-webkit-box;display:-webkit-flex;display:flex;margin-top:14px}
-.day{-webkit-box-flex:1;-webkit-flex:1;flex:1;text-align:center;padding:8px 4px;border-radius:14px;background:rgba(0,0,0,.18);margin-right:6px;font-size:14px}
+.wx-main{margin:4px 0 6px}
+#wx-i{width:64px;height:64px;margin-right:14px}
+#wx-t{font-size:56px;font-weight:300;line-height:1}
+#wx-d{font-size:16px;color:#e3e6ff}
+.days{display:-webkit-box;display:-webkit-flex;display:flex;margin-top:12px}
+.day{-webkit-box-flex:1;-webkit-flex:1;flex:1;text-align:center;padding:8px 2px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);margin-right:6px;font-size:14px;color:#c3c9ee}
 .day:last-child{margin-right:0}
-.day b{display:block;font-size:22px;font-weight:400;margin:4px 0}
-.sw{width:66px;height:38px;min-height:38px;border-radius:20px;padding:0;position:relative;background:rgba(255,255,255,.18)}
-.sw:after{content:"";position:absolute;top:4px;left:4px;width:28px;height:28px;border-radius:50%;background:#fff;-webkit-transition:left .2s;transition:left .2s}
-.sw.on{background:#2fbf71}.sw.on:after{left:32px}
-.apps{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;margin:12px -4px 0}
-.app{-webkit-box-flex:1;-webkit-flex:1 1 40%;flex:1 1 40%;margin:4px;text-align:left;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
-.app.cur{border-color:#6bf0b8;background:rgba(107,240,184,.18)}
-.logo{display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;border-radius:9px;font-weight:700;margin-right:10px;-webkit-flex:none;flex:none}
-.vol{display:-webkit-box;display:-webkit-flex;display:flex;margin-top:12px}
-.vol button{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin-right:8px}.vol button:last-child{margin-right:0}
-#now{font-size:20px;margin:6px 0 0}
+.day svg{margin:5px auto}
+.day b{color:#fff;font-weight:600}
+.tile{width:46px;height:46px;border-radius:14px;margin-right:12px;-webkit-flex:none;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.tile svg{margin:11px auto 0}
+.t-green{background:#2fbf71;background-image:-webkit-linear-gradient(-45deg,#3fdc8a,#14965a);background-image:linear-gradient(135deg,#3fdc8a,#14965a)}
+.t-pink{background:#d05fd0;background-image:-webkit-linear-gradient(-45deg,#ff6fa8,#8b6bff);background-image:linear-gradient(135deg,#ff6fa8,#8b6bff)}
+.t1{font-size:22px;font-weight:600}
+.sw{width:76px;height:44px;min-height:44px;border-radius:24px;padding:0;position:relative;background:rgba(255,255,255,.16);-webkit-flex:none;flex:none}
+.sw:after{content:"";position:absolute;top:5px;left:5px;width:32px;height:32px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);-webkit-transition:left .25s;transition:left .25s}
+.sw.on{background:#2fbf71;background-image:-webkit-linear-gradient(left,#25a862,#3fdc8a);background-image:linear-gradient(to right,#25a862,#3fdc8a);border-color:#3fdc8a}.sw.on:after{left:37px}
+.art{margin:14px 0;height:132px;border-radius:20px;padding:16px 20px;position:relative;overflow:hidden;
+  background:#1b2340;background-image:-webkit-linear-gradient(-45deg,#1b2340,#0d1430);background-image:linear-gradient(135deg,#1b2340,#0d1430);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);-webkit-transition:background-color .5s;transition:background-color .5s}
+.art .in{position:absolute;left:20px;bottom:16px;right:20px}
+.lbl{font-size:12px;letter-spacing:3px;font-weight:600;color:rgba(255,255,255,.75)}
+#now{font-size:32px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.apps{display:-webkit-box;display:-webkit-flex;display:flex;margin:0 -4px}
+.app{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 4px;padding:10px 4px;text-align:center;font-size:14px;font-weight:600;border-radius:18px}
+.app.cur{border-color:rgba(255,255,255,.55);background-color:rgba(255,255,255,.22)}
+.logo{display:block;width:36px;height:36px;line-height:36px;margin:0 auto 6px;border-radius:10px;font-weight:700;font-size:18px}
+.tv{margin-top:14px}
+.tv .grow .t1{font-size:19px}
+.vb{width:44px;padding:0;margin-left:6px;font-size:20px}
+.bar{width:54px;height:6px;border-radius:4px;background:rgba(255,255,255,.18);margin-left:6px;overflow:hidden}
+.bar i{display:block;height:6px;width:30%;background:#5b8cff;background-image:-webkit-linear-gradient(left,#5b8cff,#ff6fcf);background-image:linear-gradient(to right,#5b8cff,#ff6fcf);-webkit-transition:width .3s;transition:width .3s}
+.notif-card{background-color:rgba(190,60,200,.22);background-image:-webkit-linear-gradient(-45deg,rgba(160,70,220,.45),rgba(255,255,255,.04));background-image:linear-gradient(135deg,rgba(160,70,220,.45),rgba(255,255,255,.04))}
+.link{border:0;background:none;box-shadow:none;padding:0;min-height:0;color:#d6dbff;font-size:14px}
 ul{list-style:none;margin:0;padding:0}
-li{padding:8px 0;border-top:1px solid rgba(255,255,255,.08);font-size:15px}
-li:first-child{border-top:0}
-li span{color:#b9c0e6;font-size:13px;margin-right:8px}
-.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;background:#ffc46b}
-.dot.home{background:#6bf0b8}
+li{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.08);margin-bottom:8px;font-size:15px;-webkit-animation:rise .4s ease-out both;animation:rise .4s ease-out both}
+li span{color:#c3c9ee;font-size:13px;margin-right:10px}
+li.empty{background:none;color:#b9c0e6;padding-left:0}
+.soon{display:-webkit-box;display:-webkit-flex;display:flex;margin:0 -7px}
+.soon .card{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 7px;padding:12px 14px;opacity:.85}
+.soon .t1{font-size:16px}
+.tag{font-size:11px;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,.12);color:#c3c9ee}
+.t-orange{background-image:-webkit-linear-gradient(-45deg,#ffb454,#ff6f6f);background-image:linear-gradient(135deg,#ffb454,#ff6f6f)}
+.t-blue{background-image:-webkit-linear-gradient(-45deg,#5b8cff,#3b4fd0);background-image:linear-gradient(135deg,#5b8cff,#3b4fd0)}
+.t-grey{background-image:-webkit-linear-gradient(-45deg,#7d8bb3,#4a5578);background-image:linear-gradient(135deg,#7d8bb3,#4a5578)}
+.t-teal{background-image:-webkit-linear-gradient(-45deg,#00c8ff,#16a085);background-image:linear-gradient(135deg,#00c8ff,#16a085)}
+@-webkit-keyframes rise{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@-webkit-keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 /* réglages */
-#settings{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(5,8,24,.92);overflow-y:auto;padding:20px;display:none}
+#settings{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(5,8,24,.9);overflow-y:auto;padding:20px;display:none;z-index:5}
 #settings.show{display:block}
-.sheet{max-width:640px;margin:0 auto;background:#161c45;border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:20px}
+.sheet{max-width:640px;margin:0 auto;border-radius:26px;padding:22px;border:1px solid rgba(255,255,255,.2);background:#171d4a;background-image:-webkit-linear-gradient(-45deg,#232a66,#141838);background-image:linear-gradient(135deg,#232a66,#141838);box-shadow:0 30px 60px rgba(0,0,0,.5)}
+.sheet h3{margin:16px 0 10px}
+.line{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:13px;font-weight:600;color:#b9c0e6;margin-bottom:6px}
-.field input,.field select{width:100%;min-height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:#0b1026;padding:0 12px}
+.field input,.field select{width:100%;min-height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.3);padding:0 12px}
+.field select option{background:#141838}
 .help{font-size:13px;color:#b9c0e6;line-height:1.4}
 .btns{text-align:right}.btns button{margin:6px 0 0 6px}
-.primary{background:#5b6bff;border-color:#5b6bff}
+.primary{border-color:transparent;background:#5b6bff;background-image:-webkit-linear-gradient(left,#00c8ff,#8b6bff 60%,#ff6fcf);background-image:linear-gradient(to right,#00c8ff,#8b6bff 60%,#ff6fcf);font-weight:600}
 #st-status{display:block;margin:6px 0;font-size:14px;min-height:20px}
 .ok{color:#6bf0b8}.err{color:#ff8a8a}
 #toast{position:fixed;left:50%;bottom:24px;width:420px;margin-left:-210px;text-align:center;background:rgba(20,26,70,.95);border:1px solid rgba(255,255,255,.2);
-  border-radius:16px;padding:12px;opacity:0;-webkit-transition:opacity .3s;transition:opacity .3s;pointer-events:none}
-#toast.show{opacity:1}
-@media (max-width:760px){.row{display:block}#clock{font-size:48px}}
+  border-radius:18px;padding:12px;opacity:0;-webkit-transform:translateY(10px);transform:translateY(10px);-webkit-transition:opacity .3s,-webkit-transform .3s;transition:opacity .3s,transform .3s;pointer-events:none;z-index:6;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#toast.show{opacity:1;-webkit-transform:none;transform:none}
+@media (max-height:640px){#xb-sub{display:none}#clock{font-size:68px}.art{height:104px}#now{font-size:26px}.wrap{padding-top:10px}}
+@media (max-width:760px){.cols{display:block}.c1,.c2,.c3{width:auto}.soon{display:block}.soon .card{margin:0 7px 10px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="top">
-    <div class="grow"><div id="clock">--:--</div><div id="date"></div></div>
-    <span class="pill demo" id="mode">Mode démo</span>
-    <button id="open-st">Réglages</button>
+  <div class="flex">
+    <span class="pill" id="pr-pill"><span class="dot" id="pr-dot"></span><span id="pr-txt">Présence inconnue</span></span>
+    <div class="grow"></div>
+    <span class="pill warn-c" id="mode"><span class="dot"></span><span id="mode-txt">Mode démo</span></span>
+    <button class="icon-btn" id="open-st" aria-label="Réglages"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></button>
   </div>
 
-  <div class="row">
-    <div class="col">
+  <div class="cols">
+    <div class="col c1">
+      <div class="card clock-card"><div id="clock">--:--</div><div id="date"></div></div>
       <div class="card">
-        <h3>Météo</h3>
-        <div class="line"><div class="big" id="wx-t">--°</div><div style="font-size:44px" id="wx-i"></div></div>
-        <div id="wx-d" style="font-size:18px;margin-top:6px">En attente de Home Assistant</div>
+        <div class="line hd"><h3>Météo</h3><span class="sub">Maison</span></div>
+        <div class="flex wx-main"><div id="wx-i"></div><div><div id="wx-t">--°</div><div id="wx-d">En attente</div></div></div>
         <div class="sub" id="wx-x"></div>
         <div class="days" id="wx-days"></div>
       </div>
-      <div class="card">
-        <h3>Présence</h3>
-        <div><span class="dot" id="pr-dot"></span><span id="pr-txt">Inconnue</span></div>
-      </div>
     </div>
 
-    <div class="col">
+    <div class="col c2">
       <div class="card" id="c-xbox">
-        <div class="line"><h3 style="margin:0">Xbox et télé</h3><button class="sw" id="xb-sw" aria-label="Xbox"></button></div>
-        <div id="now">En veille</div>
-        <div class="sub" id="xb-sub">La télé s'allume avec la Xbox</div>
+        <div class="flex"><span class="tile t-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/></svg></span><div class="grow"><div class="t1">Xbox</div><div class="sub" id="xb-state">En veille</div></div><button class="sw" id="xb-sw" aria-label="Xbox"></button></div>
+        <div class="art" id="art"><div class="in"><div class="lbl" id="art-lbl">EN VEILLE</div><div id="now">Touchez une appli</div></div></div>
         <div class="apps" id="apps"></div>
-        <div class="vol"><button id="v-down">Son −</button><button id="v-mute">Muet</button><button id="v-up">Son +</button></div>
+        <div class="flex tv"><span class="tile t-pink"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M9 21h6M12 17v4"/></svg></span><div class="grow"><div class="t1">Télé</div><div class="sub" id="xb-sub">S'allume avec la Xbox</div></div>
+          <button class="vb" id="v-down" aria-label="Moins fort">−</button><span class="bar"><i id="vol-bar"></i></span><button class="vb" id="v-up" aria-label="Plus fort">+</button><button class="vb" id="v-mute" aria-label="Muet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:auto"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg></button></div>
       </div>
     </div>
 
-    <div class="col">
-      <div class="card">
-        <h3>Notifications</h3>
+    <div class="col c3">
+      <div class="card notif-card">
+        <div class="line hd"><h3>Notifications</h3><button class="link" id="n-clear">Tout effacer</button></div>
         <ul id="notifs"></ul>
       </div>
     </div>
+  </div>
+
+  <div class="soon">
+    <div class="card flex"><span class="tile t-orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div class="grow"><div class="t1">Lumières Hue</div><div class="sub">3 ampoules et ruban</div></div><span class="tag">Bientôt</span></div>
+    <div class="card flex"><span class="tile t-blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h8"/></svg></span><div class="grow"><div class="t1">Volets</div><div class="sub">Somfy</div></div><span class="tag">Bientôt</span></div>
+    <div class="card flex"><span class="tile t-grey"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-5 9 5v12"/><path d="M7 21v-8h10v8M7 16h10"/></svg></span><div class="grow"><div class="t1">Garage</div><div class="sub">Somfy</div></div><span class="tag">Bientôt</span></div>
+    <div class="card flex"><span class="tile t-teal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/></svg></span><div class="grow"><div class="t1">Température</div><div class="sub">Capteur de la chambre</div></div><span class="tag">Bientôt</span></div>
   </div>
 </div>
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 1</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 2</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-url">Adresse de Home Assistant</label><input id="st-url" type="url" autocomplete="off" spellcheck="false"></div>
     <h3 style="margin-top:18px">Se connecter (le plus simple)</h3>
@@ -158,9 +209,10 @@ li span{color:#b9c0e6;font-size:13px;margin-right:8px}
   var notifs = store.get('notifs', []) || [];
   function renderNotifs(){
     var h = '';
-    each(notifs.slice(0, 8), function(n){ h += '<li><span>' + esc(n.t) + '</span>' + esc(n.txt) + '</li>'; });
-    $('notifs').innerHTML = h || '<li class="sub">Rien de nouveau</li>';
+    each(notifs.slice(0, 6), function(n){ h += '<li><span>' + esc(n.t) + '</span>' + esc(n.txt) + '</li>'; });
+    $('notifs').innerHTML = h || '<li class="empty">Rien de nouveau</li>';
   }
+  $('n-clear').onclick = function(){ notifs = []; store.set('notifs', notifs); renderNotifs(); };
   function notify(txt){ notifs.unshift({t: hm(new Date()), txt: txt}); notifs = notifs.slice(0, 30); store.set('notifs', notifs); renderNotifs(); }
 
   /* ---------- Home Assistant (XMLHttpRequest) ---------- */
@@ -225,14 +277,27 @@ li span{color:#b9c0e6;font-size:13px;margin-right:8px}
   function tick(){ var d = new Date(); $('clock').textContent = hm(d); $('date').textContent = JOURS[d.getDay()].charAt(0).toUpperCase() + JOURS[d.getDay()].slice(1) + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()]; }
 
   /* ---------- météo (entité weather de Home Assistant) ---------- */
-  var WX = {'clear-night':['Nuit claire','☾'], cloudy:['Nuageux','☁'], exceptional:['Exceptionnel','!'], fog:['Brouillard','≡'], hail:['Grêle','☂'],
-    lightning:['Orage','ϟ'], 'lightning-rainy':['Orage et pluie','ϟ'], partlycloudy:['Éclaircies','⛅'], pouring:['Averses','☂'], rainy:['Pluie','☂'],
-    snowy:['Neige','❄'], 'snowy-rainy':['Pluie et neige','❄'], sunny:['Ensoleillé','☀'], windy:['Venteux','~'], 'windy-variant':['Venteux','~']};
+  var WX = {'clear-night':['Nuit claire','moon'], cloudy:['Nuageux','cloud'], exceptional:['Exceptionnel','cloud'], fog:['Brouillard','fog'], hail:['Grêle','rain'],
+    lightning:['Orage','storm'], 'lightning-rainy':['Orage et pluie','storm'], partlycloudy:['Partiellement nuageux','partly'], pouring:['Averses','rain'], rainy:['Pluie','rain'],
+    snowy:['Neige','snow'], 'snowy-rainy':['Pluie et neige','snow'], sunny:['Ensoleillé','sun'], windy:['Venteux','wind'], 'windy-variant':['Venteux','wind']};
+  var CL = '<path stroke="#fff" d="M7 18h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.5 11.5 3.3 3.3 0 0 0 7 18z"/>';
+  var ICO = {
+    sun: '<circle cx="12" cy="12" r="4" stroke="#ffc46b"/><path stroke="#ffc46b" d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>',
+    moon: '<path stroke="#d9c6ff" d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    cloud: CL,
+    partly: '<path stroke="#ffc46b" d="M8 3v1.5M3.5 5.5l1 1M2 10h1.5M12.5 5.5l-1 1"/><path stroke="#ffc46b" d="M5.5 11.5A3.5 3.5 0 0 1 11 8"/>' + CL,
+    rain: CL.replace('18h10', '15h10').replace('11.5 3.3 3.3 0 0 0 7 18z', '8.5 3.3 3.3 0 0 0 7 15z').replace('a4 4 0 0 0 .5-8', 'a4 4 0 0 0 .5-8') + '<path stroke="#7cc8ff" d="M9 18l-1 3M13 18l-1 3M17 18l-1 3"/>',
+    snow: CL + '<path stroke="#cfe8ff" d="M9 21h.01M13 21h.01M17 21h.01"/>',
+    storm: CL + '<path stroke="#ffc46b" d="M12 14l-2 4h4l-2 4"/>',
+    fog: '<path stroke="#c3c9ee" d="M4 10h16M3 14h18M6 18h12"/>',
+    wind: '<path stroke="#c3c9ee" d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h8"/>'
+  };
+  function wxSvg(k, n){ return '<svg width="' + n + '" height="' + n + '" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + (ICO[k] || CL) + '</svg>'; }
   var wxEntity = null, wxLast = 0;
   function showWeather(e){
     var a = e.attributes || {}, w = WX[e.state] || [e.state, ''];
     $('wx-t').textContent = (typeof a.temperature === 'number' ? Math.round(a.temperature) : '--') + '°';
-    $('wx-i').textContent = w[1]; $('wx-d').textContent = w[0];
+    $('wx-i').innerHTML = wxSvg(w[1], 64); $('wx-d').textContent = w[0];
     var x = [];
     if (typeof a.humidity === 'number') x.push('Humidité ' + Math.round(a.humidity) + ' %');
     if (typeof a.wind_speed === 'number') x.push('Vent ' + Math.round(a.wind_speed) + ' ' + (a.wind_speed_unit || 'km/h'));
@@ -247,8 +312,9 @@ li span{color:#b9c0e6;font-size:13px;margin-right:8px}
       var h = '';
       each(f.slice(0, 4), function(d, i){
         var dt = new Date(d.datetime), w = WX[d.condition] || ['', ''];
-        h += '<div class="day">' + (i === 0 ? 'Auj.' : JOURS[dt.getDay()].slice(0, 3) + '.') + '<b>' + w[1] + '</b>' + Math.round(d.temperature) + '°' +
-          (typeof d.templow === 'number' ? ' <span class="sub">' + Math.round(d.templow) + '°</span>' : '') + '</div>';
+        var jr = JOURS[dt.getDay()];
+        h += '<div class="day">' + (i === 0 ? 'Auj.' : jr.charAt(0).toUpperCase() + jr.slice(1, 3) + '.') + wxSvg(w[1], 26) + '<b>' + Math.round(d.temperature) + '°</b>' +
+          (typeof d.templow === 'number' ? ' ' + Math.round(d.templow) + '°' : '') + '</div>';
       });
       $('wx-days').innerHTML = h;
     });
@@ -256,21 +322,26 @@ li span{color:#b9c0e6;font-size:13px;margin-right:8px}
 
   /* ---------- Xbox ---------- */
   var APPS = [
-    {id:'YouTube', name:'YouTube', bg:'#ff0033', fg:'#fff', l:'▶', re:/youtube/i},
-    {id:'Netflix', name:'Netflix', bg:'#000', fg:'#e50914', l:'N', re:/netflix/i},
-    {id:'Spotify', name:'Spotify', bg:'#1db954', fg:'#000', l:'♪', re:/spotify/i},
-    {id:'Home', name:'Accueil', bg:'#107c10', fg:'#fff', l:'X', re:/^(home|accueil)/i}
+    {id:'YouTube', name:'YouTube', bg:'#ff0033', fg:'#fff', l:'▶', re:/youtube/i, art:['#ff0033','#5a0016']},
+    {id:'Netflix', name:'Netflix', bg:'#000', fg:'#e50914', l:'N', re:/netflix/i, art:['#3a0005','#0a0a0a']},
+    {id:'Spotify', name:'Spotify', bg:'#1db954', fg:'#000', l:'♪', re:/spotify/i, art:['#1db954','#0b3d1f']},
+    {id:'Home', name:'Accueil Xbox', bg:'#107c10', fg:'#fff', l:'X', re:/^(home|accueil)/i, art:['#107c10','#0b2614']}
   ];
   var s = {xbox:false, app:null, title:'', vol:30, muted:false, home:null};
   var srcList = [], xApps = null;
-  (function(){ var h = ''; each(APPS, function(a){ h += '<button class="app" data-app="' + a.id + '"><span class="logo" style="background:' + a.bg + ';color:' + a.fg + '">' + a.l + '</span>' + a.name + '</button>'; }); $('apps').innerHTML = h; })();
+  (function(){ var h = ''; each(APPS, function(a){ h += '<button class="app" data-app="' + a.id + '"><span class="logo" style="background:' + a.bg + ';color:' + a.fg + '">' + a.l + '</span>' + a.name.replace(' Xbox', '') + '</button>'; }); $('apps').innerHTML = h; })();
   function appOf(src){ if (!src) return null; var a = find(APPS, function(x){ return x.re.test(src); }); return a ? a.id : src; }
   function renderXbox(){
     $('xb-sw').className = 'sw' + (s.xbox ? ' on' : '');
-    $('c-xbox').className = 'card' + (s.xbox ? ' on' : '');
-    var a = find(APPS, function(x){ return x.id === s.app; });
-    $('now').textContent = !s.xbox ? 'En veille' : (s.title || (a ? a.name : 'Allumée'));
-    $('xb-sub').textContent = s.xbox ? 'Télé allumée par la Xbox · son ' + (s.muted ? 'coupé' : s.vol + ' %') : "La télé s'allume avec la Xbox";
+    var a = find(APPS, function(x){ return x.id === s.app; }), g = s.xbox ? (a ? a.art : ['#107c10', '#0b2614']) : ['#1b2340', '#0d1430'], art = $('art');
+    art.style.backgroundColor = g[0];
+    art.style.backgroundImage = '-webkit-linear-gradient(-45deg,' + g[0] + ',' + g[1] + ')';
+    art.style.backgroundImage = 'linear-gradient(135deg,' + g[0] + ',' + g[1] + ')';
+    $('art-lbl').textContent = s.xbox ? (a || s.title ? 'EN COURS' : 'ALLUMÉE') : 'EN VEILLE';
+    $('now').textContent = !s.xbox ? 'Touchez une appli' : (s.title || (a ? a.name : 'Accueil Xbox'));
+    $('xb-state').textContent = s.xbox ? 'Allumée' : 'En veille';
+    $('xb-sub').textContent = s.xbox ? 'Allumée par la Xbox' : "S'allume avec la Xbox";
+    $('vol-bar').style.width = (s.muted ? 0 : s.vol) + '%';
     each(document.querySelectorAll('[data-app]'), function(b){ b.className = 'app' + (s.xbox && b.getAttribute('data-app') === s.app ? ' cur' : ''); });
   }
   function needLive(){ if (!live){ toast('Mode démo : branchez Home Assistant dans Réglages'); return false; } if (!cfg.xbox){ toast('Choisissez la Xbox dans Réglages'); return false; } return true; }
@@ -338,12 +409,12 @@ li span{color:#b9c0e6;font-size:13px;margin-right:8px}
 
   /* ---------- présence ---------- */
   function renderPresence(){
-    $('pr-dot').className = 'dot' + (s.home ? ' home' : '');
-    $('pr-txt').textContent = s.home === null ? 'Inconnue (choisissez-la dans Réglages)' : (s.home ? 'iPhone à la maison' : 'iPhone parti');
+    $('pr-pill').className = 'pill' + (s.home === null ? '' : s.home ? ' ok-c' : ' warn-c');
+    $('pr-txt').textContent = s.home === null ? 'Présence inconnue' : (s.home ? 'iPhone à la maison' : 'iPhone parti');
   }
 
   /* ---------- synchro ---------- */
-  function setMode(){ $('mode').className = 'pill ' + (live ? 'live' : 'demo'); $('mode').textContent = live ? 'Connecté' : 'Mode démo'; }
+  function setMode(){ $('mode').className = 'pill ' + (live ? 'ok-c' : 'warn-c'); $('mode-txt').textContent = live ? 'Connecté' : 'Mode démo'; }
   function poll(){
     if (!cfg.url || !cfg.token || badKey){ live = false; setMode(); return; }
     req('GET', '/api/states', null, function(err, states){
