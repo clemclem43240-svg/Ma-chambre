@@ -92,6 +92,9 @@ li.empty{background:none;color:#b9c0e6;padding-left:0}
 .t-orange{background-image:-webkit-linear-gradient(-45deg,#ffb454,#ff6f6f);background-image:linear-gradient(135deg,#ffb454,#ff6f6f)}
 .t-blue{background-image:-webkit-linear-gradient(-45deg,#5b8cff,#3b4fd0);background-image:linear-gradient(135deg,#5b8cff,#3b4fd0)}
 .t-grey{background-image:-webkit-linear-gradient(-45deg,#7d8bb3,#4a5578);background-image:linear-gradient(135deg,#7d8bb3,#4a5578)}
+.t-night{background-image:-webkit-linear-gradient(-45deg,#3b3f9e,#8b6bff);background-image:linear-gradient(135deg,#3b3f9e,#8b6bff)}
+.scene{text-align:left;color:#fff;font-size:16px;min-height:0}
+.scene.on{border-color:rgba(255,255,255,.7);box-shadow:0 0 0 2px rgba(255,255,255,.35),0 18px 40px rgba(0,0,0,.35)}
 .t-teal{background-image:-webkit-linear-gradient(-45deg,#00c8ff,#16a085);background-image:linear-gradient(135deg,#00c8ff,#16a085)}
 @-webkit-keyframes rise{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -237,13 +240,13 @@ body.th-forza.fz-off .wrap{visibility:visible}
       <div class="fz-np"><div class="fz-cv" id="fz-cv">FH</div><b id="fz-title">Forza Horizon</b><small id="fz-dur">En jeu</small></div>
       <div class="fz-r">Lumières<em id="fz-li">Bientôt</em></div>
       <div class="fz-r">Xbox<em id="fz-xb">Allumée</em></div>
-      <div class="fz-r">Garage<em>Bientôt</em></div>
+      <div class="fz-r">Ambiance<em id="fz-sc">Aucune</em></div>
     </div>
     <div id="fz-boot"><svg viewBox="0 0 300 96" width="150" height="48" style="filter:drop-shadow(0 0 4px rgba(255,90,40,.9))"><path d="M8 70 L14 55 Q38 47 84 42 L126 22 Q156 12 196 17 L240 38 Q278 43 292 54 L294 68 L272 70 A22 22 0 0 0 228 70 L102 70 A22 22 0 0 0 58 70 Z" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round"/><path d="M98 42 L130 27 Q158 19 190 22 L222 40 Z" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/><circle cx="80" cy="70" r="16" fill="none" stroke="#fff" stroke-width="4"/><circle cx="250" cy="70" r="16" fill="none" stroke="#fff" stroke-width="4"/><path d="M20 88 H280" stroke="#ff5a2a" stroke-width="3" opacity=".8"/></svg><div id="fz-btxt"></div></div>
   </div>
   <div class="fz-bot"><span id="fz-temp">--°</span><span id="fz-hm">--:--</span></div>
   <div class="fz-wheel">
-    <button class="fz-k" id="k-li"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>Lumières</button><button class="fz-k" id="k-xb"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7 11v3M5.5 12.5h3"/></svg>Xbox</button><button class="fz-k" id="k-apps"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Tableau</button><button class="fz-k" id="k-gar"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-5 9 5v12"/><path d="M7 21v-8h10v8M7 16h10"/></svg>Garage</button><button class="fz-k" id="k-st"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Réglages</button>
+    <button class="fz-k" id="k-li"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>Lumières</button><button class="fz-k" id="k-xb"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7 11v3M5.5 12.5h3"/></svg>Xbox</button><button class="fz-k" id="k-apps"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Tableau</button><button class="fz-k" id="k-nuit"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>Nuit</button><button class="fz-k" id="k-st"><i></i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Réglages</button>
   </div>
 </div></div>
 <div class="wrap">
@@ -284,16 +287,16 @@ body.th-forza.fz-off .wrap{visibility:visible}
   </div>
 
   <div class="soon">
-    <div class="card flex"><span class="tile t-orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div class="grow"><div class="t1">Lumières Hue</div><div class="sub">3 ampoules et ruban</div></div><span class="tag">Bientôt</span></div>
-    <div class="card flex"><span class="tile t-blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h8"/></svg></span><div class="grow"><div class="t1">Volets</div><div class="sub">Somfy</div></div><span class="tag">Bientôt</span></div>
-    <div class="card flex"><span class="tile t-grey"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-5 9 5v12"/><path d="M7 21v-8h10v8M7 16h10"/></svg></span><div class="grow"><div class="t1">Garage</div><div class="sub">Somfy</div></div><span class="tag">Bientôt</span></div>
-    <div class="card flex"><span class="tile t-teal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/></svg></span><div class="grow"><div class="t1">Température</div><div class="sub">Capteur de la chambre</div></div><span class="tag">Bientôt</span></div>
+    <button class="card flex scene" data-sc="jeu"><span class="tile t-blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/></svg></span><div class="grow"><div class="t1">Jeu</div><div class="sub">Xbox, ruban bleu</div></div></button>
+    <button class="card flex scene" data-sc="film"><span class="tile t-orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5v4M16 5v4"/></svg></span><div class="grow"><div class="t1">Film</div><div class="sub">Netflix, lumière tamisée</div></div></button>
+    <button class="card flex scene" data-sc="nuit"><span class="tile t-night"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span><div class="grow"><div class="t1">Nuit</div><div class="sub">Tout s'éteint</div></div></button>
+    <button class="card flex scene" data-sc="reveil"><span class="tile t-teal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M5 8l2 2M19 8l-2 2M3 16h18M7 16a5 5 0 0 1 10 0M8 20h8"/></svg></span><div class="grow"><div class="t1">Réveil</div><div class="sub">Lumière douce</div></div></button>
   </div>
 </div>
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 6</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 7</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
     <div class="field"><label for="st-anim">Animations des thèmes</label><select id="st-anim"><option value="1">Oui</option><option value="0">Non (si la tablette rame)</option></select></div>
@@ -777,7 +780,19 @@ body.th-forza.fz-off .wrap{visibility:visible}
     later(3400, function(){ fz.className = ''; fzBooting = false; fzRender(); });
   }
   $('k-li').onclick = function(){ toast('Lumières : bientôt, quand le Hue sera installé'); };
-  $('k-gar').onclick = function(){ toast('Garage : bientôt'); };
+  /* ambiances : pilotent déjà la Xbox, les lumières suivront avec le Hue */
+  var SCN = {jeu:'Jeu', film:'Film', nuit:'Nuit', reveil:'Réveil'}, scene = store.get('scene', null);
+  function renderScenes(){ each(document.querySelectorAll('[data-sc]'), function(b){ b.className = 'card flex scene' + (b.getAttribute('data-sc') === scene ? ' on' : ''); }); var e = $('fz-sc'); if (e) e.textContent = scene ? SCN[scene] : 'Aucune'; }
+  function runScene(k){
+    scene = k; store.set('scene', k); renderScenes();
+    if (k === 'jeu' && !s.xbox) $('xb-sw').onclick();
+    if (k === 'film') launch('Netflix');
+    if (k === 'nuit' && s.xbox) $('xb-sw').onclick();
+    toast('Ambiance ' + SCN[k] + ' · les lumières suivront avec le Hue');
+  }
+  each(document.querySelectorAll('[data-sc]'), function(b){ b.onclick = function(){ runScene(b.getAttribute('data-sc')); }; });
+  $('k-nuit').onclick = function(){ runScene('nuit'); };
+  renderScenes();
   $('k-st').onclick = function(){ openSettings(); };
   $('k-xb').onclick = function(){ $('xb-sw').onclick(); };
   $('k-apps').onclick = function(){ fzOff = true; bodyCls(); toast("Touchez l'affiche de la Xbox pour revenir au combiné"); };
