@@ -301,7 +301,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 10</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 11</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
     <div class="field"><label for="st-anim">Animations des thèmes</label><select id="st-anim"><option value="1">Oui</option><option value="0">Non (si la tablette rame)</option></select></div>
@@ -443,11 +443,8 @@ body.th-forza.fz-off .wrap{visibility:visible}
     $('wx-x').textContent = x.join(' · ');
     if (Date.now() - wxLast > 30 * 60 * 1000){ wxLast = Date.now(); loadForecast(e.entity_id); }
   }
-  /* Met.no ne donne le jour même que pour les heures qui restent (le soir : 1° / 1°) :
-     pour les mini/maxi des jours, on prend Open-Meteo, qui compte la journée entière */
   var homeLL = null, omDaysOnly = false;
   function loadForecast(id){
-    if (homeLL && !/m[ée]t[ée]o.?france/i.test((wxEntity && wxEntity.attributes || {}).attribution || '')){ omDaysOnly = true; omLast = 0; omWeather(homeLL[0], homeLL[1]); return; }
     req('POST', '/api/services/weather/get_forecasts?return_response', {entity_id: id, type: 'daily'}, function(err, j){
       if (err || !j) return;
       var r = j.service_response || j, f = r[id] && r[id].forecast;
