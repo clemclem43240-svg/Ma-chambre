@@ -336,7 +336,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
       <span class="status" id="st-status"></span>
       <div class="btns"><button class="btn" id="st-forget">Oublier</button><button class="btn" id="st-test">Tester</button><button class="btn primary" id="st-save">Enregistrer</button></div>
     </div>
-    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 6 (25/11)</p>
+    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 7 (25/11)</p>
   </section>
 </div>
 
@@ -638,11 +638,13 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
       const was=live; live=true; setMode(); if(!was) notify('Connecté à Home Assistant');
       const z=by['zone.home']; if(z&&z.attributes&&typeof z.attributes.latitude==='number'&&!haHome){ haHome={lat:z.attributes.latitude,lon:z.attributes.longitude,name:'Maison'}; if(!cfg.city) loadWeather(); }
       const x=by[cfg.xbox];
+      /* l'intégration Xbox met le jeu en cours dans le capteur « Lecture en cours » du profil, pas dans la console */
+      const npE=states.find(e=>/^sensor\..*_(lecture_en_cours|now_playing)$/.test(e.entity_id)&&!['unknown','unavailable',''].includes(e.state)); const np=npE?npE.state:'';
       if(x){ const on=!['off','unavailable','standby','unknown'].includes(x.state); if(was&&on!==s.xbox) notify(on?'Xbox allumée':'Xbox éteinte'); s.xbox=on;
         const a=x.attributes||{}; srcList=a.source_list||[]; s.app=appOf(a.source); if(typeof a.volume_level==='number') s.vol=Math.round(a.volume_level*100); s.muted=!!a.is_volume_muted;
         const pic=a.entity_picture?(a.entity_picture.startsWith('http')?a.entity_picture:cfg.url.replace(/\/+$/,'')+a.entity_picture):null;
-        liveMedia= on&&(a.media_title||a.source) ? {title:a.media_title||a.source, picture:pic} : null;
-        $('xb-raw').textContent='La Xbox dit : état « '+x.state+' »'+(a.source?', source « '+a.source+' »':'')+', titre « '+(a.media_title||'aucun')+' »'+(a.app_id?', app_id '+a.app_id:'')+(a.media_content_id?', contenu '+a.media_content_id:'')+' (lu à '+hm(new Date())+')'; }
+        liveMedia= on&&(a.media_title||np||a.source) ? {title:a.media_title||np||a.source, picture:pic} : null;
+        $('xb-raw').textContent='La Xbox dit : état « '+x.state+' »'+(a.source?', source « '+a.source+' »':'')+', titre « '+(a.media_title||'aucun')+' »'+(a.app_id?', app_id '+a.app_id:'')+(a.media_content_id?', contenu '+a.media_content_id:'')+', profil « '+(np||'rien')+' »'+' (lu à '+hm(new Date())+')'; }
       if(cfg.person&&by[cfg.person]){ const home=by[cfg.person].state==='home'; if(home!==s.home) notify(home?'Tu es rentré à la maison':'Tu es parti de la maison'); s.home=home; renderPresence(); }
       s.lights.forEach(l=>{ const e=cfg[l.id]&&by[cfg[l.id]]; if(!e) return; l.on=e.state==='on'; const a=e.attributes||{}; if(a.brightness) l.lvl=Math.round(a.brightness/2.55);
         if(a.rgb_color) l.color='#'+a.rgb_color.map(v=>pad(v.toString(16))).join(''); });
