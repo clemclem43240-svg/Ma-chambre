@@ -13,6 +13,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;500;600&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js"></script>
 <style>
 /* Appli téléphone, portrait : une colonne de cartes en verre dépoli sur fond dégradé, barre d'onglets en bas (5 onglets). Centrée à 460px sur grand écran. */
 :root{
@@ -168,7 +170,7 @@ nav.tabs a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.16)}
 .alert.show{transform:translate(-50%,0)}
 .alert .txt{flex:1;min-width:0} .alert b{font-family:var(--f-display);display:block}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-/* ---------- thèmes selon la Xbox (sans animation sur le téléphone) ---------- */
+/* ---------- thèmes selon la Xbox (les mouvements sont dans motion.css) ---------- */
 #th-bg,#th-fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;display:none}
 #th-bg{z-index:0;background-size:cover;background-position:center bottom}#th-fx{z-index:2}
 .dk{position:absolute}.dk img,.dk svg{display:block;width:100%}
@@ -321,6 +323,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   <section class="view" id="v-reglages" hidden>
     <div class="card">
       <div class="field"><label for="st-city">Ville pour la météo</label><input id="st-city" type="text" placeholder="Vide = position du téléphone" autocomplete="off"></div>
+      <div class="field"><label for="st-anim">Animations</label><select id="st-anim"><option value="1">Oui (le plus beau)</option><option value="0">Non</option></select></div>
       <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
       <p class="help" id="xb-raw">La Xbox dit : rien pour l'instant (Home Assistant pas connecté)</p>
     </div>
@@ -337,7 +340,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
       <span class="status" id="st-status"></span>
       <div class="btns"><button class="btn" id="st-forget">Oublier</button><button class="btn" id="st-test">Tester</button><button class="btn primary" id="st-save">Enregistrer</button></div>
     </div>
-    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 10 (25/11)</p>
+    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 11 (26/11)</p>
   </section>
 </div>
 
@@ -393,7 +396,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   let reminders = store.get('reminders', [{t:'23:00', txt:'Arrêter de jouer', on:true}]);
   let notifs = store.get('notifs', []);
   const saveLists = () => { store.set('agenda', agenda); store.set('reminders', reminders); store.set('notifs', notifs.slice(0,30)); };
-  function notify(txt){ notifs.unshift({t:hm(new Date()), txt}); notifs = notifs.slice(0,30); saveLists(); renderNotifs(); }
+  function notify(txt){ notifs.unshift({t:hm(new Date()), txt}); notifs = notifs.slice(0,30); saveLists(); renderNotifs(); if(window.Motion) Motion.newNotif(); }
   let at; function showAlert(title, text){ $('alert-title').textContent=title; $('alert-text').textContent=text; $('alert').classList.add('show'); clearTimeout(at); at=setTimeout(()=>$('alert').classList.remove('show'),60000);
     try { navigator.vibrate && navigator.vibrate([200,100,200]); } catch(e){} }
   $('alert-ok').onclick = () => $('alert').classList.remove('show');
@@ -420,7 +423,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
 
   /* ---------- horloge, agenda, rappels ---------- */
   let lastMin='';
-  function tick(){ const d=new Date(), m=hm(d); $('clock').textContent=m;
+  function tick(){ const d=new Date(), m=hm(d); if(window.Motion) Motion.clock($('clock'),m); else $('clock').textContent=m;
     $('date').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
     if (m!==lastMin){ lastMin=m; reminders.forEach(r=>{ if(r.on&&r.t===m){ showAlert('Rappel',r.txt); notify('Rappel : '+r.txt);} }); agenda.forEach(a=>{ if(a.t===m) showAlert('Agenda',a.txt); }); renderAgenda(); } }
   function renderAgenda(){
@@ -450,7 +453,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     rain:'<path d="M7 15h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.5 8.5 3.3 3.3 0 0 0 7 15z"/><path style="stroke:#7cc8ff" d="M9 18l-1 3M13 18l-1 3M17 18l-1 3"/>',
     snow:'<path d="M7 14h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.5 7.5 3.3 3.3 0 0 0 7 14z"/><path style="stroke:#cfe8ff" d="M9 18h.01M13 18h.01M17 18h.01M11 21h.01M15 21h.01"/>',
     storm:'<path d="M7 14h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.5 7.5 3.3 3.3 0 0 0 7 14z"/><path style="stroke:#ffc46b" d="M12 14l-2 4h4l-2 4"/>'};
-  const icon=(c,n)=>'<svg class="svg" width="'+n+'" height="'+n+'" viewBox="0 0 24 24">'+ICONS[(WMO[c]||['','cloud'])[1]]+'</svg>';
+  const icon=(c,n)=>{ const k=(WMO[c]||['','cloud'])[1]; return '<svg class="svg" width="'+n+'" height="'+n+'" viewBox="0 0 24 24">'+((window.Motion&&Motion.wx(k))||ICONS[k])+'</svg>'; };
   function position(){ return new Promise(res=>{ if(!navigator.geolocation) return res(null); navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lon:p.coords.longitude,name:'Ma position'}),()=>res(null),{timeout:8000,maximumAge:3600000}); }); }
   async function loadWeather(){
     try {
@@ -577,7 +580,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   };
   function setL(m){ s.lights.forEach(l=>{ const v=m[l.id]; if(!v) return; l.on=v[0]; if(v[1]!=null) l.lvl=v[1]; if(v[2]) l.color=v[2]; pushLight(l); }); }
   $('scenes').innerHTML=Object.entries(SCENES).map(([k,v])=>'<button class="card scene" data-scene="'+k+'" style="--c:'+v.c+'"><span class="ic" style="--g:'+v.g+'"><svg width="22" height="22" viewBox="0 0 24 24">'+v.i+'</svg></span><span><b>'+v.label+'</b><br><span class="sub">'+v.desc+'</span></span></button>').join('');
-  document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>{ const k=b.dataset.scene; SCENES[k].run(); s.scene=k; render(); toast('Ambiance '+SCENES[k].label); });
+  document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>{ const k=b.dataset.scene; if(window.Motion) Motion.scene(b); SCENES[k].run(); s.scene=k; render(); toast('Ambiance '+SCENES[k].label); });
 
   /* ---------- affichage ---------- */
   function render(){
@@ -606,15 +609,17 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     // bientôt
     document.querySelectorAll('[data-soon]').forEach(t=>{ const k={shutter:'volets'}[t.dataset.soon]||t.dataset.soon; t.hidden = has(k); });
     document.querySelectorAll('[data-scene]').forEach(b=>b.classList.toggle('on',b.dataset.scene===s.scene));
+    if(!window.Motion) document.body.dataset.scene=s.scene||'';
     applyTheme();
+    if(window.Motion) Motion.xbox(s,liveMedia);
   }
-  /* ---------- thèmes selon ce qui tourne sur la Xbox (images fixes, sans animation) ---------- */
+  /* ---------- thèmes selon ce qui tourne sur la Xbox ---------- */
   const TH={k:null,start:0};
   function themeOf(){ const f=store.get('theme','auto'); if(f&&f!=='auto') return f==='none'?'':f; if(!s.xbox) return '';
     const t=((s.app||'')+' '+(liveMedia&&liveMedia.title||'')).toLowerCase();
     if(/netflix/.test(t)) return 'netflix'; if(/youtube/.test(t)) return 'youtube'; if(/forza/.test(t)) return 'forza'; if(/grand theft auto|gta/.test(t)) return 'gta'; return ''; }
   const dur=()=>{ const m=Math.max(0,Math.floor((Date.now()-TH.start)/60000)); return m<60? m+' min' : Math.floor(m/60)+' h '+pad(m%60); };
-  const dk=(st,src)=>'<div class="dk" style="'+st+'"><img src="themes/'+src+'" alt=""></div>';
+  const dk=(st,src,sw)=>'<div class="dk" style="'+st+'"><img src="themes/'+src+'" alt=""'+(sw?' class="'+sw+'"':'')+'></div>';
   function curtainSvg(){ const w=390/6; let st='',p='',g='';
     for(let i=0;i<7;i++) st+='<stop offset="'+(i/6)+'" stop-color="'+(i%2?'#5a0006':'#d10a14')+'"/>';
     for(let i=0;i<6;i++){ p+=' Q'+(390-i*w-w/2)+' 44 '+(390-(i+1)*w)+' 20'; g+=' Q'+(390-i*w-w/2)+' 40 '+(390-(i+1)*w)+' 16'; }
@@ -623,17 +628,20 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   function seatsSvg(){ let h=''; for(let r=0;r<2;r++) for(let i=0;i<10;i++){ const x=i*44+(r?22:0)-8, y=r?26:8;
       h+='<path d="M'+x+' '+(y+60)+' V'+(y+11)+' Q'+x+' '+y+' '+(x+11)+' '+y+' H'+(x+27)+' Q'+(x+38)+' '+y+' '+(x+38)+' '+(y+11)+' V'+(y+60)+'Z" fill="'+(r?'#050000':'#1a0003')+'"/>'; }
     return '<div class="dk" style="left:0;right:0;bottom:0"><svg height="62" viewBox="0 0 390 62" preserveAspectRatio="xMidYMin slice">'+h+'</svg></div>'; }
-  function buildDeco(k){ let b='',f='';
-    if(k==='netflix') f=curtainSvg()+seatsSvg();
-    else if(k==='youtube'){ b=dk('right:-110px;top:-90px;width:260px;transform:rotate(15deg)','yt-monstera.png')+dk('left:-90px;bottom:40px;width:300px;opacity:.85;transform:rotate(150deg)','yt-bananier.png'); f=dk('left:-142px;top:300px;width:180px','yt-liane.png'); }
-    else if(k==='gta') f=dk('right:-90px;bottom:-100px;width:215px;transform:rotate(-6deg)','gta-palmier.png');
-    $('th-bg').innerHTML=b; $('th-fx').innerHTML=f;
-    $('th-bg').style.display=k&&k!=='netflix'||b?'block':'none'; $('th-fx').style.display=f?'block':'none'; }
+  function buildDeco(k){ let b='',f=''; const mv=window.Motion&&Motion.on();
+    if(k==='netflix'){ f=curtainSvg()+seatsSvg(); if(mv) f+='<div class="cur-l"></div><div class="cur-r"></div>'; }
+    else if(k==='youtube'){ b=dk('right:-110px;top:-90px;width:260px;transform:rotate(15deg)','yt-monstera.png','sway-t')+dk('left:-90px;bottom:40px;width:300px;opacity:.85;transform:rotate(150deg)','yt-bananier.png','sway-t');
+      for(let i=0;i<10;i++) b+='<span class="ff" style="left:'+((i*37+11)%88+6)+'%;top:'+((i*53+17)%75+12)+'%;animation-duration:'+(6+i%5)+'s;animation-delay:-'+i+'s"></span>';
+      f=dk('left:-142px;top:300px;width:180px','yt-liane.png','sway-t'); }
+    else if(k==='gta') f=dk('right:-90px;bottom:-100px;width:215px;transform:rotate(-6deg)','gta-palmier.png','sway-b');
+    $('th-bg').innerHTML=b; $('th-fx').innerHTML=f; $('th-fx').className='';
+    $('th-bg').style.display=k&&k!=='netflix'||b?'block':'none'; $('th-fx').style.display=f?'block':'none';
+    if(k==='netflix'&&mv){ setTimeout(()=>$('th-fx').className='open',500); setTimeout(()=>$('th-fx').querySelectorAll('.cur-l,.cur-r').forEach(e=>e.remove()),2700); } }
   function applyTheme(){
     const k=themeOf();
     if(k!==TH.k){ TH.k=k; const st=store.get('th-start',null);
       if(k&&st&&st.k===k&&Date.now()-st.t<12*3600000) TH.start=st.t; else { TH.start=Date.now(); if(k) store.set('th-start',{k,t:TH.start}); }
-      ['netflix','youtube','forza','gta'].forEach(x=>document.body.classList.toggle('th-'+x,x===k)); buildDeco(k); }
+      ['netflix','youtube','forza','gta'].forEach(x=>document.body.classList.toggle('th-'+x,x===k)); buildDeco(k); if(window.Motion) Motion.theme(k); }
     const now=$('xb-now'); now.classList.toggle('ticket',k==='netflix');
     if(k==='netflix'){ $('xb-label').textContent='Séance de '+hm(new Date(TH.start))+' · '+dur(); $('xb-title').textContent='Netflix'; const im=now.querySelector('img'); if(im) im.remove(); }
     if(k==='forza'){ $('xb-label').textContent=(s.xbox?'En jeu · ':'')+dur(); if(!s.xbox||!liveMedia) $('xb-title').textContent='Forza Horizon 6'; const im=now.querySelector('img'); if(im) im.remove(); }
@@ -716,7 +724,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   $('st-forget').onclick=()=>{ cfg={city:cfg.city,url:SAME?location.origin:'',token:'',xbox:'media_player.xbox',person:''}; store.set('cfg',cfg); fillSettings(); live=false; liveMedia=null; setMode(); render(); $('st-status').className='status ok'; $('st-status').textContent='Adresse et clé effacées du téléphone'; };
 
   /* ---------- démarrage ---------- */
-  route(); setMode(); renderPresence(); render(); renderAgenda(); renderReminders(); renderNotifs();
+  route(); setMode(); renderPresence(); render(); if(window.Motion) Motion.start(); renderAgenda(); renderReminders(); renderNotifs();
   tick(); setInterval(tick,1000);
   loadWeather(); setInterval(loadWeather,15*60*1000);
   poll(); setInterval(poll,10000);

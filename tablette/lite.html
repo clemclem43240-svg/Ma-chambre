@@ -230,9 +230,205 @@ body.th-forza.fz-off .wrap{visibility:visible}
 .fz-k.on{color:#fff}.fz-k.on svg{opacity:1}
 .fz-k i{position:absolute;top:6px;right:10px;width:8px;height:3px;border-radius:2px;background:#333}
 .fz-k.on i{background:#ff5a2a;box-shadow:0 0 6px #ff3a10}
+/* ---------- MOUVEMENTS (version 14) ----------
+   Uniquement transform et opacity (calculés par la carte graphique), préfixes -webkit- pour Android 4.4.
+   Réglages › Animations : Toutes / Légères (sans les effets permanents) / Aucune. */
+/* fond vivant : trois halos de couleur qui dérivent lentement */
+#sky{position:fixed;left:0;top:0;right:0;bottom:0;z-index:0;overflow:hidden;pointer-events:none;-webkit-transition:opacity .5s;transition:opacity .5s}
+#sky.fade{opacity:0}
+#sky i{position:absolute;width:720px;height:720px;opacity:.8;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+#sky .h1{left:-280px;top:-330px;background-image:-webkit-radial-gradient(50% 50%,circle,rgba(80,100,255,.6) 0,rgba(80,100,255,0) 70%);background-image:radial-gradient(circle,rgba(80,100,255,.6) 0,rgba(80,100,255,0) 70%);-webkit-animation:dr1 26s ease-in-out infinite alternate;animation:dr1 26s ease-in-out infinite alternate}
+#sky .h2{right:-320px;top:-120px;background-image:-webkit-radial-gradient(50% 50%,circle,rgba(205,70,215,.5) 0,rgba(205,70,215,0) 70%);background-image:radial-gradient(circle,rgba(205,70,215,.5) 0,rgba(205,70,215,0) 70%);-webkit-animation:dr2 31s ease-in-out infinite alternate;animation:dr2 31s ease-in-out infinite alternate}
+#sky .h3{left:100px;bottom:-440px;background-image:-webkit-radial-gradient(50% 50%,circle,rgba(0,185,215,.45) 0,rgba(0,185,215,0) 70%);background-image:radial-gradient(circle,rgba(0,185,215,.45) 0,rgba(0,185,215,0) 70%);-webkit-animation:dr3 28s ease-in-out infinite alternate;animation:dr3 28s ease-in-out infinite alternate}
+@-webkit-keyframes dr1{to{-webkit-transform:translate3d(150px,100px,0) scale(1.18)}}
+@keyframes dr1{to{transform:translate3d(150px,100px,0) scale(1.18)}}
+@-webkit-keyframes dr2{to{-webkit-transform:translate3d(-170px,80px,0) scale(1.1)}}
+@keyframes dr2{to{transform:translate3d(-170px,80px,0) scale(1.1)}}
+@-webkit-keyframes dr3{to{-webkit-transform:translate3d(140px,-120px,0) scale(1.22)}}
+@keyframes dr3{to{transform:translate3d(140px,-120px,0) scale(1.22)}}
+/* couleurs des halos selon l'ambiance */
+.sc-jeu #sky .h1{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(60,110,255,.7) 0,rgba(60,110,255,0) 70%);background-image:radial-gradient(circle,rgba(60,110,255,.7) 0,rgba(60,110,255,0) 70%)}
+.sc-jeu #sky .h2{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(130,80,255,.6) 0,rgba(130,80,255,0) 70%);background-image:radial-gradient(circle,rgba(130,80,255,.6) 0,rgba(130,80,255,0) 70%)}
+.sc-jeu #sky .h3{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(0,200,255,.55) 0,rgba(0,200,255,0) 70%);background-image:radial-gradient(circle,rgba(0,200,255,.55) 0,rgba(0,200,255,0) 70%)}
+.sc-film #sky .h1{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(255,130,60,.55) 0,rgba(255,130,60,0) 70%);background-image:radial-gradient(circle,rgba(255,130,60,.55) 0,rgba(255,130,60,0) 70%)}
+.sc-film #sky .h2{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(255,70,120,.5) 0,rgba(255,70,120,0) 70%);background-image:radial-gradient(circle,rgba(255,70,120,.5) 0,rgba(255,70,120,0) 70%)}
+.sc-film #sky .h3{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(170,40,110,.5) 0,rgba(170,40,110,0) 70%);background-image:radial-gradient(circle,rgba(170,40,110,.5) 0,rgba(170,40,110,0) 70%)}
+.sc-reveil #sky .h1{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(255,180,100,.6) 0,rgba(255,180,100,0) 70%);background-image:radial-gradient(circle,rgba(255,180,100,.6) 0,rgba(255,180,100,0) 70%)}
+.sc-reveil #sky .h2{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(90,200,255,.5) 0,rgba(90,200,255,0) 70%);background-image:radial-gradient(circle,rgba(90,200,255,.5) 0,rgba(90,200,255,0) 70%)}
+.sc-reveil #sky .h3{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(70,230,180,.5) 0,rgba(70,230,180,0) 70%);background-image:radial-gradient(circle,rgba(70,230,180,.5) 0,rgba(70,230,180,0) 70%)}
+.th-netflix #sky .h1{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(229,9,20,.5) 0,rgba(229,9,20,0) 70%);background-image:radial-gradient(circle,rgba(229,9,20,.5) 0,rgba(229,9,20,0) 70%)}
+.th-netflix #sky .h2{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(140,0,12,.55) 0,rgba(140,0,12,0) 70%);background-image:radial-gradient(circle,rgba(140,0,12,.55) 0,rgba(140,0,12,0) 70%)}
+.th-netflix #sky .h3{background-image:-webkit-radial-gradient(50% 50%,circle,rgba(255,60,70,.3) 0,rgba(255,60,70,0) 70%);background-image:radial-gradient(circle,rgba(255,60,70,.3) 0,rgba(255,60,70,0) 70%)}
+.sc-jeu #sky{background-color:rgba(8,16,70,.45)}.sc-film #sky{background-color:rgba(60,14,24,.5)}.sc-reveil #sky{background-color:rgba(70,44,40,.42)}.th-netflix #sky{background-color:transparent}
+.th-youtube #sky,.th-gta #sky,.th-forza #sky{display:none}
+/* arrivée en cascade au démarrage */
+@-webkit-keyframes rise2{0%{opacity:0;-webkit-transform:translate3d(0,28px,0) scale(.96)}60%{opacity:1}100%{opacity:1;-webkit-transform:none}}
+@keyframes rise2{0%{opacity:0;transform:translate3d(0,28px,0) scale(.96)}60%{opacity:1}100%{opacity:1;transform:none}}
+@-webkit-keyframes drop{from{opacity:0;-webkit-transform:translate3d(0,-20px,0)}}
+@keyframes drop{from{opacity:0;transform:translate3d(0,-20px,0)}}
+.card{-webkit-animation:rise2 .9s cubic-bezier(.2,.9,.3,1.1) both;animation:rise2 .9s cubic-bezier(.2,.9,.3,1.1) both}
+.wrap > .flex{-webkit-animation:drop .7s cubic-bezier(.2,.9,.3,1) both;animation:drop .7s cubic-bezier(.2,.9,.3,1) both}
+.cols .c1 .card{-webkit-animation-delay:.08s;animation-delay:.08s}
+.cols .c1 .card+.card{-webkit-animation-delay:.18s;animation-delay:.18s}
+.cols .c2 .card{-webkit-animation-delay:.24s;animation-delay:.24s}
+.cols .c3 .card{-webkit-animation-delay:.32s;animation-delay:.32s}
+.soon .card:nth-child(1){-webkit-animation-delay:.42s;animation-delay:.42s}
+.soon .card:nth-child(2){-webkit-animation-delay:.49s;animation-delay:.49s}
+.soon .card:nth-child(3){-webkit-animation-delay:.56s;animation-delay:.56s}
+.soon .card:nth-child(4){-webkit-animation-delay:.63s;animation-delay:.63s}
+body.ready .card,body.ready .wrap > .flex{-webkit-animation:none;animation:none}
+/* reflet de verre qui traverse les cartes, une à la fois */
+.gl{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;pointer-events:none;opacity:0;
+  background-image:-webkit-linear-gradient(-20deg,rgba(255,255,255,0) 38%,rgba(255,255,255,.16) 48%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.16) 52%,rgba(255,255,255,0) 62%);
+  background-image:linear-gradient(110deg,rgba(255,255,255,0) 38%,rgba(255,255,255,.16) 48%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.16) 52%,rgba(255,255,255,0) 62%);
+  background-size:300% 100%;background-position:100% 0;background-repeat:no-repeat}
+.gl.go{-webkit-animation:gl 1.7s cubic-bezier(.45,0,.25,1);animation:gl 1.7s cubic-bezier(.45,0,.25,1)}
+@-webkit-keyframes gl{0%{opacity:1;background-position:100% 0}100%{opacity:1;background-position:0 0}}
+@keyframes gl{0%{opacity:1;background-position:100% 0}100%{opacity:1;background-position:0 0}}
+/* horloge : les chiffres roulent quand la minute change */
+#clock.mxc{background-image:none;-webkit-text-fill-color:#fff}
+#clock .dg{display:inline-block;position:relative;vertical-align:top}
+#clock .dg b{display:block;font-weight:200;color:#fff;background-image:-webkit-linear-gradient(top,#ffffff 35%,#d9c6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#clock .dg b.o{position:absolute;left:0;top:0;-webkit-animation:dgo .55s cubic-bezier(.5,0,.25,1) both;animation:dgo .55s cubic-bezier(.5,0,.25,1) both}
+#clock .dg b.n{-webkit-animation:dgi .75s cubic-bezier(.2,.9,.3,1.25) both;animation:dgi .75s cubic-bezier(.2,.9,.3,1.25) both}
+#clock .cl b{-webkit-animation:colon 2s ease-in-out infinite;animation:colon 2s ease-in-out infinite}
+@-webkit-keyframes dgo{to{opacity:0;-webkit-transform:translate3d(0,-42%,0) scale(.88)}}
+@keyframes dgo{to{opacity:0;transform:translate3d(0,-42%,0) scale(.88)}}
+@-webkit-keyframes dgi{from{opacity:0;-webkit-transform:translate3d(0,48%,0) scale(.88)}}
+@keyframes dgi{from{opacity:0;transform:translate3d(0,48%,0) scale(.88)}}
+@-webkit-keyframes colon{50%{opacity:.3}}
+@keyframes colon{50%{opacity:.3}}
+.th-netflix #clock .dg b{background-image:-webkit-linear-gradient(top,#fff 35%,#ffc9c9)}
+.th-youtube #clock .dg b{background-image:-webkit-linear-gradient(top,#fff 35%,#c8f5cf)}
+.th-gta #clock .dg b{background-image:-webkit-linear-gradient(top,#fff 35%,#ffd0ea)}
+/* vague de couleur quand on choisit une ambiance, anneaux */
+#fxl,#fxb{position:fixed;left:0;top:0;width:0;height:0;z-index:6;pointer-events:none}
+#fxb{z-index:0}
+.bloom{position:absolute;width:200px;height:200px;margin:-100px 0 0 -100px;border-radius:50%;opacity:0;-webkit-animation:bloom 1.8s cubic-bezier(.2,.6,.3,1) both;animation:bloom 1.8s cubic-bezier(.2,.6,.3,1) both}
+.ring{position:absolute;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:2px solid #fff;opacity:0;-webkit-animation:ring 1s cubic-bezier(.2,.7,.3,1) both;animation:ring 1s cubic-bezier(.2,.7,.3,1) both}
+.flt{position:absolute;width:40px;height:30px;margin:-15px 0 0 -20px;text-align:center;font-size:24px;line-height:30px;font-weight:600;color:#fff;-webkit-animation:flt 1s ease-out both;animation:flt 1s ease-out both}
+.flt svg{margin:5px auto 0}
+@-webkit-keyframes bloom{0%{opacity:0;-webkit-transform:scale(.3)}12%{opacity:1}55%{opacity:.8}100%{opacity:0;-webkit-transform:scale(10)}}
+@keyframes bloom{0%{opacity:0;transform:scale(.3)}12%{opacity:1}55%{opacity:.8}100%{opacity:0;transform:scale(10)}}
+@-webkit-keyframes ring{0%{opacity:.9;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:scale(3.4)}}
+@keyframes ring{0%{opacity:.9;transform:scale(.4)}100%{opacity:0;transform:scale(3.4)}}
+@-webkit-keyframes flt{0%{opacity:0;-webkit-transform:translate3d(0,0,0) scale(.5)}20%{opacity:1;-webkit-transform:translate3d(0,-10px,0) scale(1.15)}100%{opacity:0;-webkit-transform:translate3d(0,-54px,0) scale(1)}}
+@keyframes flt{0%{opacity:0;transform:translate3d(0,0,0) scale(.5)}20%{opacity:1;transform:translate3d(0,-10px,0) scale(1.15)}100%{opacity:0;transform:translate3d(0,-54px,0) scale(1)}}
+/* ambiances : l'icône rebondit, puis vit tant que l'ambiance est active */
+.scene:before{content:"";position:absolute;left:-1px;top:-1px;right:-1px;bottom:-1px;border-radius:inherit;opacity:0;-webkit-transition:opacity .6s;transition:opacity .6s;pointer-events:none}
+.scene[data-sc="jeu"]:before{box-shadow:0 0 30px 4px rgba(91,140,255,.6)}
+.scene[data-sc="film"]:before{box-shadow:0 0 30px 4px rgba(255,150,80,.55)}
+.scene[data-sc="nuit"]:before{box-shadow:0 0 30px 4px rgba(139,107,255,.6)}
+.scene[data-sc="reveil"]:before{box-shadow:0 0 30px 4px rgba(60,220,200,.55)}
+.scene.on:before{opacity:1;-webkit-animation:halo 3.2s ease-in-out infinite;animation:halo 3.2s ease-in-out infinite}
+@-webkit-keyframes halo{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes halo{0%,100%{opacity:1}50%{opacity:.4}}
+.tile.pop{-webkit-animation:pop .8s cubic-bezier(.3,1.5,.5,1);animation:pop .8s cubic-bezier(.3,1.5,.5,1)}
+@-webkit-keyframes pop{0%{-webkit-transform:scale(1)}25%{-webkit-transform:scale(.75)}60%{-webkit-transform:scale(1.2)}100%{-webkit-transform:scale(1)}}
+@keyframes pop{0%{transform:scale(1)}25%{transform:scale(.75)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.scene.on[data-sc="jeu"] .tile svg{-webkit-animation:rumble 3.6s ease-in-out infinite;animation:rumble 3.6s ease-in-out infinite}
+.scene.on[data-sc="film"] .tile svg{-webkit-animation:tilt 4s ease-in-out infinite;animation:tilt 4s ease-in-out infinite}
+.scene.on[data-sc="nuit"] .tile svg{-webkit-animation:rock 6s ease-in-out infinite;animation:rock 6s ease-in-out infinite}
+.scene.on[data-sc="reveil"] .tile svg{-webkit-animation:sunup 3.4s ease-in-out infinite;animation:sunup 3.4s ease-in-out infinite}
+@-webkit-keyframes rumble{0%,16%,100%{-webkit-transform:none}2%{-webkit-transform:rotate(-10deg)}4%{-webkit-transform:rotate(9deg)}6%{-webkit-transform:rotate(-7deg)}8%{-webkit-transform:rotate(5deg)}10%{-webkit-transform:rotate(-3deg)}12%{-webkit-transform:rotate(2deg)}}
+@keyframes rumble{0%,16%,100%{transform:none}2%{transform:rotate(-10deg)}4%{transform:rotate(9deg)}6%{transform:rotate(-7deg)}8%{transform:rotate(5deg)}10%{transform:rotate(-3deg)}12%{transform:rotate(2deg)}}
+@-webkit-keyframes tilt{0%,100%{-webkit-transform:none}50%{-webkit-transform:rotate(-9deg) translate3d(0,-1px,0)}}
+@keyframes tilt{0%,100%{transform:none}50%{transform:rotate(-9deg) translate3d(0,-1px,0)}}
+@-webkit-keyframes rock{0%,100%{-webkit-transform:rotate(-12deg)}50%{-webkit-transform:rotate(10deg)}}
+@keyframes rock{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(10deg)}}
+@-webkit-keyframes sunup{0%,100%{-webkit-transform:translate3d(0,3px,0)}50%{-webkit-transform:translate3d(0,-2px,0)}}
+@keyframes sunup{0%,100%{transform:translate3d(0,3px,0)}50%{transform:translate3d(0,-2px,0)}}
+/* Xbox : démarrage, extinction façon vieille télé, changement d'appli, égaliseur */
+#art .ox,#art .swp{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;opacity:0;pointer-events:none}
+#art .swp{background-image:-webkit-linear-gradient(-20deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.45) 50%,rgba(255,255,255,0) 65%);background-image:linear-gradient(110deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.45) 50%,rgba(255,255,255,0) 65%);background-size:300% 100%;background-position:100% 0;background-repeat:no-repeat}
+#c-xbox.go #art .swp{-webkit-animation:gl 1.1s cubic-bezier(.45,0,.25,1) .15s;animation:gl 1.1s cubic-bezier(.45,0,.25,1) .15s}
+#c-xbox.x #art .ox{-webkit-animation:out .9s ease both;animation:out .9s ease both}
+#c-xbox.go #art .in{-webkit-animation:inr .8s cubic-bezier(.2,.9,.3,1.15) both;animation:inr .8s cubic-bezier(.2,.9,.3,1.15) both}
+#c-xbox.shut #art .in{-webkit-animation:inf .6s ease .5s both;animation:inf .6s ease .5s both}
+#art .in.old{-webkit-animation:crt .55s cubic-bezier(.6,0,.4,1) both;animation:crt .55s cubic-bezier(.6,0,.4,1) both}
+#art .crt{position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:#fff;opacity:0;box-shadow:0 0 12px 2px rgba(255,255,255,.7)}
+#c-xbox.shut #art .crt{-webkit-animation:crtl .7s ease-in both;animation:crtl .7s ease-in both}
+@-webkit-keyframes out{from{opacity:1}to{opacity:0}}
+@keyframes out{from{opacity:1}to{opacity:0}}
+@-webkit-keyframes inr{from{opacity:0;-webkit-transform:translate3d(40px,0,0)}}
+@keyframes inr{from{opacity:0;transform:translate3d(40px,0,0)}}
+@-webkit-keyframes inf{from{opacity:0}}
+@keyframes inf{from{opacity:0}}
+@-webkit-keyframes crt{0%{opacity:1;-webkit-transform:none}45%{opacity:1;-webkit-transform:scale(1,.03)}100%{opacity:0;-webkit-transform:scale(0,.03)}}
+@keyframes crt{0%{opacity:1;transform:none}45%{opacity:1;transform:scale(1,.03)}100%{opacity:0;transform:scale(0,.03)}}
+@-webkit-keyframes crtl{0%,30%{opacity:0;-webkit-transform:scale(1,1)}40%{opacity:1;-webkit-transform:scale(1,1)}100%{opacity:0;-webkit-transform:scale(0,1)}}
+@keyframes crtl{0%,30%{opacity:0;transform:scale(1,1)}40%{opacity:1;transform:scale(1,1)}100%{opacity:0;transform:scale(0,1)}}
+.eq{position:absolute;right:20px;top:18px;height:20px;opacity:0;-webkit-transition:opacity .5s;transition:opacity .5s}
+.eq i{float:left;width:4px;height:20px;margin-left:3px;border-radius:2px;background:#fff;-webkit-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:scale(1,.3);transform:scale(1,.3)}
+#c-xbox.playing .eq{opacity:.85}
+#c-xbox.playing .eq i{-webkit-animation:eq .8s ease-in-out infinite alternate;animation:eq .8s ease-in-out infinite alternate}
+#c-xbox.playing .eq i+i{-webkit-animation-duration:.55s;animation-duration:.55s;-webkit-animation-delay:-.3s;animation-delay:-.3s}
+#c-xbox.playing .eq i+i+i{-webkit-animation-duration:.95s;animation-duration:.95s;-webkit-animation-delay:-.5s;animation-delay:-.5s}
+#c-xbox.playing .eq i+i+i+i{-webkit-animation-duration:.65s;animation-duration:.65s;-webkit-animation-delay:-.1s;animation-delay:-.1s}
+@-webkit-keyframes eq{from{-webkit-transform:scale(1,.2)}to{-webkit-transform:scale(1,1)}}
+@keyframes eq{from{transform:scale(1,.2)}to{transform:scale(1,1)}}
+#art.ticket .eq,#art.ticket .swp{display:none}
+#c-xbox.boot .apps .app{-webkit-animation:popin .7s cubic-bezier(.2,1.5,.4,1) both;animation:popin .7s cubic-bezier(.2,1.5,.4,1) both}
+#c-xbox.boot .apps .app:nth-child(2){-webkit-animation-delay:.07s;animation-delay:.07s}
+#c-xbox.boot .apps .app:nth-child(3){-webkit-animation-delay:.14s;animation-delay:.14s}
+#c-xbox.boot .apps .app:nth-child(4){-webkit-animation-delay:.21s;animation-delay:.21s}
+@-webkit-keyframes popin{0%{opacity:.3;-webkit-transform:scale(.7)}100%{opacity:1;-webkit-transform:none}}
+@keyframes popin{0%{opacity:.3;transform:scale(.7)}100%{opacity:1;transform:none}}
+.logo.hop{-webkit-animation:hop .7s cubic-bezier(.3,1.4,.5,1);animation:hop .7s cubic-bezier(.3,1.4,.5,1)}
+@-webkit-keyframes hop{0%{-webkit-transform:none}30%{-webkit-transform:translate3d(0,-12px,0) scale(1.15)}65%{-webkit-transform:translate3d(0,0,0) scale(.92,1.05)}100%{-webkit-transform:none}}
+@keyframes hop{0%{transform:none}30%{transform:translate3d(0,-12px,0) scale(1.15)}65%{transform:translate3d(0,0,0) scale(.92,1.05)}100%{transform:none}}
+/* fenêtres : Jeux, Réglages, message, mode Nuit */
+#games{-webkit-animation:inf .3s ease both;animation:inf .3s ease both}
+#games .g-card{-webkit-animation:sheet .6s cubic-bezier(.2,1.25,.4,1) both;animation:sheet .6s cubic-bezier(.2,1.25,.4,1) both}
+#g-list .app{-webkit-animation:popin .6s cubic-bezier(.2,1.5,.4,1) both;animation:popin .6s cubic-bezier(.2,1.5,.4,1) both}
+#g-list .app:nth-child(2){-webkit-animation-delay:.04s;animation-delay:.04s}#g-list .app:nth-child(3){-webkit-animation-delay:.08s;animation-delay:.08s}
+#g-list .app:nth-child(4){-webkit-animation-delay:.12s;animation-delay:.12s}#g-list .app:nth-child(5){-webkit-animation-delay:.16s;animation-delay:.16s}
+#g-list .app:nth-child(6){-webkit-animation-delay:.2s;animation-delay:.2s}#g-list .app:nth-child(7){-webkit-animation-delay:.24s;animation-delay:.24s}
+#g-list .app:nth-child(8){-webkit-animation-delay:.28s;animation-delay:.28s}#g-list .app:nth-child(9){-webkit-animation-delay:.32s;animation-delay:.32s}
+#g-list .app:nth-child(10){-webkit-animation-delay:.36s;animation-delay:.36s}
+#settings.show{-webkit-animation:inf .3s ease both;animation:inf .3s ease both}
+#settings.show .sheet{-webkit-animation:sheet .6s cubic-bezier(.2,1.25,.4,1) both;animation:sheet .6s cubic-bezier(.2,1.25,.4,1) both}
+@-webkit-keyframes sheet{from{opacity:0;-webkit-transform:translate3d(0,40px,0) scale(.94)}}
+@keyframes sheet{from{opacity:0;transform:translate3d(0,40px,0) scale(.94)}}
+#toast{-webkit-transform:translate3d(0,24px,0) scale(.9);transform:translate3d(0,24px,0) scale(.9);-webkit-transition:opacity .3s,-webkit-transform .55s cubic-bezier(.2,1.4,.4,1);transition:opacity .3s,transform .55s cubic-bezier(.2,1.4,.4,1)}
+#night.show{-webkit-animation:inf 1.6s ease both;animation:inf 1.6s ease both}
+#night.show #n-clock{-webkit-animation:nclk 2.6s cubic-bezier(.2,.8,.2,1) .3s both;animation:nclk 2.6s cubic-bezier(.2,.8,.2,1) .3s both}
+@-webkit-keyframes nclk{from{opacity:0;-webkit-transform:translate3d(0,30px,0)}}
+@keyframes nclk{from{opacity:0;transform:translate3d(0,30px,0)}}
+/* présence : onde radar autour du point vert */
+.ok-c .dot{-webkit-animation:none;animation:none}
+.ok-c .dot:after{content:"";position:absolute;left:0;top:0;width:10px;height:10px;border-radius:50%;background:#6bf0b8;-webkit-animation:radar 2.6s ease-out infinite;animation:radar 2.6s ease-out infinite}
+@-webkit-keyframes radar{0%{opacity:.7;-webkit-transform:scale(1)}100%{opacity:0;-webkit-transform:scale(3.4)}}
+@keyframes radar{0%{opacity:.7;transform:scale(1)}100%{opacity:0;transform:scale(3.4)}}
+/* notification qui arrive */
+body.ready li{-webkit-animation:none;animation:none}
+body.ready li.nw{position:relative;-webkit-animation:nin .8s cubic-bezier(.2,1.2,.4,1) both;animation:nin .8s cubic-bezier(.2,1.2,.4,1) both}
+body.ready li.nw:after{content:"";position:absolute;left:0;top:0;right:0;bottom:0;border-radius:14px;background:#fff;opacity:0;-webkit-animation:flash 1.2s ease-out .2s;animation:flash 1.2s ease-out .2s}
+@-webkit-keyframes nin{from{opacity:0;-webkit-transform:translate3d(50px,0,0) scale(.94)}}
+@keyframes nin{from{opacity:0;transform:translate3d(50px,0,0) scale(.94)}}
+@-webkit-keyframes flash{0%{opacity:.28}100%{opacity:0}}
+@keyframes flash{0%{opacity:.28}100%{opacity:0}}
+/* changement de thème Xbox : fondu, néon GTA, ticket Netflix qui sort */
+#veil{position:fixed;left:0;top:0;right:0;bottom:0;background:#000;z-index:5;pointer-events:none;display:none}
+#veil.go{display:block;-webkit-animation:out 1.1s ease both;animation:out 1.1s ease both}
+.thin #th-bg,.thin #th-fx{-webkit-animation:decor 1.8s cubic-bezier(.2,.8,.2,1) both;animation:decor 1.8s cubic-bezier(.2,.8,.2,1) both}
+@-webkit-keyframes decor{from{opacity:0;-webkit-transform:scale(1.08)}}
+@keyframes decor{from{opacity:0;transform:scale(1.08)}}
+.thin.th-gta #clock .dg b,.thin.th-gta .clock-card{-webkit-animation:neon 1.6s linear both;animation:neon 1.6s linear both}
+@-webkit-keyframes neon{0%{opacity:.15}8%{opacity:1}12%{opacity:.25}20%{opacity:1}24%{opacity:.4}26%{opacity:1}55%{opacity:1}58%{opacity:.5}62%{opacity:1}100%{opacity:1}}
+@keyframes neon{0%{opacity:.15}8%{opacity:1}12%{opacity:.25}20%{opacity:1}24%{opacity:.4}26%{opacity:1}55%{opacity:1}58%{opacity:.5}62%{opacity:1}100%{opacity:1}}
+.thin #art.ticket{-webkit-animation:tkt 1s cubic-bezier(.2,1.3,.4,1) .3s both;animation:tkt 1s cubic-bezier(.2,1.3,.4,1) .3s both}
+@-webkit-keyframes tkt{from{opacity:0;-webkit-transform:translate3d(0,-40px,0) rotate(-5deg)}}
+@keyframes tkt{from{opacity:0;transform:translate3d(0,-40px,0) rotate(-5deg)}}
+/* Légères : on coupe tout ce qui bouge en permanence */
+body.lowfx #sky i,body.lowfx .ff,body.lowfx .swayT,body.lowfx .swayB,body.lowfx .eq i,body.lowfx .scene.on .tile svg,body.lowfx .scene.on:before,body.lowfx .ok-c .dot:after,body.lowfx #clock .cl b{-webkit-animation:none!important;animation:none!important}
+/* Aucune */
+body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!important;animation:none!important}
+.nowc{font-size:32px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
+<div id="sky"><i class="h1"></i><i class="h2"></i><i class="h3"></i></div>
 <div id="th-bg"></div>
 <div id="th-fx"></div>
 <div id="fz"><div class="fz-in">
@@ -282,7 +478,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
     <div class="col c2">
       <div class="card" id="c-xbox">
         <div class="flex"><span class="tile t-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/></svg></span><div class="grow"><div class="t1">Xbox</div><div class="sub" id="xb-state">En veille</div></div><button class="sw" id="xb-sw" aria-label="Xbox"></button></div>
-        <div class="art" id="art"><span class="tk tk-l"></span><span class="tk tk-r"></span><span class="tk tk-d"></span><span class="tk tk-s">ADMIS</span><div class="in"><div class="lbl" id="art-lbl">EN VEILLE</div><div id="now">Touchez une appli</div></div></div>
+        <div class="art" id="art"><i class="ox"></i><i class="swp"></i><i class="crt"></i><span class="eq"><i></i><i></i><i></i><i></i></span><span class="tk tk-l"></span><span class="tk tk-r"></span><span class="tk tk-d"></span><span class="tk tk-s">ADMIS</span><div class="in"><div class="lbl" id="art-lbl">EN VEILLE</div><div id="now">Touchez une appli</div></div></div>
         <div class="apps" id="apps"></div>
         <div class="flex tv"><span class="tile t-pink"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M9 21h6M12 17v4"/></svg></span><div class="grow"><div class="t1">Télé</div><div class="sub">S'allume avec la Xbox</div></div>
           <button class="vb" data-tv="moins" aria-label="Moins fort">−</button><button class="vb" data-tv="plus" aria-label="Plus fort">+</button><button class="vb" data-tv="muet" aria-label="Muet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:auto"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg></button></div>
@@ -307,10 +503,10 @@ body.th-forza.fz-off .wrap{visibility:visible}
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 13</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 14</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
-    <div class="field"><label for="st-anim">Animations des thèmes</label><select id="st-anim"><option value="1">Oui</option><option value="0">Non (si la tablette rame)</option></select></div>
+    <div class="field"><label for="st-anim">Animations</label><select id="st-anim"><option value="1">Toutes (le plus beau)</option><option value="light">Légères (si la tablette rame)</option><option value="0">Aucune</option></select><p class="help" id="mx-note"></p></div>
     <div class="field"><label for="st-night">Écran en mode Nuit</label><select id="st-night"><option value="dim">Heure à peine éclairée</option><option value="off">Écran complètement éteint</option></select></div>
     <p class="help" id="xb-raw">La Xbox dit : rien pour l'instant (Home Assistant pas connecté)</p>
     <div class="field"><label for="st-url">Adresse de Home Assistant</label><input id="st-url" type="url" autocomplete="off" spellcheck="false"></div>
@@ -329,6 +525,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
 <div id="games"><div class="card g-card"><div class="line hd"><h3>Jeux</h3><button id="g-close">Fermer</button></div><div id="g-list"></div></div></div>
 <div id="night"><div id="n-clock">--:--</div><div id="n-date"></div><div id="n-hint">Touchez l'écran pour réveiller la tablette</div></div>
 <div id="toast"></div>
+<div id="fxb"></div><div id="fxl"></div><div id="veil"></div>
 
 <script>
 (function(){
@@ -353,13 +550,13 @@ body.th-forza.fz-off .wrap{visibility:visible}
   var tt;
   function toast(m){ var t = $('toast'); t.textContent = m; t.className = 'show'; clearTimeout(tt); tt = setTimeout(function(){ t.className = ''; }, 2500); }
   var notifs = store.get('notifs', []) || [];
-  function renderNotifs(){
+  function renderNotifs(nw){
     var h = '';
-    each(notifs.slice(0, 6), function(n){ h += '<li><span>' + esc(n.t) + '</span>' + esc(n.txt) + '</li>'; });
+    each(notifs.slice(0, 6), function(n, i){ h += '<li' + (nw && i === 0 ? ' class="nw"' : '') + '><span>' + esc(n.t) + '</span>' + esc(n.txt) + '</li>'; });
     $('notifs').innerHTML = h || '<li class="empty">Rien de nouveau</li>';
   }
   $('n-clear').onclick = function(){ notifs = []; store.set('notifs', notifs); renderNotifs(); };
-  function notify(txt){ notifs.unshift({t: hm(new Date()), txt: txt}); notifs = notifs.slice(0, 30); store.set('notifs', notifs); renderNotifs(); }
+  function notify(txt){ notifs.unshift({t: hm(new Date()), txt: txt}); notifs = notifs.slice(0, 30); store.set('notifs', notifs); renderNotifs(true); }
 
   /* ---------- Home Assistant (XMLHttpRequest) ---------- */
   /* requête brute (connexion par identifiant, sans clé) */
@@ -420,7 +617,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
   /* ---------- horloge ---------- */
   var JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
   var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-  function tick(){ var d = new Date(); $('clock').textContent = hm(d); $('date').textContent = JOURS[d.getDay()].charAt(0).toUpperCase() + JOURS[d.getDay()].slice(1) + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()]; if (TH && TH.k) themeRefresh(); }
+  function tick(){ var d = new Date(); mxClock(hm(d)); $('date').textContent = JOURS[d.getDay()].charAt(0).toUpperCase() + JOURS[d.getDay()].slice(1) + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()]; if (TH && TH.k) themeRefresh(); }
 
   /* ---------- météo (entité weather de Home Assistant) ---------- */
   var WX = {'clear-night':['Nuit claire','moon'], cloudy:['Nuageux','cloud'], exceptional:['Exceptionnel','cloud'], fog:['Brouillard','fog'], hail:['Grêle','rain'],
@@ -443,7 +640,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
   function showWeather(e){
     var a = e.attributes || {}, w = WX[e.state] || [e.state, ''];
     $('wx-t').textContent = (typeof a.temperature === 'number' ? Math.round(a.temperature) : '--') + '°';
-    $('wx-i').innerHTML = wxSvg(w[1], 64); $('wx-d').textContent = w[0];
+    wxBig(w[1]); $('wx-d').textContent = w[0];
     var x = [];
     if (typeof a.humidity === 'number') x.push('Humidité ' + Math.round(a.humidity) + ' %');
     if (typeof a.wind_speed === 'number') x.push('Vent ' + Math.round(a.wind_speed) + ' ' + (a.wind_speed_unit || 'km/h'));
@@ -481,7 +678,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
       var j = null; try { j = JSON.parse(x.responseText); } catch(e){}
       if (x.status !== 200 || !j || !j.current){ omLast = Date.now() - 25 * 60 * 1000; return noWeather(); }
       var c = j.current, k = omKey(c.weather_code);
-      if (!omDaysOnly){ $('wx-t').textContent = Math.round(c.temperature_2m) + '°'; $('wx-i').innerHTML = wxSvg(k, 64); $('wx-d').textContent = OMTXT[k];
+      if (!omDaysOnly){ $('wx-t').textContent = Math.round(c.temperature_2m) + '°'; wxBig(k); $('wx-d').textContent = OMTXT[k];
       $('wx-x').textContent = 'Humidité ' + Math.round(c.relative_humidity_2m) + ' % · Vent ' + Math.round(c.wind_speed_10m) + ' km/h'; }
       var d = j.daily, h = '';
       each(d.time, function(t, i){
@@ -530,6 +727,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
     $('xb-state').textContent = s.xbox ? 'Allumée' : 'En veille';
     each(document.querySelectorAll('[data-app]'), function(b){ b.className = 'app' + (s.xbox && b.getAttribute('data-app') === s.app ? ' cur' : ''); });
     if (TH) applyTheme();
+    mxXbox();
   }
   function needLive(){ if (!live){ toast('Mode démo : branchez Home Assistant dans Réglages'); return false; } if (!cfg.xbox){ toast('Choisissez la Xbox dans Réglages'); return false; } return true; }
 
@@ -576,12 +774,13 @@ body.th-forza.fz-off .wrap{visibility:visible}
     tvCmd(s.xbox ? 'allumer' : 'eteindre', true);
     notify(s.xbox ? 'Xbox allumée' : 'Xbox éteinte');
   };
-  each(document.querySelectorAll('[data-app]'), function(b){ b.onclick = function(){ launch(b.getAttribute('data-app')); }; });
+  each(document.querySelectorAll('[data-app]'), function(b){ b.onclick = function(){ var l = b.querySelector('.logo'); if (l && mxOn()) restart(l, 'hop'); launch(b.getAttribute('data-app')); }; });
   $('g-open').onclick = function(){ $('games').style.display = 'block'; };
   $('g-close').onclick = function(){ $('games').style.display = 'none'; };
   /* télé LG : commandes infrarouges du Redmi (scripts Home Assistant), sans retour d'état */
   var TV = {allumer:['tele_allumer','Télé : allumage'], eteindre:['tele_eteindre','Télé : extinction'], plus:['tele_volume_plus','Volume +'], moins:['tele_volume_moins','Volume −'], muet:['tele_muet','Son coupé / remis'], source:['tele_source','Source suivante']};
   each(document.querySelectorAll('[data-tv]'), function(b){ b.onclick = function(){
+    fxAdd('flt', b, b.innerHTML, '', 1100);
     if (needLive()) tvCmd(b.getAttribute('data-tv')); }; });
   function tvCmd(k, quiet){ var t = TV[k]; if (!quiet) toast(t[1]);
     service('script', t[0], {}, function(err){ if (err) notify('Télé : commande non envoyée (' + err.message + ')'); }); }
@@ -721,6 +920,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
 
   /* ---------- thèmes selon ce qui tourne sur la Xbox ---------- */
   var TH = {k:null, start:0}, thTimers = [], anim = store.get('anim', true) !== false, fzOff = false, fzBooting = false;
+  var mx = {mode: store.get('anim', true), low: false, ready: false, thin: false};
   function later(ms, f){ thTimers.push(setTimeout(f, ms)); }
   function clearLater(){ each(thTimers, function(t){ clearTimeout(t); }); thTimers = []; }
   function themeOf(){
@@ -735,7 +935,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
     return '';
   }
   function dur(){ var m = Math.max(0, Math.floor((Date.now() - TH.start) / 60000)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + pad(m % 60); }
-  function bodyCls(){ var c = []; if (TH.k) c.push('th-' + TH.k); if (!anim) c.push('noanim'); if (fzOff) c.push('fz-off'); document.body.className = c.join(' '); }
+  function bodyCls(){ var c = []; if (TH.k) c.push('th-' + TH.k); if (mx.mode === false) c.push('noanim'); if (mx.mode === 'light' || mx.low) c.push('lowfx'); if (mx.ready) c.push('ready'); if (mx.thin) c.push('thin'); if (scene && scene !== 'nuit') c.push('sc-' + scene); if (fzOff) c.push('fz-off'); document.body.className = c.join(' '); }
   function dk(style, src, sway){ return '<div class="dk" style="' + style + '"><img src="../themes/' + src + '" class="' + sway + '" alt=""></div>'; }
   function curtainSvg(){
     var st = '', i, w = 1024 / 12, p = '', g = '';
@@ -806,7 +1006,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
   $('k-li').onclick = function(){ toast('Lumières : bientôt, quand le Hue sera installé'); };
   /* ambiances : pilotent déjà la Xbox, les lumières suivront avec le Hue */
   var SCN = {jeu:'Jeu', film:'Film', nuit:'Nuit', reveil:'Réveil'}, scene = store.get('scene', null);
-  function renderScenes(){ each(document.querySelectorAll('[data-sc]'), function(b){ b.className = 'card flex scene' + (b.getAttribute('data-sc') === scene ? ' on' : ''); }); var e = $('fz-sc'); if (e) e.textContent = scene ? SCN[scene] : 'Aucune'; }
+  function renderScenes(){ if (TH.k !== null) bodyCls(); each(document.querySelectorAll('[data-sc]'), function(b){ b.className = 'card flex scene' + (b.getAttribute('data-sc') === scene ? ' on' : ''); }); var e = $('fz-sc'); if (e) e.textContent = scene ? SCN[scene] : 'Aucune'; }
   function runScene(k){
     scene = k; store.set('scene', k); renderScenes();
     if (k === 'jeu' && !s.xbox) $('xb-sw').onclick();
@@ -815,7 +1015,7 @@ body.th-forza.fz-off .wrap{visibility:visible}
     if (k === 'nuit'){ if (s.xbox) $('xb-sw').onclick(); else if (live) tvCmd('eteindre', true); nightOn(); return; }
     toast('Ambiance ' + SCN[k] + ' · les lumières suivront avec le Hue');
   }
-  each(document.querySelectorAll('[data-sc]'), function(b){ b.onclick = function(){ runScene(b.getAttribute('data-sc')); }; });
+  each(document.querySelectorAll('[data-sc]'), function(b){ b.onclick = function(){ mxScene(b.getAttribute('data-sc'), b); runScene(b.getAttribute('data-sc')); }; });
   $('k-nuit').onclick = function(){ runScene('nuit'); };
   /* mode Nuit : écran noir avec l'heure à peine visible (ou écran éteint), via Fully Kiosk quand il est là */
   var nightBr = null;
@@ -856,17 +1056,128 @@ body.th-forza.fz-off .wrap{visibility:visible}
       var st = store.get('th-start', null);
       if (k && st && st.k === k && Date.now() - st.t < 12 * 3600000) TH.start = st.t;
       else { TH.start = Date.now(); if (k) store.set('th-start', {k: k, t: TH.start}); }
+      if (k && mxOn() && mx.ready){ mx.thin = true; restart($('veil'), 'go'); clearTimeout(mx.thT); mx.thT = setTimeout(function(){ mx.thin = false; $('veil').className = ''; bodyCls(); }, 2600); }
       bodyCls(); buildDeco(k);
     }
     themeRefresh();
   }
   $('st-theme').value = store.get('theme', 'auto') || 'auto';
-  $('st-anim').value = anim ? '1' : '0';
+  $('st-anim').value = mx.mode === 'light' ? 'light' : mx.mode === false ? '0' : '1';
   $('st-theme').onchange = function(){ store.set('theme', this.value); TH.k = null; applyTheme(); };
-  $('st-anim').onchange = function(){ anim = this.value === '1'; store.set('anim', anim); TH.k = null; applyTheme(); };
+  $('st-anim').onchange = function(){ mx.mode = this.value === '1' ? true : this.value === 'light' ? 'light' : false; mx.low = false; anim = mx.mode !== false; store.set('anim', mx.mode); $('mx-note').textContent = ''; wxKey = ''; clkCur = ''; TH.k = null; applyTheme(); };
+
+  /* ---------- mouvements (version 14) : chiffres qui roulent, vagues de couleur, Xbox, reflets ---------- */
+  function mxOn(){ return mx.mode !== false; }
+  function mxFull(){ return mx.mode === true && !mx.low; }
+  function restart(el, c){ el.classList.remove(c); void el.offsetWidth; el.classList.add(c); }
+  /* position d'un élément dans la page (marche aussi avec le zoom de la tablette) */
+  function pagePos(el){ var x = el.offsetWidth / 2, y = el.offsetHeight / 2; while (el){ x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return [x, y]; }
+  function fxAdd(cls, el, html, style, ms){
+    if (!mxOn()) return;
+    var p = pagePos(el), d = document.createElement('div');
+    d.className = cls; d.style.left = p[0] + 'px'; d.style.top = p[1] + 'px';
+    if (style) d.style.cssText += style; if (html) d.innerHTML = html;
+    $(cls === 'bloom' ? 'fxb' : 'fxl').appendChild(d); setTimeout(function(){ if (d.parentNode) d.parentNode.removeChild(d); }, ms || 1500);
+  }
+  function rgba(c, a){ return 'rgba(' + c + ',' + a + ')'; }
+  function blob(c){ return 'background-image:-webkit-radial-gradient(50% 50%,circle,' + rgba(c, .95) + ' 0,' + rgba(c, .5) + ' 35%,' + rgba(c, 0) + ' 70%);background-image:radial-gradient(circle,' + rgba(c, .95) + ' 0,' + rgba(c, .5) + ' 35%,' + rgba(c, 0) + ' 70%)'; }
+  /* horloge */
+  var clkCur = '';
+  function mxClock(t){
+    var el = $('clock'), i, sl, old, nb;
+    if (t === clkCur) return;
+    if (!mxOn() || !clkCur || clkCur.length !== t.length || !el.firstChild || el.firstChild.nodeType !== 1){
+      var h = '';
+      for (i = 0; i < t.length; i++) h += '<span class="dg' + (t.charAt(i) === ':' ? ' cl' : '') + '"><b>' + t.charAt(i) + '</b></span>';
+      el.className = 'mxc'; el.innerHTML = h; clkCur = t; return;
+    }
+    for (i = 0; i < t.length; i++){
+      if (t.charAt(i) === clkCur.charAt(i)) continue;
+      sl = el.children[i]; old = sl.lastChild; old.className = 'o';
+      nb = document.createElement('b'); nb.className = 'n'; nb.textContent = t.charAt(i); sl.appendChild(nb);
+      (function(o){ setTimeout(function(){ if (o.parentNode) o.parentNode.removeChild(o); }, 700); })(old);
+    }
+    clkCur = t;
+  }
+  /* reflet qui traverse une carte à la fois */
+  var glI = 0;
+  function mxShine(){
+    if (!mxFull() || TH.k === 'forza' || $('night').className === 'show') return;
+    var g = document.querySelectorAll('.wrap .gl'); if (!g.length) return;
+    restart(g[glI++ % g.length], 'go');
+  }
+  /* ambiances : vague de la couleur de l'ambiance, puis les halos du fond changent de teinte */
+  var SCC = {jeu:'91,140,255', film:'255,140,80', nuit:'120,100,255', reveil:'70,225,200'};
+  function mxScene(k, btn){
+    if (!btn) return;
+    var t = btn.querySelector('.tile'); if (t) restart(t, 'pop');
+    fxAdd('bloom', btn, '', blob(SCC[k]), 2000);
+    fxAdd('ring', btn, '', 'border-color:' + rgba(SCC[k], 1), 1100);
+    if (mxOn()){ var sky = $('sky'); sky.className = 'fade'; setTimeout(function(){ bodyCls(); sky.className = ''; }, 450); }
+  }
+  /* Xbox : démarrage, extinction façon vieille télé, changement d'appli */
+  var px = null, pxT = null;
+  function mxXbox(){
+    var on = s.xbox, a = find(APPS, function(x){ return x.id === s.app; }), key = on ? (s.app || '') + '|' + (s.title || '') : '';
+    var c = $('c-xbox'), art = $('art'), bg = [art.style.backgroundColor, art.style.backgroundImage];
+    var html = art.querySelector('.in').innerHTML.replace(/ id="now"/g, ' class="nowc"').replace(/ id="[^"]*"/g, '');
+    if (on && (s.title || (a && a.id !== 'Home'))) c.classList.add('playing'); else c.classList.remove('playing');
+    if (!px || !mxOn() || (on === px.on && key === px.key)){ px = {on: on, key: key, bg: bg, html: html}; return; }
+    var ox = art.querySelector('.ox'); ox.style.backgroundColor = px.bg[0]; ox.style.backgroundImage = px.bg[1];
+    clearTimeout(pxT); each(['boot', 'shut', 'go', 'x'], function(k){ c.classList.remove(k); });
+    each(art.querySelectorAll('.in.old'), function(o){ o.parentNode.removeChild(o); });
+    void c.offsetWidth;
+    if (on && !px.on){ c.classList.add('boot'); c.classList.add('go'); fxAdd('ring', c.querySelector('.tile'), '', 'border-color:#3fdc8a', 1100); }
+    else if (!on && px.on){
+      var cl = document.createElement('div'); cl.className = 'in old'; cl.innerHTML = px.html; art.appendChild(cl);
+      c.classList.add('shut'); setTimeout(function(){ if (cl.parentNode) cl.parentNode.removeChild(cl); }, 700);
+    } else c.classList.add('go');
+    c.classList.add('x');
+    pxT = setTimeout(function(){ each(['boot', 'shut', 'go', 'x'], function(k){ c.classList.remove(k); }); }, 1500);
+    px = {on: on, key: key, bg: bg, html: html};
+  }
+  /* météo animée (dessins SVG animés, seulement la grande icône) */
+  function sm(t, v, d, b){ return '<animateTransform attributeName="transform" type="' + t + '" values="' + v + '" dur="' + d + '"' + (b ? ' begin="' + b + '"' : '') + ' repeatCount="indefinite"/>'; }
+  function so(v, d, b){ return '<animate attributeName="opacity" values="' + v + '" dur="' + d + '"' + (b ? ' begin="' + b + '"' : '') + ' repeatCount="indefinite"/>'; }
+  function drift(x){ return '<g>' + sm('translate', '0 0;1.2 0;0 0', '7s') + x + '</g>'; }
+  function drops(col, ds, dur, dy){ var h = ''; each(ds, function(d, i){ h += '<path stroke="' + col + '" d="' + d + '">' + sm('translate', '0.4 -' + dy + ';-0.4 ' + dy, dur, (i * 0.33) + 's') + so('0;1;0', dur, (i * 0.33) + 's') + '</path>'; }); return h; }
+  var RAIN_CL = CL.replace('18h10', '15h10').replace('11.5 3.3 3.3 0 0 0 7 18z', '8.5 3.3 3.3 0 0 0 7 15z');
+  var ICOA = {
+    sun: '<g>' + sm('rotate', '0 12 12;360 12 12', '30s') + '<path stroke="#ffc46b" d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></g><circle cx="12" cy="12" r="4" stroke="#ffc46b"><animate attributeName="r" values="4;4.6;4" dur="4s" repeatCount="indefinite"/></circle>',
+    moon: '<g>' + sm('rotate', '-8 12 12;8 12 12;-8 12 12', '8s') + '<path stroke="#d9c6ff" d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></g><path stroke="#fff" d="M18 4h.01">' + so('0;1;0', '3s') + '</path><path stroke="#fff" d="M21 8h.01">' + so('0;1;0', '3s', '1.5s') + '</path>',
+    cloud: drift(CL),
+    partly: '<g>' + so('.5;1;.5', '4s') + '<path stroke="#ffc46b" d="M8 3v1.5M3.5 5.5l1 1M2 10h1.5M12.5 5.5l-1 1"/></g><path stroke="#ffc46b" d="M5.5 11.5A3.5 3.5 0 0 1 11 8"/>' + drift(CL),
+    rain: drift(RAIN_CL) + drops('#7cc8ff', ['M9 18l-1 3', 'M13 18l-1 3', 'M17 18l-1 3'], '1s', 1.5),
+    snow: drift(CL) + drops('#cfe8ff', ['M9 21h.01', 'M13 21h.01', 'M17 21h.01'], '2.2s', 1.2),
+    storm: drift(CL) + '<path stroke="#ffc46b" d="M12 14l-2 4h4l-2 4">' + so('1;1;1;1;.1;1;.1;1;1;1', '3s') + '</path>',
+    fog: '<path stroke="#c3c9ee" d="M4 10h16">' + sm('translate', '-1 0;1 0;-1 0', '5s') + '</path><path stroke="#c3c9ee" d="M3 14h18">' + sm('translate', '1 0;-1 0;1 0', '6s') + '</path><path stroke="#c3c9ee" d="M6 18h12">' + sm('translate', '-1 0;1 0;-1 0', '4s') + '</path>',
+    wind: '<g>' + sm('translate', '-1 0;1 0;-1 0', '3s') + ICO.wind + '</g>'
+  };
+  var wxKey = '';
+  function wxBig(k){
+    var key = k + (mxFull() ? 'a' : '');
+    if (key === wxKey) return; wxKey = key;
+    $('wx-i').innerHTML = mxFull() && ICOA[k] ? '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + ICOA[k] + '</svg>' : wxSvg(k, 64);
+  }
+  /* la tablette vérifie sa fluidité au démarrage : si elle rame, elle passe toute seule en animations légères */
+  function mxProbe(){
+    var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+    if (!raf || mx.mode !== true) return;
+    var n = 0, t0 = Date.now();
+    function f(){ n++; var dt = Date.now() - t0; if (dt < 2500) return raf(f);
+      if (n * 1000 / dt < 24){ mx.low = true; bodyCls(); wxKey = ''; $('mx-note').textContent = 'La tablette a allégé les animations toute seule (' + Math.round(n * 1000 / dt) + ' images/s).'; } }
+    raf(f);
+  }
+  function mxStart(){
+    each(document.querySelectorAll('.wrap .card'), function(cd){ var g = document.createElement('i'); g.className = 'gl'; cd.appendChild(g); });
+    setTimeout(function(){ mx.ready = true; bodyCls(); }, 1700);
+    setTimeout(function(){ var g = document.querySelector('.clock-card .gl'); if (g && mxFull()) restart(g, 'go'); }, 1100);
+    setInterval(mxShine, 6000);
+    setTimeout(mxProbe, 2600);
+  }
 
   /* ---------- démarrage ---------- */
-  tick(); setInterval(tick, 1000);
+  mxStart(); tick(); setInterval(tick, 1000);
   renderNotifs(); renderXbox(); renderPresence(); setMode();
   poll(); setInterval(poll, 10000);
   if (!cfg.token) setTimeout(openSettings, 600);
