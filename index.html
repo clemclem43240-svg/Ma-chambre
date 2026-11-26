@@ -306,7 +306,7 @@ body.acc h1{font-size:28px}
   <!-- MAISON -->
   <section class="view" id="v-maison" hidden>
     <div class="card plan-card">
-      <div class="row" style="padding:2px 4px 0"><h3>Ma chambre en 3D</h3><span class="sub">Touchez un meuble</span></div>
+      <div class="row" style="padding:2px 4px 0"><h3>Ma chambre en 3D</h3><span class="sub">Touchez un objet</span></div>
       <div class="vwrap" id="plan"></div>
     </div>
     <h2>Lumières Philips Hue</h2>
@@ -407,7 +407,7 @@ body.acc h1{font-size:28px}
   /* ---------- configuration ---------- */
   const ENT = [
     ['xbox','Xbox','media_player.xbox'], ['person','Présence iPhone','person.clement'],
-    ['chevet','Lampe de chevet','light.chevet'], ['plafond','Plafonnier / bureau','light.plafonnier'], ['ruban','Ruban sous le canapé','light.ruban_canape']
+    ['chevet','Lampe du plafond 1','light.chevet'], ['plafond','Lampe du plafond 2','light.plafonnier'], ['ruban','Ruban sous le canapé','light.ruban_canape']
   ];
   let cfg = Object.assign({city:'', url:'', token:'', xbox:'media_player.xbox', person:''}, store.get('cfg', {}));
   /* servie par Home Assistant lui-même (http://…:8123/local/…) : l'adresse se remplit toute seule */
@@ -420,8 +420,8 @@ body.acc h1{font-size:28px}
   /* ---------- état ---------- */
   const s = { xbox:false, app:null, vol:30, muted:false, home:true, shutter:0, garage:100, scene:null,
     lights:[
-      {id:'chevet', name:'Lampe de chevet', kind:'Ampoule Hue', on:false, lvl:40, color:'#ffcf8a'},
-      {id:'plafond', name:'Plafonnier / bureau', kind:'Ampoule Hue', on:false, lvl:80, color:'#f4f6ff'},
+      {id:'chevet', name:'Lampe du plafond 1', kind:'Ampoule Hue', on:false, lvl:40, color:'#ffcf8a'},
+      {id:'plafond', name:'Lampe du plafond 2', kind:'Ampoule Hue', on:false, lvl:80, color:'#f4f6ff'},
       {id:'ruban', name:'Ruban sous le canapé', kind:'Hue Lightstrip 5 m', on:false, lvl:60, color:'#a77bff'}
     ]};
   let agenda = store.get('agenda', null) || [{t:'18:00', txt:'Exemple : entraînement'}, {t:'20:30', txt:'Exemple : repas en famille'}];

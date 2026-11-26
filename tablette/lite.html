@@ -554,7 +554,7 @@ body.lowfx .vrain{display:none!important}
   </div>
 </div>
 <div id="games"><div class="card g-card"><div class="line hd"><h3>Jeux</h3><button id="g-close">Fermer</button></div><div id="g-list"></div></div></div>
-<div id="plan3d"><div class="p3"><div id="p3"></div><div class="p3-side"><h3>Ma chambre en 3D</h3><p>Touchez un meuble pour le piloter : la télé, la Xbox, le canapé (ruban), le lit (chevet) ou le bureau.</p><p class="sub" id="p3-note">Les lumières sont en démo jusqu'à l'arrivée du Hue.</p><button id="p3-close">Fermer</button></div></div></div>
+<div id="plan3d"><div class="p3"><div id="p3"></div><div class="p3-side"><h3>Ma chambre en 3D</h3><p>Touchez un meuble pour le piloter : la télé, la Xbox, le canapé (ruban) ou les deux lampes du plafond.</p><p class="sub" id="p3-note">Les lumières sont en démo jusqu'à l'arrivée du Hue.</p><button id="p3-close">Fermer</button></div></div></div>
 <div id="night"><div id="n-clock">--:--</div><div id="n-date"></div><div id="n-hint">Touchez l'écran pour réveiller la tablette</div></div>
 <div id="toast"></div>
 <div id="fxb"></div><div id="fxl"></div><div id="veil"></div>
@@ -1277,7 +1277,7 @@ body.lowfx .vrain{display:none!important}
     if (viv.covOn !== ok){ viv.covOn = ok; bodyCls(); }
   }
   /* plan 3D de la chambre (écran plein) */
-  var P3N = {chevet: 'Lampe de chevet', lit: 'Lampe de chevet', bureau: 'Lampe du bureau', canape: 'Ruban du canapé'}, P3L = {lit: 'chevet', chevet: 'chevet', bureau: 'bureau', canape: 'ruban'};
+  var P3N = {chevet: 'Lampe du plafond 1', bureau: 'Lampe du plafond 2', canape: 'Ruban du canapé'}, P3L = {lit: 'chevet', chevet: 'chevet', bureau: 'bureau', canape: 'ruban'};
   var P3C = [['#ffcf8a', 'Blanc chaud'], ['#5b8cff', 'Bleu'], ['#a77bff', 'Violet'], ['#ff9b42', 'Orange']];
   var MUTE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>';
   function tvShown(){ return viv.tv === null ? s.xbox : viv.tv; }
