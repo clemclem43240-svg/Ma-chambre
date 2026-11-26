@@ -56,6 +56,7 @@
     fog: '<path d="M4 10h16">' + am('translate', '-1 0;1 0;-1 0', '5s') + '</path><path d="M3 14h18">' + am('translate', '1 0;-1 0;1 0', '6s') + '</path><path d="M6 18h12">' + am('translate', '-1 0;1 0;-1 0', '4s') + '</path>',
     rain: drift(C15) + drops('#7cc8ff', ['M9 18l-1 3', 'M13 18l-1 3', 'M17 18l-1 3'], '1s', 1.5),
     snow: drift(C14) + drops('#cfe8ff', ['M9 18h.01', 'M13 18h.01', 'M17 18h.01', 'M11 21h.01', 'M15 21h.01'], '2.2s', 1.2),
+    moon: '<g>' + am('rotate', '-8 12 12;8 12 12;-8 12 12', '9s') + '<path style="stroke:#e6e4ff" d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></g><path style="stroke:#fff" d="M17 4v2M16 5h2">' + ao('0;1;0', '3s') + '</path>',
     storm: drift(C14) + '<path style="stroke:#ffc46b" d="M12 14l-2 4h4l-2 4">' + ao('1;1;1;1;.1;1;.1;1;1;1', '3s') + '</path>'
   };
   const wx = k => on ? WX[k] : null;

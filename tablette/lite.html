@@ -425,9 +425,38 @@ body.lowfx #sky i,body.lowfx .ff,body.lowfx .swayT,body.lowfx .swayB,body.lowfx 
 /* Aucune */
 body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!important;animation:none!important}
 .nowc{font-size:32px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ---------- chambre vivante (version 15) : ciel, jaquette, message d'accueil, plan 3D ---------- */
+#vsk{display:none}
+body.vs #vsk{display:block}
+.th-netflix #vsk,.th-youtube #vsk,.th-gta #vsk,.th-forza #vsk,.th-netflix #vcov,.th-youtube #vcov,.th-gta #vcov,.th-forza #vcov{display:none}
+body.vs #sky i{opacity:0}
+body.vs.sc-jeu #sky i,body.vs.sc-film #sky i,body.vs.sc-reveil #sky i{opacity:.45}
+#vcov{position:fixed;left:0;top:0;right:0;bottom:0;z-index:0;pointer-events:none;background-size:cover;background-position:center center;opacity:0;-webkit-transition:opacity 1.6s;transition:opacity 1.6s}
+body.cov #vcov{opacity:.55}
+#g-hello{font-size:19px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#g-line{font-size:15px;color:#cdd3f7;margin-top:6px;min-height:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-transition:opacity .45s;transition:opacity .45s}
+#g-line.out{opacity:0}
+.art .cvi{position:absolute;left:0;top:0;right:0;bottom:0;background-size:cover;background-position:center center;opacity:0;-webkit-transition:opacity .8s;transition:opacity .8s}
+#open-plan{white-space:nowrap;height:50px;margin-right:10px;padding:0 16px;border-radius:16px;font-size:16px;font-weight:500;background-color:rgba(255,255,255,.12)}
+#open-plan svg{display:inline-block;vertical-align:middle;margin:-3px 8px 0 0}
+#plan3d{position:fixed;left:0;top:0;right:0;bottom:0;z-index:6;display:none;background:rgba(5,8,25,.88);padding:20px 24px}
+#plan3d.show{display:block}
+.p3{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;height:100%}
+#p3{position:relative;width:640px;height:532px;-webkit-flex:none;flex:none}
+#p3 .vplan{width:640px;height:532px}
+.p3-side{-webkit-box-flex:1;-webkit-flex:1;flex:1;padding-left:24px}
+.p3-side h3{font-size:26px;margin:0 0 6px;text-transform:none;letter-spacing:0;color:#fff}
+.p3-side p{font-size:16px;color:#c3c9ee;line-height:1.45;margin:0 0 18px}
+.p3-side button{width:100%;margin-top:8px}
+.vpop{font-family:inherit}
+body.lowfx .vplan .vglow,body.lowfx .vsl,body.lowfx .vstars{-webkit-transition:none!important;transition:none!important}
+body.lowfx .vpop{-webkit-animation:none;animation:none}
+body.lowfx .vrain{display:none!important}
 </style>
+<style id="vcol"></style>
 </head>
 <body>
+<div id="vsk"></div><div id="vcov"></div>
 <div id="sky"><i class="h1"></i><i class="h2"></i><i class="h3"></i></div>
 <div id="th-bg"></div>
 <div id="th-fx"></div>
@@ -461,12 +490,13 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
     <span class="pill" id="pr-pill"><span class="dot" id="pr-dot"></span><span id="pr-txt">Présence inconnue</span></span>
     <div class="grow"></div>
     <span class="pill warn-c" id="mode"><span class="dot"></span><span id="mode-txt">Mode démo</span></span>
+    <button id="open-plan"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>Ma chambre 3D</button>
     <button class="icon-btn" id="open-st" aria-label="Réglages"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></button>
   </div>
 
   <div class="cols">
     <div class="col c1">
-      <div class="card clock-card"><div id="clock">--:--</div><div id="date"></div></div>
+      <div class="card clock-card"><div id="g-hello"></div><div id="clock">--:--</div><div id="date"></div><div id="g-line"></div></div>
       <div class="card">
         <div class="line hd"><h3>Météo</h3><span class="sub">Maison</span></div>
         <div class="flex wx-main"><div id="wx-i"></div><div><div id="wx-t">--°</div><div id="wx-d">En attente</div></div></div>
@@ -478,7 +508,7 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
     <div class="col c2">
       <div class="card" id="c-xbox">
         <div class="flex"><span class="tile t-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h4M8 8v4M15 11h.01M18 9h.01"/><path d="M7 5h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-3a5 5 0 0 1 5-5z"/></svg></span><div class="grow"><div class="t1">Xbox</div><div class="sub" id="xb-state">En veille</div></div><button class="sw" id="xb-sw" aria-label="Xbox"></button></div>
-        <div class="art" id="art"><i class="ox"></i><i class="swp"></i><i class="crt"></i><span class="eq"><i></i><i></i><i></i><i></i></span><span class="tk tk-l"></span><span class="tk tk-r"></span><span class="tk tk-d"></span><span class="tk tk-s">ADMIS</span><div class="in"><div class="lbl" id="art-lbl">EN VEILLE</div><div id="now">Touchez une appli</div></div></div>
+        <div class="art" id="art"><i class="cvi" id="cvi"></i><i class="ox"></i><i class="swp"></i><i class="crt"></i><span class="eq"><i></i><i></i><i></i><i></i></span><span class="tk tk-l"></span><span class="tk tk-r"></span><span class="tk tk-d"></span><span class="tk tk-s">ADMIS</span><div class="in"><div class="lbl" id="art-lbl">EN VEILLE</div><div id="now">Touchez une appli</div></div></div>
         <div class="apps" id="apps"></div>
         <div class="flex tv"><span class="tile t-pink"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M9 21h6M12 17v4"/></svg></span><div class="grow"><div class="t1">Télé</div><div class="sub">S'allume avec la Xbox</div></div>
           <button class="vb" data-tv="moins" aria-label="Moins fort">−</button><button class="vb" data-tv="plus" aria-label="Plus fort">+</button><button class="vb" data-tv="muet" aria-label="Muet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:auto"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg></button></div>
@@ -503,9 +533,10 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 14</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 15</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
+    <div class="field"><label for="st-fond">Fond d'écran</label><select id="st-fond"><option value="ciel">Ciel qui suit l'heure et la météo</option><option value="couleurs">Couleurs (comme avant)</option></select></div>
     <div class="field"><label for="st-anim">Animations</label><select id="st-anim"><option value="1">Toutes (le plus beau)</option><option value="light">Légères (si la tablette rame)</option><option value="0">Aucune</option></select><p class="help" id="mx-note"></p></div>
     <div class="field"><label for="st-night">Écran en mode Nuit</label><select id="st-night"><option value="dim">Heure à peine éclairée</option><option value="off">Écran complètement éteint</option></select></div>
     <p class="help" id="xb-raw">La Xbox dit : rien pour l'instant (Home Assistant pas connecté)</p>
@@ -523,10 +554,12 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
   </div>
 </div>
 <div id="games"><div class="card g-card"><div class="line hd"><h3>Jeux</h3><button id="g-close">Fermer</button></div><div id="g-list"></div></div></div>
+<div id="plan3d"><div class="p3"><div id="p3"></div><div class="p3-side"><h3>Ma chambre en 3D</h3><p>Touchez un meuble pour le piloter : la télé, la Xbox, le canapé (ruban), le lit (chevet) ou le bureau.</p><p class="sub" id="p3-note">Les lumières sont en démo jusqu'à l'arrivée du Hue.</p><button id="p3-close">Fermer</button></div></div></div>
 <div id="night"><div id="n-clock">--:--</div><div id="n-date"></div><div id="n-hint">Touchez l'écran pour réveiller la tablette</div></div>
 <div id="toast"></div>
 <div id="fxb"></div><div id="fxl"></div><div id="veil"></div>
 
+<script src="../vivant.js?v=1"></script>
 <script>
 (function(){
   'use strict';
@@ -617,7 +650,7 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
   /* ---------- horloge ---------- */
   var JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
   var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-  function tick(){ var d = new Date(); mxClock(hm(d)); $('date').textContent = JOURS[d.getDay()].charAt(0).toUpperCase() + JOURS[d.getDay()].slice(1) + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()]; if (TH && TH.k) themeRefresh(); }
+  function tick(){ var d = new Date(); mxClock(hm(d)); $('date').textContent = JOURS[d.getDay()].charAt(0).toUpperCase() + JOURS[d.getDay()].slice(1) + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()]; if (TH && TH.k) themeRefresh(); if (viv && d.getMinutes() !== viv.min){ viv.min = d.getMinutes(); vivMinute(); } }
 
   /* ---------- météo (entité weather de Home Assistant) ---------- */
   var WX = {'clear-night':['Nuit claire','moon'], cloudy:['Nuageux','cloud'], exceptional:['Exceptionnel','cloud'], fog:['Brouillard','fog'], hail:['Grêle','rain'],
@@ -641,6 +674,7 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
     var a = e.attributes || {}, w = WX[e.state] || [e.state, ''];
     $('wx-t').textContent = (typeof a.temperature === 'number' ? Math.round(a.temperature) : '--') + '°';
     wxBig(w[1]); $('wx-d').textContent = w[0];
+    viv.cond = w[1] || 'partly'; viv.temp = typeof a.temperature === 'number' ? a.temperature : null; vivMinute();
     var x = [];
     if (typeof a.humidity === 'number') x.push('Humidité ' + Math.round(a.humidity) + ' %');
     if (typeof a.wind_speed === 'number') x.push('Vent ' + Math.round(a.wind_speed) + ' ' + (a.wind_speed_unit || 'km/h'));
@@ -678,7 +712,8 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
       var j = null; try { j = JSON.parse(x.responseText); } catch(e){}
       if (x.status !== 200 || !j || !j.current){ omLast = Date.now() - 25 * 60 * 1000; return noWeather(); }
       var c = j.current, k = omKey(c.weather_code);
-      if (!omDaysOnly){ $('wx-t').textContent = Math.round(c.temperature_2m) + '°'; wxBig(k); $('wx-d').textContent = OMTXT[k];
+      viv.cond = k; viv.temp = c.temperature_2m; vivMinute();
+      if (!omDaysOnly){ $('wx-t').textContent = Math.round(c.temperature_2m) + '°'; wxBig(k === 'sun' && vivNight() ? 'moon' : k); $('wx-d').textContent = OMTXT[k];
       $('wx-x').textContent = 'Humidité ' + Math.round(c.relative_humidity_2m) + ' % · Vent ' + Math.round(c.wind_speed_10m) + ' km/h'; }
       var d = j.daily, h = '';
       each(d.time, function(t, i){
@@ -728,6 +763,7 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
     each(document.querySelectorAll('[data-app]'), function(b){ b.className = 'app' + (s.xbox && b.getAttribute('data-app') === s.app ? ' cur' : ''); });
     if (TH) applyTheme();
     mxXbox();
+    if (viv) vivXbox();
   }
   function needLive(){ if (!live){ toast('Mode démo : branchez Home Assistant dans Réglages'); return false; } if (!cfg.xbox){ toast('Choisissez la Xbox dans Réglages'); return false; } return true; }
 
@@ -764,7 +800,7 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
     if (!needLive()) return;
     var a = find(APPS, function(x){ return x.id === id; });
     $('games').style.display = 'none';
-    s.xbox = true; s.app = id; s.title = ''; renderXbox(); toast('Lancement : ' + a.name);
+    s.xbox = true; s.app = id; s.title = ''; if (V) V.learn(store, id); renderXbox(); toast('Lancement : ' + a.name);
     service('script', a.sc, {}, function(err){ if (err){ notify('Xbox : ' + a.name + ' non lancé (' + err.message + ')'); toast('Xbox : ' + a.name + ' non lancé'); } else notify(a.name + ' : la Xbox s\'en occupe'); });
   }
   $('xb-sw').onclick = function(){
@@ -814,7 +850,7 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
     req('GET', '/api/states', null, function(err, states){
       if (err || !states){ if (live) notify('Connexion à Home Assistant perdue'); live = false; setMode(); return; }
       var by = {}; each(states, function(e){ by[e.entity_id] = e; });
-      if (!live) notify('Connecté à Home Assistant');
+      var wasLive = live; if (!live) notify('Connecté à Home Assistant');
       live = true; setMode();
       var x = cfg.xbox && by[cfg.xbox];
       /* l'intégration Xbox met le jeu en cours dans le capteur « Lecture en cours » du profil, pas dans la console */
@@ -822,11 +858,17 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
       np = npE ? npE.state : '';
       if (x){
         var on = ['off', 'unavailable', 'standby', 'unknown'].indexOf(x.state) < 0, at = x.attributes || {};
-        s.xbox = on; srcList = at.source_list || []; s.app = on ? appOf(at.source) : null;
+        var pa = s.app; s.xbox = on; srcList = at.source_list || []; s.app = on ? appOf(at.source) : null;
+        if (wasLive && on && s.app && s.app !== pa && V) V.learn(store, s.app);
+        var ep = on ? (at.entity_picture || (npE && npE.attributes && npE.attributes.entity_picture) || '') : '';
+        viv.pic = ep ? (/^https?:/.test(ep) ? ep : trimUrl(cfg.url) + ep) : '';
         s.title = on ? (at.media_title || np || '') : '';
         if (typeof at.volume_level === 'number') s.vol = Math.round(at.volume_level * 100);
         s.muted = !!at.is_volume_muted; xbRaw(x); renderXbox();
       }
+      var sun = by['sun.sun']; if (sun && sun.attributes){ viv.rise = isoD(sun.attributes.next_rising) || viv.rise; viv.set = isoD(sun.attributes.next_setting) || viv.set; }
+      var pe = (cfg.person && by[cfg.person]) || find(states, function(e){ return e.entity_id.indexOf('person.') === 0; });
+      if (pe && V){ var fn = V.firstName((pe.attributes || {}).friendly_name); if (fn && fn !== viv.who){ viv.who = fn; store.set('name', fn); vivGreet(); } }
       if (cfg.person && by[cfg.person]){
         var home = by[cfg.person].state === 'home';
         if (s.home !== null && home !== s.home) notify(home ? 'Tu es rentré à la maison' : 'Tu es parti de la maison');
@@ -935,7 +977,7 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
     return '';
   }
   function dur(){ var m = Math.max(0, Math.floor((Date.now() - TH.start) / 60000)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + pad(m % 60); }
-  function bodyCls(){ var c = []; if (TH.k) c.push('th-' + TH.k); if (mx.mode === false) c.push('noanim'); if (mx.mode === 'light' || mx.low) c.push('lowfx'); if (mx.ready) c.push('ready'); if (mx.thin) c.push('thin'); if (scene && scene !== 'nuit') c.push('sc-' + scene); if (fzOff) c.push('fz-off'); document.body.className = c.join(' '); }
+  function bodyCls(){ var c = []; if (TH.k) c.push('th-' + TH.k); if (mx.mode === false) c.push('noanim'); if (mx.mode === 'light' || mx.low) c.push('lowfx'); if (mx.ready) c.push('ready'); if (mx.thin) c.push('thin'); if (scene && scene !== 'nuit') c.push('sc-' + scene); if (fzOff) c.push('fz-off'); if (vivSky()) c.push('vs'); if (viv && viv.covOn) c.push('cov'); document.body.className = c.join(' '); }
   function dk(style, src, sway){ return '<div class="dk" style="' + style + '"><img src="../themes/' + src + '" class="' + sway + '" alt=""></div>'; }
   function curtainSvg(){
     var st = '', i, w = 1024 / 12, p = '', g = '';
@@ -1176,8 +1218,108 @@ body.noanim *,body.noanim *:before,body.noanim *:after{-webkit-animation:none!im
     setTimeout(mxProbe, 2600);
   }
 
+  /* ---------- chambre vivante (vivant.js) : ciel, message d'accueil, jaquette, plan 3D ---------- */
+  var V = window.VIV || null;
+  var viv = {who: store.get('name', ''), rise: null, set: null, cond: 'partly', temp: null, k: null, min: -1, pic: '', cov: null, covKey: null, covOn: false, planOn: false, tv: null, lastX: null,
+    L: {chevet: {on: false, color: '#ffcf8a', lvl: 40}, bureau: {on: false, color: '#f4f6ff', lvl: 80}, ruban: {on: false, color: '#a77bff', lvl: 60}}};
+  function isoD(t){ if (!t) return null; var d = new Date(String(t).replace(/\.\d+/, '')); return isNaN(d.getTime()) ? null : d; }
+  function vivSky(){ return !!V && store.get('fond', 'ciel') !== 'couleurs'; }
+  function vivNight(){ return !!V && !V.sunInfo(new Date(), viv.rise, viv.set).day; }
+  function vivPaint(){
+    if (!V) return; bodyCls(); if (!vivSky()) return;
+    var el = $('vsk'); if (!el._built){ V.skyBuild(el, 40, {rain: true}); el._built = true; }
+    var k = V.sky(V.sunInfo(new Date(), viv.rise, viv.set), viv.cond); viv.k = k; V.skyPaint(el, k); planPaintT();
+  }
+  function vivMinute(){ vivPaint(); vivGreet(); }
+  /* message d'accueil */
+  var gL = [], gI = 0, gK = '', gT = null;
+  function kindOf(a){ return !a ? 'game' : a.game ? 'game' : /Spotify|Deezer/.test(a.id) ? 'music' : a.id === 'Home' ? 'home' : 'video'; }
+  function vivGreet(){
+    if (!V) return;
+    var d = new Date(), h = d.getHours(), a = find(APPS, function(x){ return x.id === s.app; }), p = null;
+    if (s.xbox){ if (s.title && !/^(home|accueil)/i.test(s.title)) p = {name: s.title, kind: kindOf(a)}; else if (a && a.id !== 'Home') p = {name: a.name, kind: kindOf(a)}; }
+    var fid = V.fav(store, h), fa = find(APPS, function(x){ return x.id === fid; });
+    var g = V.greet({name: viv.who, h: h, playing: p, fav: fa ? {name: fa.name, kind: kindOf(fa)} : null, temp: viv.temp, cond: viv.cond === 'moon' ? 'sun' : viv.cond});
+    $('g-hello').textContent = g.hello;
+    var key = g.lines.join('|'); if (key === gK) return; gK = key; gL = g.lines; gI = 0; gShow();
+  }
+  function gShow(){
+    var el = $('g-line'); clearTimeout(gT); if (!gL.length){ el.textContent = ''; return; }
+    var t = gL[gI % gL.length];
+    if (el.textContent && el.textContent !== t && mxOn()){ el.className = 'out'; setTimeout(function(){ el.textContent = t; el.className = ''; }, 450); } else el.textContent = t;
+    if (gL.length > 1) gT = setTimeout(function(){ gI++; gShow(); }, 8000);
+  }
+  /* jaquette : image dans l'affiche Xbox, couleurs reprises partout, fond flou */
+  function vivXbox(){
+    if (viv.lastX !== s.xbox){ viv.lastX = s.xbox; viv.tv = null; }
+    vivCover(); vivGreet(); planPaintT();
+  }
+  function vivCover(){
+    if (!V) return; var u = s.xbox && viv.pic || '';
+    if (u === viv.covKey){ vivCovApply(); return; }
+    viv.covKey = u; if (!u){ viv.cov = null; vivCovApply(); return; }
+    V.palette(u, function(r){ if (viv.covKey !== u) return; viv.cov = r; vivCovApply(); planPaintT(); });
+  }
+  function grd(a, b){ return 'background-image:-webkit-linear-gradient(-45deg,' + a + ',' + b + ');background-image:linear-gradient(135deg,' + a + ',' + b + ')'; }
+  function vivCovApply(){
+    var c = viv.cov, ok = !!(c && s.xbox && !TH.k), cv = $('cvi'), css = '';
+    if (ok){
+      cv.style.backgroundImage = '-webkit-linear-gradient(top,rgba(0,0,0,0) 30%,rgba(0,0,0,.7)),url("' + c.url + '")';
+      cv.style.backgroundImage = 'linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.7)),url("' + c.url + '")';
+      cv.style.opacity = 1; $('vcov').style.backgroundImage = 'url("' + (c.tiny || c.url) + '")';
+      if (c.c1){ var ac = V.accent(c.c1), dk2 = V.darken(c.c2 || c.c1, .5);
+        css = '.clock-card{background-color:' + V.rgba(c.c1, .4) + ';' + grd(V.rgba(c.c1, .65), V.rgba(dk2, .35)) + '}' +
+          '.app.cur{border-color:' + ac + ';background-color:' + V.rgba(ac, .28) + '}' +
+          '.sw.on{background-color:' + ac + ';' + grd(V.darken(ac, .25), ac).replace(/-45deg|135deg/g, function(m){ return m === '135deg' ? '90deg' : 'left'; }) + ';border-color:' + ac + '}' +
+          '#c-xbox{border-color:' + V.rgba(ac, .5) + '}'; }
+    } else cv.style.opacity = 0;
+    $('vcol').textContent = css;
+    if (viv.covOn !== ok){ viv.covOn = ok; bodyCls(); }
+  }
+  /* plan 3D de la chambre (écran plein) */
+  var P3N = {chevet: 'Lampe de chevet', lit: 'Lampe de chevet', bureau: 'Lampe du bureau', canape: 'Ruban du canapé'}, P3L = {lit: 'chevet', chevet: 'chevet', bureau: 'bureau', canape: 'ruban'};
+  var P3C = [['#ffcf8a', 'Blanc chaud'], ['#5b8cff', 'Bleu'], ['#a77bff', 'Violet'], ['#ff9b42', 'Orange']];
+  var MUTE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>';
+  function tvShown(){ return viv.tv === null ? s.xbox : viv.tv; }
+  function planPaintT(){
+    if (!viv.planOn || $('plan3d').className !== 'show') return;
+    var a = find(APPS, function(x){ return x.id === s.app; }), c = viv.cov, tv = tvShown();
+    V.planPaint($('p3'), {tv: tv, xbox: s.xbox, art: c && c.c1 ? [c.c1, V.darken(c.c2 || c.c1, .5)] : (s.xbox && a ? a.art : ['#107c10', '#0b2614']),
+      pic: tv && s.xbox ? viv.pic : '', lights: viv.L, sky: viv.k});
+  }
+  function planTapT(o){
+    var t, h = '', tv = tvShown();
+    if (o === 'tv'){ t = 'Télé'; h = '<button data-va="' + (tv ? 'tv-off' : 'tv-on') + '">' + (tv ? 'Éteindre' : 'Allumer') + '</button><button data-va="moins">−</button><button data-va="plus">+</button><button data-va="muet">' + MUTE + '</button>'; }
+    else if (o === 'xbox'){ t = 'Xbox'; h = '<button data-va="xb">' + (s.xbox ? 'Éteindre' : 'Allumer') + '</button>' + (s.xbox ? '<button data-va="home">Accueil</button>' : '') + '<button data-va="go">Jeux</button>'; }
+    else { var l = viv.L[P3L[o]]; t = P3N[o]; h = '<button data-va="l">' + (l.on ? 'Éteindre' : 'Allumer') + '</button>';
+      each(P3C, function(c){ h += '<button class="vsw" data-va="c' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '"></button>'; }); }
+    V.planPop($('p3'), o, t, h, function(va){ planActT(o, va); });
+  }
+  function planActT(o, va){
+    if (o === 'tv'){
+      if (va === 'tv-on' || va === 'tv-off'){ viv.tv = va === 'tv-on'; if (live) tvCmd(viv.tv ? 'allumer' : 'eteindre'); else toast('Démo : télé ' + (viv.tv ? 'allumée' : 'éteinte')); }
+      else if (needLive()) tvCmd(va);
+    } else if (o === 'xbox'){
+      if (va === 'xb') $('xb-sw').onclick(); else if (va === 'home') launch('Home');
+      else { $('plan3d').className = ''; $('games').style.display = 'block'; return; }
+    } else { var l = viv.L[P3L[o]]; if (va === 'l') l.on = !l.on; else { l.color = va.slice(1); l.on = true; }
+      var m = o === 'canape'; toast(P3N[o] + (l.on ? (m ? ' allumé' : ' allumée') : (m ? ' éteint' : ' éteinte')) + ' (démo, en vrai avec le Hue)'); }
+    planPaintT(); planTapT(o);
+  }
+  $('open-plan').onclick = function(){
+    if (!V) return toast('Plan 3D indisponible : rechargez la page');
+    var w = $('p3'); $('plan3d').className = 'show';
+    if (!viv.planOn){ w.innerHTML = V.PLAN; viv.planOn = true; V.planBind(w, function(o){ planTapT(o); }); }
+    V.planHit(w); planPaintT();
+  };
+  $('plan3d').onclick = function(e){ if (V && !$('p3').contains(e.target)) V.planPop($('p3'), null); };
+  $('p3-close').onclick = function(){ $('plan3d').className = ''; if (V) V.planPop($('p3'), null); };
+  $('st-fond').value = store.get('fond', 'ciel') || 'ciel';
+  $('st-fond').onchange = function(){ store.set('fond', this.value); vivPaint(); };
+  setInterval(function(){ if (V && vivSky() && mxFull() && $('night').className !== 'show' && Math.random() < .5) V.skyShoot($('vsk')); }, 25000);
+
   /* ---------- démarrage ---------- */
-  mxStart(); tick(); setInterval(tick, 1000);
+  mxStart(); vivPaint(); tick(); setInterval(tick, 1000);
   renderNotifs(); renderXbox(); renderPresence(); setMode();
   poll(); setInterval(poll, 10000);
   if (!cfg.token) setTimeout(openSettings, 600);

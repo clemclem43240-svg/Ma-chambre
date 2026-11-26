@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;500;600&family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="motion.css">
 <script src="motion.js"></script>
+<script src="vivant.js?v=1"></script>
 <style>
 /* Appli téléphone, portrait : une colonne de cartes en verre dépoli sur fond dégradé, barre d'onglets en bas (5 onglets). Centrée à 460px sur grand écran. */
 :root{
@@ -221,9 +222,34 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
 .th-forza .appb[aria-pressed="true"]{background:rgba(255,90,42,.28);border-color:#ff5a2a}
 .th-forza nav.tabs{background:rgba(20,6,4,.75)}
 .th-forza .now{--art:url(themes/fz-mini.jpg) center/cover no-repeat #000!important;min-height:190px}
+/* ---------- chambre vivante : ciel, jaquette, message d'accueil, plan 3D ---------- */
+#v-sky{display:none}
+body.sky #v-sky{display:block}
+body.themed #v-sky,body.themed #v-cover{display:none}
+body.sky .aurora i:not(.a4){opacity:0;transition:opacity 1.2s}
+body.sky.sc-on .aurora i:not(.a4){opacity:.5}
+#v-cover{position:fixed;inset:-80px;z-index:0;pointer-events:none;background-size:cover;background-position:center;filter:blur(46px) saturate(150%);opacity:0;transform:scale(1.15);transition:opacity 1.6s}
+body.cov #v-cover{opacity:.55}
+#v-cover::after{content:"";position:absolute;inset:0;background:rgba(5,8,24,.35)}
+.top{position:relative}
+body.acc .top{display:block}
+body.acc #mode{position:absolute;right:0;top:-2px}
+body.acc h1{font-size:28px}
+.clock{white-space:nowrap;flex-shrink:0}
+.wxmini .sub{display:block;max-width:118px}
+.greet{margin:-6px 0 0;min-height:20px;font-size:15px;color:var(--muted);transition:opacity .5s,transform .5s}
+.greet.out{opacity:0;transform:translateY(6px)}
+.plan-card{padding:12px 12px 6px;overflow:hidden}
+.vwrap{position:relative;margin:-4px -4px 0;perspective:900px;-webkit-perspective:900px;touch-action:pan-y}
+.vwrap .vplan{transition:transform .9s cubic-bezier(.2,1.3,.4,1);transform-origin:50% 60%}
+.vwrap.drag .vplan{transition:none}
+.vleg{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding-bottom:6px}
+.vleg span{font-size:11px;font-weight:600;color:var(--muted);padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.08)}
+.vpop{font-family:var(--f-body)}
 </style>
 </head>
 <body>
+<div id="v-sky" aria-hidden="true"></div><div id="v-cover" aria-hidden="true"></div>
 <div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
 <div id="th-bg" aria-hidden="true"></div><div id="th-fx" aria-hidden="true"></div>
 
@@ -232,6 +258,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     <div><div class="sub" id="date"></div><h1 id="title">Ma chambre</h1></div>
     <span class="pill demo" id="mode"><span class="dot"></span><span id="mode-txt">Démo</span></span>
   </div>
+  <p class="greet" id="greet"></p>
 
   <!-- ACCUEIL -->
   <section class="view" id="v-accueil">
@@ -278,6 +305,10 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
 
   <!-- MAISON -->
   <section class="view" id="v-maison" hidden>
+    <div class="card plan-card">
+      <div class="row" style="padding:2px 4px 0"><h3>Ma chambre en 3D</h3><span class="sub">Touchez un meuble</span></div>
+      <div class="vwrap" id="plan"></div>
+    </div>
     <h2>Lumières Philips Hue</h2>
     <div id="lights" class="view"></div>
     <div hidden><!-- volets et garage : pas prévus pour l'instant -->
@@ -323,6 +354,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   <section class="view" id="v-reglages" hidden>
     <div class="card">
       <div class="field"><label for="st-city">Ville pour la météo</label><input id="st-city" type="text" placeholder="Vide = position du téléphone" autocomplete="off"></div>
+      <div class="field"><label for="st-fond">Fond d'écran</label><select id="st-fond"><option value="ciel">Ciel qui suit l'heure et la météo</option><option value="couleurs">Couleurs (comme avant)</option></select></div>
       <div class="field"><label for="st-anim">Animations</label><select id="st-anim"><option value="1">Oui (le plus beau)</option><option value="0">Non</option></select></div>
       <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
       <p class="help" id="xb-raw">La Xbox dit : rien pour l'instant (Home Assistant pas connecté)</p>
@@ -340,7 +372,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
       <span class="status" id="st-status"></span>
       <div class="btns"><button class="btn" id="st-forget">Oublier</button><button class="btn" id="st-test">Tester</button><button class="btn primary" id="st-save">Enregistrer</button></div>
     </div>
-    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 11 (26/11)</p>
+    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 12 (26/11)</p>
   </section>
 </div>
 
@@ -414,24 +446,26 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   }
 
   /* ---------- onglets ---------- */
+  let curTab='accueil', greetHello='';
   const TABS = {accueil:'Ma chambre', xbox:'Xbox et télé', maison:'Maison', journee:'Journée', reglages:'Réglages'};
   function route(){ const t=(location.hash||'').slice(1); const tab = TABS[t] ? t : 'accueil';
     Object.keys(TABS).forEach(k => $('v-'+k).hidden = k !== tab);
     document.querySelectorAll('nav.tabs a').forEach(a => { if (a.dataset.tab===tab) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
-    $('title').textContent = TABS[tab]; if (tab==='reglages'){ fillSettings(); if(!badKey&&cfg.url&&cfg.token) findDevices(cfg.url,cfg.token).catch(()=>{}); } window.scrollTo(0,0); }
+    curTab=tab; document.body.classList.toggle('acc',tab==='accueil'); $('title').textContent = tab==='accueil'&&greetHello ? greetHello : TABS[tab]; $('greet').hidden = tab!=='accueil'; if(tab==='maison'&&planOn) VIV.planHit($('plan')); if (tab==='reglages'){ fillSettings(); if(!badKey&&cfg.url&&cfg.token) findDevices(cfg.url,cfg.token).catch(()=>{}); } window.scrollTo(0,0); }
   window.addEventListener('hashchange', route);
 
   /* ---------- horloge, agenda, rappels ---------- */
-  let lastMin='';
+  let lastMin='', nextUp=null;
   function tick(){ const d=new Date(), m=hm(d); if(window.Motion) Motion.clock($('clock'),m); else $('clock').textContent=m;
     $('date').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-    if (m!==lastMin){ lastMin=m; reminders.forEach(r=>{ if(r.on&&r.t===m){ showAlert('Rappel',r.txt); notify('Rappel : '+r.txt);} }); agenda.forEach(a=>{ if(a.t===m) showAlert('Agenda',a.txt); }); renderAgenda(); } }
+    if (m!==lastMin){ lastMin=m; reminders.forEach(r=>{ if(r.on&&r.t===m){ showAlert('Rappel',r.txt); notify('Rappel : '+r.txt);} }); agenda.forEach(a=>{ if(a.t===m) showAlert('Agenda',a.txt); }); renderAgenda(); vivMinute(); } }
   function renderAgenda(){
     const m=hm(new Date()); const list=agenda.slice().sort((a,b)=>a.t.localeCompare(b.t)); const ni=list.findIndex(a=>a.t>=m);
     $('agenda').innerHTML = list.length ? list.map((a,i)=>'<li class="item'+(a.t<m?' past':'')+(i===ni?' next':'')+'"><span class="time">'+esc(a.t)+'</span><span class="txt">'+esc(a.txt)+'</span><button class="x" data-del-ag="'+agenda.indexOf(a)+'" aria-label="Supprimer">✕</button></li>').join('') : '<li class="empty">Rien de prévu</li>';
     $('ag-count').textContent = list.length ? list.length+' aujourd\'hui' : '';
     document.querySelectorAll('[data-del-ag]').forEach(b=>b.onclick=()=>{ agenda.splice(+b.dataset.delAg,1); saveLists(); renderAgenda(); });
     const up = list.filter(a=>a.t>=m).map(a=>({t:a.t,txt:a.txt,k:'Agenda'})).concat(reminders.filter(r=>r.on&&r.t>=m).map(r=>({t:r.t,txt:r.txt,k:'Rappel'}))).sort((a,b)=>a.t.localeCompare(b.t)).slice(0,4);
+    nextUp = up[0]||null;
     $('upcoming').innerHTML = up.length ? up.map(u=>'<li class="item"><span class="time">'+esc(u.t)+'</span><span class="txt">'+esc(u.txt)+'<small>'+u.k+'</small></span></li>').join('') : '<li class="empty">Plus rien de prévu aujourd\'hui</li>';
   }
   function renderReminders(){
@@ -452,8 +486,10 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     cloud:'<path d="M7 19h10a4.5 4.5 0 0 0 .5-9A6 6 0 0 0 6 11.5 3.8 3.8 0 0 0 7 19z"/>', fog:'<path d="M4 10h16M3 14h18M6 18h12"/>',
     rain:'<path d="M7 15h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.5 8.5 3.3 3.3 0 0 0 7 15z"/><path style="stroke:#7cc8ff" d="M9 18l-1 3M13 18l-1 3M17 18l-1 3"/>',
     snow:'<path d="M7 14h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.5 7.5 3.3 3.3 0 0 0 7 14z"/><path style="stroke:#cfe8ff" d="M9 18h.01M13 18h.01M17 18h.01M11 21h.01M15 21h.01"/>',
+    moon:'<path style="stroke:#e6e4ff" d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    cloudmoon:'<path style="stroke:#e6e4ff" d="M13.5 3.5a5 5 0 0 0 6 6.5 5.5 5.5 0 0 1-4.3 3"/><path d="M7 20h9a4 4 0 0 0 0-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 20z"/>',
     storm:'<path d="M7 14h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.5 7.5 3.3 3.3 0 0 0 7 14z"/><path style="stroke:#ffc46b" d="M12 14l-2 4h4l-2 4"/>'};
-  const icon=(c,n)=>{ const k=(WMO[c]||['','cloud'])[1]; return '<svg class="svg" width="'+n+'" height="'+n+'" viewBox="0 0 24 24">'+((window.Motion&&Motion.wx(k))||ICONS[k])+'</svg>'; };
+  const icon=(c,n,night)=>{ let k=(WMO[c]||['','cloud'])[1]; if(night&&k==='sun') k='moon'; else if(night&&k==='cloudsun') k='cloudmoon'; return '<svg class="svg" width="'+n+'" height="'+n+'" viewBox="0 0 24 24">'+((window.Motion&&Motion.wx(k))||ICONS[k])+'</svg>'; };
   function position(){ return new Promise(res=>{ if(!navigator.geolocation) return res(null); navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lon:p.coords.longitude,name:'Ma position'}),()=>res(null),{timeout:8000,maximumAge:3600000}); }); }
   async function loadWeather(){
     try {
@@ -464,11 +500,13 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
       if (!loc) loc={lat:48.8566,lon:2.3522,name:'Paris (choisis ta ville dans Réglages)'};
       const j=await (await fetch('https://api.open-meteo.com/v1/forecast?latitude='+loc.lat+'&longitude='+loc.lon+'&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&timezone=auto&forecast_days=4')).json();
       const c=j.current, dd=j.daily, desc=(WMO[c.weather_code]||['—'])[0];
-      $('wx-city').textContent=loc.name; $('wx-t').textContent=Math.round(c.temperature_2m)+'°'; $('wx-desc').textContent=desc; $('wx-icon').innerHTML=icon(c.weather_code,52);
-      $('wx-mini-t').textContent=Math.round(c.temperature_2m)+'°'; $('wx-mini-d').textContent=desc; $('wx-mini-i').innerHTML=icon(c.weather_code,40);
+      wxNow={kind:(WMO[c.weather_code]||['','cloud'])[1], temp:c.temperature_2m, rise:new Date(dd.sunrise[0]), set:new Date(dd.sunset[0])};
+      $('wx-city').textContent=loc.name; $('wx-t').textContent=Math.round(c.temperature_2m)+'°'; $('wx-desc').textContent=desc; $('wx-icon').innerHTML=icon(c.weather_code,52,isNight());
+      $('wx-mini-t').textContent=Math.round(c.temperature_2m)+'°'; $('wx-mini-d').textContent=desc; $('wx-mini-i').innerHTML=icon(c.weather_code,40,isNight()); wxCode=c.weather_code;
       $('wx-extra').textContent='Ressenti '+Math.round(c.apparent_temperature)+'° · Humidité '+c.relative_humidity_2m+' % · Vent '+Math.round(c.wind_speed_10m)+' km/h';
       $('wx-days').innerHTML=dd.time.map((t,i)=>'<div class="wx-day"><span class="sub" style="text-transform:capitalize">'+(i===0?'Auj.':esc(new Date(t+'T12:00').toLocaleDateString('fr-FR',{weekday:'short'})))+'</span>'+icon(dd.weather_code[i],24)+'<b>'+Math.round(dd.temperature_2m_max[i])+'° <span class="sub">'+Math.round(dd.temperature_2m_min[i])+'°</span></b><span class="sub">'+(dd.precipitation_probability_max[i]??0)+' %</span></div>').join('');
       $('sunrise').textContent=hm(new Date(dd.sunrise[0])); $('sunset').textContent=hm(new Date(dd.sunset[0]));
+      paintSky(); greetRender();
     } catch(e){ $('wx-desc').textContent='Météo indisponible'; $('wx-mini-d').textContent='Météo indisponible'; }
   }
 
@@ -530,12 +568,13 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     if (src) return send('select_source', {entity_id:cfg.xbox, source:src});
     throw new Error(name+' introuvable ('+(xApps ? xApps.length : 0)+' applis vues sur la Xbox)');
   }
-  async function xboxPower(on){ s.xbox=on; if(!on) s.app=null; s.scene=null; render(); notify(on?'Xbox allumée':'Xbox éteinte'); tv(on?'allumer':'eteindre',true); if(has('xbox')) await call('media_player', on?'turn_on':'turn_off', {entity_id:cfg.xbox}); }
-  async function launch(id){ const a=APPS.find(x=>x.id===id)||{name:id}; s.xbox=true; s.app=id; render(); notify('Lancement : '+a.name);
+  async function xboxPower(on){ s.xbox=on; tvOn=on; if(!on) s.app=null; s.scene=null; render(); notify(on?'Xbox allumée':'Xbox éteinte'); tv(on?'allumer':'eteindre',true); if(has('xbox')) await call('media_player', on?'turn_on':'turn_off', {entity_id:cfg.xbox}); }
+  async function launch(id){ const a=APPS.find(x=>x.id===id)||{name:id}; s.xbox=true; s.app=id; tvOn=true; if(window.VIV) VIV.learn(store,id); render(); notify('Lancement : '+a.name);
     if(!cfg.token) return; try { await ha('/api/services/script/'+a.sc,'POST',{}); toast(a.name+' : la Xbox s\'en occupe'); } catch(e){ toast('Xbox : '+a.name+' non lancé'); notify('Xbox : '+a.name+' non lancé ('+e.message+')'); } }
   /* télé LG : commandes infrarouges envoyées par le Redmi (scripts Home Assistant), sans retour d'état */
   const TV={allumer:['tele_allumer','Télé : allumage'],eteindre:['tele_eteindre','Télé : extinction'],plus:['tele_volume_plus','Volume +'],moins:['tele_volume_moins','Volume −'],muet:['tele_muet','Son coupé / remis'],source:['tele_source','Source suivante']};
-  async function tv(k,quiet){ const t=TV[k]; if(!quiet) toast(t[1]); if(!cfg.token) return; try { await ha('/api/services/script/'+t[0],'POST',{}); } catch(e){ notify('Télé : commande non envoyée ('+e.message+')'); } }
+  let tvOn=null; /* la télé ne dit rien : on suppose qu'elle suit la Xbox et nos commandes */
+  async function tv(k,quiet){ const t=TV[k]; if(!quiet) toast(t[1]); if(k==='allumer'||k==='eteindre'){ tvOn=k==='allumer'; planPaint(); } if(!cfg.token) return; try { await ha('/api/services/script/'+t[0],'POST',{}); } catch(e){ notify('Télé : commande non envoyée ('+e.message+')'); } }
   $('xb-sw').onclick=()=>xboxPower(!s.xbox);
   document.querySelectorAll('[data-app]').forEach(b=>b.onclick=()=>launch(b.dataset.app));
   document.querySelectorAll('[data-tv]').forEach(b=>b.onclick=()=>tv(b.dataset.tv));
@@ -548,7 +587,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   const hex2rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
   async function pushLight(l){ if(!has(l.id)) return; if(!l.on) return call('light','turn_off',{entity_id:cfg[l.id]}); return call('light','turn_on',{entity_id:cfg[l.id],brightness_pct:l.lvl,rgb_color:hex2rgb(l.color)}); }
   let lt; const debounce=(f)=>{ clearTimeout(lt); lt=setTimeout(f,250); };
-  document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{ const l=s.lights[b.dataset.l]; l.on=!l.on; s.scene=null; render(); pushLight(l); toast(l.name+(l.on?' allumée':' éteinte')); });
+  document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{ const l=s.lights[b.dataset.l]; l.on=!l.on; s.scene=null; render(); pushLight(l); toast(l.name+(l.on?(l.id==='ruban'?' allumé':' allumée'):(l.id==='ruban'?' éteint':' éteinte'))); });
   document.querySelectorAll('[data-lr]').forEach(r=>r.oninput=()=>{ const l=s.lights[r.dataset.lr]; l.lvl=+r.value; l.on=true; s.scene=null; render(); debounce(()=>pushLight(l)); });
   document.querySelectorAll('[data-lc]').forEach(b=>b.onclick=()=>{ const l=s.lights[b.dataset.lc]; l.color=b.dataset.color; l.on=true; s.scene=null; render(); pushLight(l); });
 
@@ -612,6 +651,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     if(!window.Motion) document.body.dataset.scene=s.scene||'';
     applyTheme();
     if(window.Motion) Motion.xbox(s,liveMedia);
+    document.body.classList.toggle('sc-on',!!s.scene); coverUpdate(); planPaint(); greetRender();
   }
   /* ---------- thèmes selon ce qui tourne sur la Xbox ---------- */
   const TH={k:null,start:0};
@@ -641,7 +681,7 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
     const k=themeOf();
     if(k!==TH.k){ TH.k=k; const st=store.get('th-start',null);
       if(k&&st&&st.k===k&&Date.now()-st.t<12*3600000) TH.start=st.t; else { TH.start=Date.now(); if(k) store.set('th-start',{k,t:TH.start}); }
-      ['netflix','youtube','forza','gta'].forEach(x=>document.body.classList.toggle('th-'+x,x===k)); buildDeco(k); if(window.Motion) Motion.theme(k); }
+      ['netflix','youtube','forza','gta'].forEach(x=>document.body.classList.toggle('th-'+x,x===k)); document.body.classList.toggle('themed',!!k); covKey=null; buildDeco(k); if(window.Motion) Motion.theme(k); }
     const now=$('xb-now'); now.classList.toggle('ticket',k==='netflix');
     if(k==='netflix'){ $('xb-label').textContent='Séance de '+hm(new Date(TH.start))+' · '+dur(); $('xb-title').textContent='Netflix'; const im=now.querySelector('img'); if(im) im.remove(); }
     if(k==='forza'){ $('xb-label').textContent=(s.xbox?'En jeu · ':'')+dur(); if(!s.xbox||!liveMedia) $('xb-title').textContent='Forza Horizon 6'; const im=now.querySelector('img'); if(im) im.remove(); }
@@ -665,11 +705,14 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
       const x=by[cfg.xbox];
       /* l'intégration Xbox met le jeu en cours dans le capteur « Lecture en cours » du profil, pas dans la console */
       const npE=states.find(e=>/^sensor\..*_(lecture_en_cours|now_playing)$/.test(e.entity_id)&&!['unknown','unavailable',''].includes(e.state)); const np=npE?npE.state:'';
-      if(x){ const on=!['off','unavailable','standby','unknown'].includes(x.state); if(was&&on!==s.xbox) notify(on?'Xbox allumée':'Xbox éteinte'); s.xbox=on;
-        const a=x.attributes||{}; srcList=a.source_list||[]; s.app=appOf(a.source); if(typeof a.volume_level==='number') s.vol=Math.round(a.volume_level*100); s.muted=!!a.is_volume_muted;
-        const pic=a.entity_picture?(a.entity_picture.startsWith('http')?a.entity_picture:cfg.url.replace(/\/+$/,'')+a.entity_picture):null;
+      if(x){ const on=!['off','unavailable','standby','unknown'].includes(x.state); if(was&&on!==s.xbox){ notify(on?'Xbox allumée':'Xbox éteinte'); tvOn=on; } s.xbox=on;
+        const a=x.attributes||{}; srcList=a.source_list||[]; const pa=s.app; s.app=appOf(a.source); if(was&&on&&s.app&&s.app!==pa&&window.VIV) VIV.learn(store,s.app); if(typeof a.volume_level==='number') s.vol=Math.round(a.volume_level*100); s.muted=!!a.is_volume_muted;
+        const ep=a.entity_picture||(npE&&npE.attributes&&npE.attributes.entity_picture)||'';
+        const pic=ep?(ep.startsWith('http')?ep:cfg.url.replace(/\/+$/,'')+ep):null;
         liveMedia= on&&(a.media_title||np||a.source) ? {title:a.media_title||np||a.source, picture:pic} : null;
         $('xb-raw').textContent='La Xbox dit : état « '+x.state+' »'+(a.source?', source « '+a.source+' »':'')+', titre « '+(a.media_title||'aucun')+' »'+(a.app_id?', app_id '+a.app_id:'')+(a.media_content_id?', contenu '+a.media_content_id:'')+', profil « '+(np||'rien')+' »'+' (lu à '+hm(new Date())+')'; }
+      const pe=by[cfg.person]||states.find(e=>e.entity_id.indexOf('person.')===0);
+      if(pe&&window.VIV){ const fn=VIV.firstName(pe.attributes&&pe.attributes.friendly_name); if(fn&&fn!==who){ who=fn; store.set('name',fn); greetRender(); } }
       if(cfg.person&&by[cfg.person]){ const home=by[cfg.person].state==='home'; if(home!==s.home) notify(home?'Tu es rentré à la maison':'Tu es parti de la maison'); s.home=home; renderPresence(); }
       s.lights.forEach(l=>{ const e=cfg[l.id]&&by[cfg[l.id]]; if(!e) return; l.on=e.state==='on'; const a=e.attributes||{}; if(a.brightness) l.lvl=Math.round(a.brightness/2.55);
         if(a.rgb_color) l.color='#'+a.rgb_color.map(v=>pad(v.toString(16))).join(''); });
@@ -723,8 +766,81 @@ body.th-forza{--bg:#050506;--accent:#ff5a2a;--edge:rgba(255,120,80,.25)}
   $('st-save').onclick=()=>{ badKey=false; const old=cfg.city; cfg=readSettings(); store.set('cfg',cfg); toast('Réglages enregistrés'); if(cfg.city!==old) loadWeather(); poll(); };
   $('st-forget').onclick=()=>{ cfg={city:cfg.city,url:SAME?location.origin:'',token:'',xbox:'media_player.xbox',person:''}; store.set('cfg',cfg); fillSettings(); live=false; liveMedia=null; setMode(); render(); $('st-status').className='status ok'; $('st-status').textContent='Adresse et clé effacées du téléphone'; };
 
+  /* ---------- chambre vivante (vivant.js) : ciel, message d'accueil, jaquette, plan 3D ---------- */
+  function isNight(){ const w=wxNow||{}; return !!window.VIV&&!VIV.sunInfo(new Date(),w.rise,w.set).day; }
+  const V=window.VIV; let wxCode=null, who=store.get('name',''), wxNow=null, skyK=null;
+  const COND={sun:'sun',cloudsun:'partly',cloud:'cloud',fog:'fog',rain:'rain',snow:'snow',storm:'storm'};
+  /* ciel */
+  function skyOn(){ return !!V && store.get('fond','ciel')!=='couleurs'; }
+  function paintSky(){ if(!V) return; document.body.classList.toggle('sky',skyOn()); if(!skyOn()) return;
+    const el=$('v-sky'); if(!el._cur&&el._cur!==0) V.skyBuild(el,70,{rain:true});
+    const w=wxNow||{}, k=V.sky(V.sunInfo(new Date(),w.rise,w.set),COND[w.kind]||'partly');
+    if(w.kind==='sun'&&k.night>.5) k.sun=false;
+    skyK=k; V.skyPaint(el,k); planPaint(); }
+  let shootT; function shootLoop(){ clearTimeout(shootT); shootT=setTimeout(()=>{ if(skyOn()&&(!window.Motion||Motion.on())&&!document.hidden) V.skyShoot($('v-sky')); shootLoop(); },18000+Math.random()*30000); }
+  /* message d'accueil : moment de la journée, ce qui tourne, habitudes, agenda, météo */
+  const kindOf=a=>!a?'game':a.game?'game':/Spotify|Deezer/.test(a.id)?'music':a.id==='Home'?'home':'video';
+  let gLines=[], gIdx=0, gKey='', gT;
+  function greetRender(){ if(!V) return;
+    const d=new Date(), h=d.getHours(), a=APPS.find(x=>x.id===s.app);
+    const playing=s.xbox ? (liveMedia&&liveMedia.title&&!/^(home|accueil)/i.test(liveMedia.title) ? {name:liveMedia.title,kind:kindOf(a)} : a&&a.id!=='Home' ? {name:a.name,kind:kindOf(a)} : null) : null;
+    const fa=APPS.find(x=>x.id===V.fav(store,h)), fav=fa?{name:fa.name,kind:kindOf(fa)}:null;
+    let next=null; if(nextUp){ const [H,M]=nextUp.t.split(':').map(Number), mins=H*60+M-(h*60+d.getMinutes()); if(mins>=0&&mins<=180) next={t:nextUp.t,txt:nextUp.txt}; }
+    const w=wxNow||{}, g=V.greet({name:who,h,playing,fav,temp:w.temp,cond:COND[w.kind],next});
+    greetHello=g.hello; if(curTab==='accueil') $('title').textContent=g.hello;
+    const key=g.lines.join('|'); if(key===gKey) return; gKey=key; gLines=g.lines; gIdx=0; showLine(); }
+  function showLine(){ const el=$('greet'); clearTimeout(gT); if(!gLines.length){ el.textContent=''; return; }
+    const txt=gLines[gIdx%gLines.length];
+    if(el.textContent&&el.textContent!==txt&&(!window.Motion||Motion.on())){ el.classList.add('out'); setTimeout(()=>{ el.textContent=txt; el.classList.remove('out'); },450); } else el.textContent=txt;
+    if(gLines.length>1) gT=setTimeout(()=>{ gIdx++; showLine(); },7000); }
+  let lastNight=null;
+  function vivMinute(){ const n=isNight(); paintSky(); greetRender(); if(wxCode!=null&&lastNight!==null&&n!==lastNight){ $('wx-mini-i').innerHTML=icon(wxCode,40,isNight()); $('wx-icon').innerHTML=icon(wxCode,52,isNight()); } lastNight=n; }
+  /* jaquette : couleurs dominantes reprises par l'interface + fond flou */
+  let covKey=null, cov=null;
+  const artCols=a=>{ const m=(a&&a.art||'').match(/#[0-9a-f]{6}/gi); return m&&m.length>1?[m[0],m[1]]:['#107c10','#0b2614']; };
+  function coverUpdate(){ if(!V) return; const u=s.xbox&&liveMedia&&liveMedia.picture||'';
+    if(u===covKey){ coverApply(); return; } covKey=u; if(!u){ cov=null; coverApply(); return; }
+    V.palette(u,r=>{ if(covKey!==u) return; cov=r; coverApply(); planPaint(); }); }
+  function coverApply(){ const r=document.documentElement.style, ok=cov&&!TH.k&&s.xbox;
+    document.body.classList.toggle('cov',!!ok); $('v-cover').style.backgroundImage=ok?'url("'+(cov.tiny||cov.url)+'")':'';
+    if(ok&&cov.c1){ const ac=V.accent(cov.c1); r.setProperty('--accent',ac); r.setProperty('--edge',V.rgba(ac,.32)); $('xb-now').style.setProperty('--art','linear-gradient(135deg,'+cov.c1+','+V.darken(cov.c2||cov.c1,.55)+')'); }
+    else { r.removeProperty('--accent'); r.removeProperty('--edge'); } }
+  /* plan 3D */
+  const PL={chevet:'chevet',plafond:'bureau',ruban:'ruban'}, LOF={lit:'chevet',chevet:'chevet',bureau:'plafond',canape:'ruban'};
+  let planOn=false, popO=null;
+  function planPaint(){ if(!planOn) return; const L={}; s.lights.forEach(l=>L[PL[l.id]]={on:l.on,color:l.color,lvl:l.lvl});
+    const a=APPS.find(x=>x.id===s.app), tvv=tvOn==null?s.xbox:tvOn;
+    V.planPaint($('plan'),{tv:tvv, xbox:s.xbox, art:cov&&cov.c1?[cov.c1,V.darken(cov.c2||cov.c1,.5)]:artCols(a), pic:tvv&&s.xbox&&liveMedia&&liveMedia.picture||'', lights:L, sky:skyK}); }
+  const SVM='<svg class="svg" width="18" height="18" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4zM22 9l-6 6M16 9l6 6"/></svg>';
+  const SWC=[['#ffcf8a','Blanc chaud'],['#5b8cff','Bleu'],['#a77bff','Violet'],['#ff9b42','Orange']];
+  function planPop(o){ popO=o; const w=$('plan'); if(!o){ V.planPop(w,null); return; }
+    let t='', h=''; const tvv=tvOn==null?s.xbox:tvOn;
+    if(o==='tv'){ t='Télé'; h='<button data-va="'+(tvv?'tv-off':'tv-on')+'">'+(tvv?'Éteindre':'Allumer')+'</button><button data-va="moins" aria-label="Baisser le son">−</button><button data-va="plus" aria-label="Monter le son">+</button><button data-va="muet" aria-label="Couper le son">'+SVM+'</button>'; }
+    else if(o==='xbox'){ t='Xbox'; h='<button data-va="xb">'+(s.xbox?'Éteindre':'Allumer')+'</button>'+(s.xbox?'<button data-va="home">Accueil</button>':'')+'<button data-va="go">Applis</button>'; }
+    else { const l=s.lights.find(x=>x.id===LOF[o]); t=l.name;
+      h='<button data-va="l">'+(l.on?'Éteindre':'Allumer')+'</button>'+SWC.map(c=>'<button class="vsw" data-va="c'+c[0]+'" style="background:'+c[0]+'" aria-label="'+c[1]+'"></button>').join(''); }
+    V.planPop(w,o,t,h,va=>planAct(o,va)); }
+  function planAct(o,va){
+    if(o==='tv'){ if(va==='tv-on') tv('allumer'); else if(va==='tv-off') tv('eteindre'); else tv(va); }
+    else if(o==='xbox'){ if(va==='xb') xboxPower(!s.xbox); else if(va==='home') launch('Home'); else { location.hash='#xbox'; return; } }
+    else { const l=s.lights.find(x=>x.id===LOF[o]); if(va==='l') l.on=!l.on; else { l.color=va.slice(1); l.on=true; } s.scene=null; render(); pushLight(l); toast(l.name+(l.on?(l.id==='ruban'?' allumé':' allumée'):(l.id==='ruban'?' éteint':' éteinte'))); }
+    planPaint(); planPop(o); }
+  function planInit(){ if(!V) return; const w=$('plan'); w.innerHTML=V.PLAN; planOn=true; V.planBind(w,o=>planPop(o)); planPaint();
+    /* on peut faire pivoter un peu la chambre du doigt */
+    const sv=w.querySelector('svg'); let x0=null, y0=0, moved=false;
+    w.addEventListener('pointerdown',e=>{ x0=e.clientX; y0=e.clientY; moved=false; });
+    w.addEventListener('pointermove',e=>{ if(x0==null) return; const dx=e.clientX-x0, dy=e.clientY-y0; if(!moved&&Math.abs(dx)<8) return;
+      if(!moved&&Math.abs(dy)>Math.abs(dx)){ x0=null; return; } moved=true; w.classList.add('drag');
+      sv.style.transform='rotateX('+Math.max(-10,Math.min(10,-dy/14)).toFixed(1)+'deg) rotateY('+Math.max(-16,Math.min(16,dx/10)).toFixed(1)+'deg)'; });
+    const end=()=>{ if(x0==null&&!moved) return; x0=null; w.classList.remove('drag'); sv.style.transform=''; };
+    w.addEventListener('pointerup',end); w.addEventListener('pointercancel',end); w.addEventListener('pointerleave',end);
+    w.addEventListener('click',e=>{ if(moved){ e.stopPropagation(); moved=false; } },true);
+    document.addEventListener('click',e=>{ if(popO&&!w.contains(e.target)){ popO=null; V.planPop(w,null); } }); }
+  $('st-fond').value=store.get('fond','ciel');
+  $('st-fond').onchange=e=>{ store.set('fond',e.target.value); paintSky(); };
+
   /* ---------- démarrage ---------- */
-  route(); setMode(); renderPresence(); render(); if(window.Motion) Motion.start(); renderAgenda(); renderReminders(); renderNotifs();
+  planInit(); paintSky(); shootLoop(); route(); setMode(); renderPresence(); render(); if(window.Motion) Motion.start(); renderAgenda(); renderReminders(); renderNotifs();
   tick(); setInterval(tick,1000);
   loadWeather(); setInterval(loadWeather,15*60*1000);
   poll(); setInterval(poll,10000);
