@@ -533,7 +533,7 @@ body.lowfx .vrain{display:none!important}
 
 <div id="settings">
   <div class="sheet">
-    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 15</span></h3><button id="st-close">Fermer</button></div>
+    <div class="line"><h3 style="margin:0;font-size:20px;text-transform:none;letter-spacing:0;color:#fff">Réglages <span class="sub">· version légère 16</span></h3><button id="st-close">Fermer</button></div>
     <p class="help">L'adresse et la clé restent <b>uniquement sur cette tablette</b>, jamais sur GitHub.</p>
     <div class="field"><label for="st-theme">Thème</label><select id="st-theme"><option value="auto">Automatique (selon ce qui tourne sur la Xbox)</option><option value="none">Aucun</option><option value="netflix">Netflix</option><option value="youtube">YouTube</option><option value="forza">Forza</option><option value="gta">GTA 6</option></select></div>
     <div class="field"><label for="st-fond">Fond d'écran</label><select id="st-fond"><option value="ciel">Ciel qui suit l'heure et la météo</option><option value="couleurs">Couleurs (comme avant)</option></select></div>
@@ -796,16 +796,20 @@ body.lowfx .vrain{display:none!important}
       }
     }
   }
+  /* appli choisie au bouton : on la garde à l'écran le temps que la Xbox confirme (max 90 s) */
+  var pin = null;
+  function pinKey(n){ var w = String(n).toLowerCase().split(/[^a-z0-9]+/); for (var i = 0; i < w.length; i++) if (w[i].length > 2) return w[i]; return String(n).toLowerCase(); }
   function launch(id){
     if (!needLive()) return;
     var a = find(APPS, function(x){ return x.id === id; });
+    pin = {id: id, name: a.name, k: pinKey(a.name), t: new Date().getTime()};
     $('games').style.display = 'none';
     s.xbox = true; s.app = id; s.title = ''; if (V) V.learn(store, id); renderXbox(); toast('Lancement : ' + a.name);
     service('script', a.sc, {}, function(err){ if (err){ notify('Xbox : ' + a.name + ' non lancé (' + err.message + ')'); toast('Xbox : ' + a.name + ' non lancé'); } else notify(a.name + ' : la Xbox s\'en occupe'); });
   }
   $('xb-sw').onclick = function(){
     if (!needLive()) return;
-    s.xbox = !s.xbox; if (!s.xbox){ s.app = null; s.title = ''; } renderXbox();
+    s.xbox = !s.xbox; if (!s.xbox){ s.app = null; s.title = ''; pin = null; } renderXbox();
     service('media_player', s.xbox ? 'turn_on' : 'turn_off', {entity_id:cfg.xbox});
     tvCmd(s.xbox ? 'allumer' : 'eteindre', true);
     notify(s.xbox ? 'Xbox allumée' : 'Xbox éteinte');
@@ -863,6 +867,7 @@ body.lowfx .vrain{display:none!important}
         var ep = on ? (at.entity_picture || (npE && npE.attributes && npE.attributes.entity_picture) || '') : '';
         viv.pic = ep ? (/^https?:/.test(ep) ? ep : trimUrl(cfg.url) + ep) : '';
         s.title = on ? (at.media_title || np || '') : '';
+        if (pin){ var seen = ((s.app || '') + ' ' + s.title).toLowerCase(); if (!on || new Date().getTime() - pin.t > 90000 || seen.indexOf(pin.k) >= 0) pin = null; else { s.app = pin.id; s.title = pin.name; viv.pic = ''; } }
         if (typeof at.volume_level === 'number') s.vol = Math.round(at.volume_level * 100);
         s.muted = !!at.is_volume_muted; xbRaw(x); renderXbox();
       }

@@ -372,7 +372,7 @@ body.acc h1{font-size:28px}
       <span class="status" id="st-status"></span>
       <div class="btns"><button class="btn" id="st-forget">Oublier</button><button class="btn" id="st-test">Tester</button><button class="btn primary" id="st-save">Enregistrer</button></div>
     </div>
-    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 12 (26/11)</p>
+    <p class="help">Tableau de bord tablette : <a class="link" href="tablette/index.html">ouvrir</a> · Version 13 (26/11)</p>
   </section>
 </div>
 
@@ -568,8 +568,10 @@ body.acc h1{font-size:28px}
     if (src) return send('select_source', {entity_id:cfg.xbox, source:src});
     throw new Error(name+' introuvable ('+(xApps ? xApps.length : 0)+' applis vues sur la Xbox)');
   }
-  async function xboxPower(on){ s.xbox=on; tvOn=on; if(!on) s.app=null; s.scene=null; render(); notify(on?'Xbox allumée':'Xbox éteinte'); tv(on?'allumer':'eteindre',true); if(has('xbox')) await call('media_player', on?'turn_on':'turn_off', {entity_id:cfg.xbox}); }
-  async function launch(id){ const a=APPS.find(x=>x.id===id)||{name:id}; s.xbox=true; s.app=id; tvOn=true; if(window.VIV) VIV.learn(store,id); render(); notify('Lancement : '+a.name);
+  async function xboxPower(on){ s.xbox=on; tvOn=on; if(!on){ s.app=null; pin=null; } s.scene=null; render(); notify(on?'Xbox allumée':'Xbox éteinte'); tv(on?'allumer':'eteindre',true); if(has('xbox')) await call('media_player', on?'turn_on':'turn_off', {entity_id:cfg.xbox}); }
+  /* appli choisie au bouton : on la garde à l'écran le temps que la Xbox confirme (max 90 s) */
+  let pin=null; const pinKey=n=>(String(n).toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2)[0]||String(n).toLowerCase());
+  async function launch(id){ const a=APPS.find(x=>x.id===id)||{name:id}; pin={id,name:a.name||id,k:pinKey(a.name||id),t:Date.now()}; liveMedia={title:a.name||id,picture:null}; s.xbox=true; s.app=id; tvOn=true; if(window.VIV) VIV.learn(store,id); render(); notify('Lancement : '+a.name);
     if(!cfg.token) return; try { await ha('/api/services/script/'+a.sc,'POST',{}); toast(a.name+' : la Xbox s\'en occupe'); } catch(e){ toast('Xbox : '+a.name+' non lancé'); notify('Xbox : '+a.name+' non lancé ('+e.message+')'); } }
   /* télé LG : commandes infrarouges envoyées par le Redmi (scripts Home Assistant), sans retour d'état */
   const TV={allumer:['tele_allumer','Télé : allumage'],eteindre:['tele_eteindre','Télé : extinction'],plus:['tele_volume_plus','Volume +'],moins:['tele_volume_moins','Volume −'],muet:['tele_muet','Son coupé / remis'],source:['tele_source','Source suivante']};
@@ -710,6 +712,7 @@ body.acc h1{font-size:28px}
         const ep=a.entity_picture||(npE&&npE.attributes&&npE.attributes.entity_picture)||'';
         const pic=ep?(ep.startsWith('http')?ep:cfg.url.replace(/\/+$/,'')+ep):null;
         liveMedia= on&&(a.media_title||np||a.source) ? {title:a.media_title||np||a.source, picture:pic} : null;
+        if(pin){ const seen=((s.app||'')+' '+(liveMedia&&liveMedia.title||'')).toLowerCase(); if(!on||Date.now()-pin.t>90000||seen.indexOf(pin.k)>=0) pin=null; else { s.app=pin.id; liveMedia={title:pin.name,picture:null}; } }
         $('xb-raw').textContent='La Xbox dit : état « '+x.state+' »'+(a.source?', source « '+a.source+' »':'')+', titre « '+(a.media_title||'aucun')+' »'+(a.app_id?', app_id '+a.app_id:'')+(a.media_content_id?', contenu '+a.media_content_id:'')+', profil « '+(np||'rien')+' »'+' (lu à '+hm(new Date())+')'; }
       const pe=by[cfg.person]||states.find(e=>e.entity_id.indexOf('person.')===0);
       if(pe&&window.VIV){ const fn=VIV.firstName(pe.attributes&&pe.attributes.friendly_name); if(fn&&fn!==who){ who=fn; store.set('name',fn); greetRender(); } }
