@@ -146,7 +146,7 @@
           }
           var order = bins.map ? bins.slice() : bins; order.sort(function(p, q){ return q[3] - p[3]; });
           var avg = hex([tot[0] / tot[3], tot[1] / tot[3], tot[2] / tot[3]]);
-          function col(bn){ return hex([bn[0] / bn[3], bn[1] / bn[3], bn[2] / bn[3]]); }
+          var col = function(bn){ return hex([bn[0] / bn[3], bn[1] / bn[3], bn[2] / bn[3]]); };
           var c1 = order[0][3] > 2 ? col(order[0]) : avg, c2 = order[1][3] > 1.2 ? col(order[1]) : V.darken(c1, .45);
           var t = document.createElement('canvas'); t.width = 24; t.height = 16; t.getContext('2d').drawImage(img, 0, 0, 24, 16);
           fin({c1: c1, c2: c2, avg: avg, tiny: t.toDataURL('image/jpeg', .85), url: url});
